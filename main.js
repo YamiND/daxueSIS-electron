@@ -20,7 +20,9 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({titleBarStyle: 'hidden',
+    // In the future I might use a frameless browser again
+    //mainWindow = new BrowserWindow({titleBarStyle: 'hidden',
+    mainWindow = new BrowserWindow({
     width: 1281,
     height: 800,
     minWidth: 1281,

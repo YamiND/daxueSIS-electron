@@ -18,24 +18,71 @@
                       <tr>
                         <th>Class Name</th>
                         <th>Class Day</th>
-                        <th>ClassID</th>
+                        <th>Class Start Time</th>
+                        <th>Class End Time</th>
                       </tr>
                     </thead>
                     <tbody>
                         <script>
-                            var t = $('#viewClassesTable').DataTable();
-
+                            var t = $('#viewClassesTable').DataTable({"order": [[ 1, "asc" ]]});
+  
                             var sqlite3 = require('sqlite3').verbose();
                             var db = new sqlite3.Database('sqlite/daxuesis.db');
+
                             db.serialize(function() {
                             
-                            db.each("SELECT classID, className, classDay, classStartID FROM classes", 
+                            db.each("SELECT classes.className, classDay, classPeriods.classStartTime, classPeriods.classEndTime FROM classes INNER JOIN classPeriods ON classes.classStartID = classPeriods.classPeriodID ORDER BY classDay ASC", 
                                 function(err, row) 
-                                {
-                                    t.row.add( [ row.className, row.classDay, row.classID ] ).draw( false );
+                                {   
+                                    var days = [];
+                                    var listOfDays = row.classDay;
+                                    var hasSun = listOfDays & 1;
+                                    var hasSat = listOfDays & 2;
+                                    var hasFri = listOfDays & 4;
+                                    var hasThu = listOfDays & 8;
+                                    var hasWed = listOfDays & 16;
+                                    var hasTue = listOfDays & 32;
+                                    var hasMon = listOfDays & 64;
+
+                                    if (hasSun)
+                                    {
+                                        days.push("Sunday");
+                                    }
+
+                                    if (hasSat)
+                                    {
+                                        days.push("Saturday");
+                                    }
+
+                                    if (hasFri)
+                                    {
+                                        days.push("Friday");
+                                    }
+
+                                    if (hasThu)
+                                    {
+                                        days.push("Thursday");
+                                    }
+
+                                    if (hasWed)
+                                    {
+                                        days.push("Wednesday");
+                                    }
+
+                                    if (hasTue)
+                                    {
+                                        days.push("Tuesday");
+                                    }
+
+                                    if (hasMon)
+                                    {
+                                        days.push("Monday");
+                                    }
+
+                                    t.row.add( [ row.className, days.toString(), row.classStartTime, row.classEndTime ] ).draw( false );
                                 });
                             });
-                            
+
                             db.close();
                         </script>
                     </tbody>

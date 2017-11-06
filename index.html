@@ -12,28 +12,16 @@
     <!-- ADDED IMPORT LINKS -->
     <link rel="import" href="sections/index.html">
     <link rel="import" href="sections/home.html">
-    <link rel="import" href="sections/assignStudentClass.html">
+    <!-- <link rel="import" href="sections/assignStudentClass.html"> -->
     <link rel="import" href="sections/viewClasses.html">
+    <link rel="import" href="sections/deleteClass.html">
     <!-- END ADDED IMPORT LINKS -->
-
-
-
-
 
     <!-- Bootstrap -->
     <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <!-- Font Awesome -->
     <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-
-    <!-- NProgress -->
-    <link href="assets/vendors/nprogress/nprogress.css" rel="stylesheet">
-    <!-- jQuery custom content scroller -->
-    <link href="assets/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet"/>
-
-    <!-- PNotify -->
-    <link href="assets/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
-    <link href="assets/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
-    <link href="assets/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
     
     <!-- Custom Theme Style -->
     <link href="assets/css/custom.min.css" rel="stylesheet">
@@ -46,19 +34,9 @@
     <link href="assets/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
     <link href="assets/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
     <link href="assets/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
-
-
-
-    <!-- iCheck -->
-    <link href="assets/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
-    <!-- bootstrap-progressbar -->
-    <link href="assets/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
-    <!-- jVectorMap -->
-    <link href="assets/css/maps/jquery-jvectormap-2.0.3.css" rel="stylesheet"/>
-
+    
     <!-- Select2 -->
     <link href="assets/vendors/select2/dist/css/select2.min.css" rel="stylesheet">
-    
     
   </head>
   
@@ -99,39 +77,20 @@
                       <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="home.php">Dashboard</a></li>
-                          <li><a id="assignStudentClass-menu" data-section="assignStudentClass" href="#">Assign Student Class</a></li>
                           <li><a id="index-menu" data-section="index" href="#">Index</a></li>
                           <li><a id="home-menu" data-section="home" href="#">Home</a></li>
                         </ul>
-                      </li>
-              
-                      <li><a><i class="fa fa-users"></i> Users <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a href="createUser.php">Create User</a></li>
-                          <li><a href="editUser.php">Edit User</a></li>
-                          <li><a href="deleteUser.php">Delete User</a></li>
-                          <li><a href="viewUsers.php">View Users</a></li>
-                        </ul>
-                      </li>
+                      </li>         
                       <li><a><i class="fa fa-university"></i> Classes <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="assignStudentClass.php">Assign Student to Class</a></li>
+                          <li><a id="assignStudentClass-menu" data-section="assignStudentClass" href="#">Assign Student Class</a></li>
                           <li><a href="removeStudentClass.php">Remove Student from Class</a></li>
                           <li><a href="createClass.php">Create Class</a></li>
                           <li><a href="editClass.php">Edit Class</a></li>
-                          <li><a href="deleteClass.php">Delete Class</a></li>
+                          <li><a id="deleteClass-menu" data-section="deleteClass" href="#">Delete Class</a></li>
                           <li><a id="viewClasses-menu" data-section="viewClasses" href="#">View Classes</a></li>
                         </ul>
                       </li>
-                      <li><a><i class="fa fa-calendar"></i> School Year <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a href="createSchoolYear.php">Create School Year</a></li>
-                          <li><a href="editSchoolYear.php">Edit School Year</a></li>
-                          <li><a href="deleteSchoolYear.php">Delete School Year</a></li>
-                          <li><a href="viewSchoolYears.php">View School Years</a></li>
-                        </ul>
-                      </li>
-                
                       <li><a><i class="fa fa-pencil-square-o"></i> Assignments <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="gradeAssignment.php">Grade Assignment</a></li>
@@ -144,6 +103,7 @@
                       <li><a><i class="fa fa-child"></i> Students(NYD) <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="studentGrades.php">Student Grades</a></li>
+                          <li><a href="#">Add Students</a></li>
                         </ul>
                       </li>
                 
@@ -204,9 +164,6 @@
             <!-- /top navigation -->
         <!-- /Top and Side panel -->
 
-        <!-- jQuery custom content scroller -->
-        <link href="assets/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet"/>
-
        <!--MENU ENDS HERE -->
 
 
@@ -231,7 +188,8 @@
   
 
     <!-- Add jQuery and "single window" Support -->
-      <script>window.$ = window.jQuery = require('./assets/js/jquery.min.js');</script>
+      <script> window.$ = window.jQuery = require('jquery');</script>
+    <script>//window.$ = window.jQuery = require('./assets/js/jquery.min.js');</script>
       <script>window.i18n = new(require('./translations/i18n'));</script>
       <script src="assets/js/jquery.scrollex.min.js"></script>
       <script src="assets/js/jquery.scrolly.min.js"></script>
@@ -240,25 +198,10 @@
       <script src="assets/js/main.js"></script>
     <!-- End jQuery and "single window" Support -->
 
-    <!-- jQuery -->
-    <script src="node_modules/jquery/dist/jquery.min.js"></script>
-
     <!-- Bootstrap -->
-    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    
-    <!-- FastClick -->
-    <script src="assets/vendors/fastclick/lib/fastclick.js"></script>
-    
-    <!-- NProgress -->
-    <script src="assets/vendors/nprogress/nprogress.js"></script>
-    
-    <!-- jQuery custom content scroller -->
-    <script src="assets/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
-    
-    <!-- PNotify -->
-    <script src="assets/vendors/pnotify/dist/pnotify.js"></script>
-    <script src="assets/vendors/pnotify/dist/pnotify.buttons.js"></script>
-    <script src="assets/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+    <script>
+      require('./node_modules/bootstrap/dist/js/bootstrap.min')
+    </script>
 
     <!-- Code needed for menu and translations -->
     <script>
@@ -281,294 +224,23 @@
     <script src="assets/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
     <script src="assets/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
 
-    <!-- Chart.js -->
-    <script src="assets/vendors/Chart.js/dist/Chart.min.js"></script>
-    
-    <!-- bootstrap-progressbar -->
-    <script src="assets/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
-    
-    <!-- iCheck -->
-    <script src="assets/vendors/iCheck/icheck.min.js"></script>
-    
-    <!-- Skycons -->
-    <script src="assets/vendors/skycons/skycons.js"></script>
-    
-    <!-- Flot -->
-    <script src="assets/vendors/Flot/jquery.flot.js"></script>
-    <script src="assets/vendors/Flot/jquery.flot.pie.js"></script>
-    <script src="assets/vendors/Flot/jquery.flot.time.js"></script>
-    <script src="assets/vendors/Flot/jquery.flot.stack.js"></script>
-    <script src="assets/vendors/Flot/jquery.flot.resize.js"></script>
-    
-    <!-- Flot plugins -->
-    <script src="assets/js/flot/jquery.flot.orderBars.js"></script>
-    <script src="assets/js/flot/date.js"></script>
-    <script src="assets/js/flot/jquery.flot.spline.js"></script>
-    <script src="assets/js/flot/curvedLines.js"></script>
-    
-    <!-- jVectorMap -->
-    <script src="assets/js/maps/jquery-jvectormap-2.0.3.min.js"></script>
-    
-    <!-- bootstrap-daterangepicker -->
-    <script src="assets/js/moment/moment.min.js"></script>
-    <script src="assets/js/datepicker/daterangepicker.js"></script>
-
     <!-- Custom Theme Scripts -->
     <script src="assets/js/custom.min.js"></script>
 
     <!-- Select2 -->
     <script src="assets/vendors/select2/dist/js/select2.full.min.js"></script>
-
-    <!-- Flot -->
-    <script>
-      $(document).ready(function() {
-        var data1 = [
-          [gd(2012, 1, 1), 17],
-          [gd(2012, 1, 2), 74],
-          [gd(2012, 1, 3), 6],
-          [gd(2012, 1, 4), 39],
-          [gd(2012, 1, 5), 20],
-          [gd(2012, 1, 6), 85],
-          [gd(2012, 1, 7), 7]
-        ];
-
-        var data2 = [
-          [gd(2012, 1, 1), 82],
-          [gd(2012, 1, 2), 23],
-          [gd(2012, 1, 3), 66],
-          [gd(2012, 1, 4), 9],
-          [gd(2012, 1, 5), 119],
-          [gd(2012, 1, 6), 6],
-          [gd(2012, 1, 7), 9]
-        ];
-        $("#canvas_dahs").length && $.plot($("#canvas_dahs"), [
-          data1, data2
-        ], {
-          series: {
-            lines: {
-              show: false,
-              fill: true
-            },
-            splines: {
-              show: true,
-              tension: 0.4,
-              lineWidth: 1,
-              fill: 0.4
-            },
-            points: {
-              radius: 0,
-              show: true
-            },
-            shadowSize: 2
-          },
-          grid: {
-            verticalLines: true,
-            hoverable: true,
-            clickable: true,
-            tickColor: "#d5d5d5",
-            borderWidth: 1,
-            color: '#fff'
-          },
-          colors: ["rgba(38, 185, 154, 0.38)", "rgba(3, 88, 106, 0.38)"],
-          xaxis: {
-            tickColor: "rgba(51, 51, 51, 0.06)",
-            mode: "time",
-            tickSize: [1, "day"],
-            //tickLength: 10,
-            axisLabel: "Date",
-            axisLabelUseCanvas: true,
-            axisLabelFontSizePixels: 12,
-            axisLabelFontFamily: 'Verdana, Arial',
-            axisLabelPadding: 10
-          },
-          yaxis: {
-            ticks: 8,
-            tickColor: "rgba(51, 51, 51, 0.06)",
-          },
-          tooltip: false
-        });
-
-        function gd(year, month, day) {
-          return new Date(year, month - 1, day).getTime();
-        }
-      });
-    </script>
-    <!-- /Flot -->
-
-    <!-- jVectorMap -->
-    <script src="assets/js/maps/jquery-jvectormap-world-mill-en.js"></script>
-    <script src="assets/js/maps/jquery-jvectormap-us-aea-en.js"></script>
-    <script src="assets/js/maps/gdp-data.js"></script>
-    <script>
-      $(document).ready(function(){
-        $('#world-map-gdp').vectorMap({
-          map: 'world_mill_en',
-          backgroundColor: 'transparent',
-          zoomOnScroll: false,
-          series: {
-            regions: [{
-              values: gdpData,
-              scale: ['#E6F2F0', '#149B7E'],
-              normalizeFunction: 'polynomial'
-            }]
-          },
-          onRegionTipShow: function(e, el, code) {
-            el.html(el.html() + ' (GDP - ' + gdpData[code] + ')');
-          }
-        });
-      });
-    </script>
-    <!-- /jVectorMap -->
-
-    <!-- Skycons -->
-    <script>
-      $(document).ready(function() {
-        var icons = new Skycons({
-            "color": "#73879C"
-          }),
-          list = [
-            "clear-day", "clear-night", "partly-cloudy-day",
-            "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind",
-            "fog"
-          ],
-          i;
-
-        for (i = list.length; i--;)
-          icons.set(list[i], list[i]);
-
-        icons.play();
-      });
-    </script>
-    <!-- /Skycons -->
-
-    <!-- Doughnut Chart -->
-    <script>
-      $(document).ready(function(){
-        var options = {
-          legend: false,
-          responsive: false
-        };
-
-        new Chart(document.getElementById("canvas1"), {
-          type: 'doughnut',
-          tooltipFillColor: "rgba(51, 51, 51, 0.55)",
-          data: {
-            labels: [
-              "Symbian",
-              "Blackberry",
-              "Other",
-              "Android",
-              "IOS"
-            ],
-            datasets: [{
-              data: [15, 20, 30, 10, 30],
-              backgroundColor: [
-                "#BDC3C7",
-                "#9B59B6",
-                "#E74C3C",
-                "#26B99A",
-                "#3498DB"
-              ],
-              hoverBackgroundColor: [
-                "#CFD4D8",
-                "#B370CF",
-                "#E95E4F",
-                "#36CAAB",
-                "#49A9EA"
-              ]
-            }]
-          },
-          options: options
-        });
-      });
-    </script>
-    <!-- /Doughnut Chart -->
-    
-    <!-- bootstrap-daterangepicker -->
-    <script>
-      $(document).ready(function() {
-
-        var cb = function(start, end, label) {
-          console.log(start.toISOString(), end.toISOString(), label);
-          $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-        };
-
-        var optionSet1 = {
-          startDate: moment().subtract(29, 'days'),
-          endDate: moment(),
-          minDate: '01/01/2012',
-          maxDate: '12/31/2015',
-          dateLimit: {
-            days: 60
-          },
-          showDropdowns: true,
-          showWeekNumbers: true,
-          timePicker: false,
-          timePickerIncrement: 1,
-          timePicker12Hour: true,
-          ranges: {
-            'Today': [moment(), moment()],
-            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            'This Month': [moment().startOf('month'), moment().endOf('month')],
-            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-          },
-          opens: 'left',
-          buttonClasses: ['btn btn-default'],
-          applyClass: 'btn-small btn-primary',
-          cancelClass: 'btn-small',
-          format: 'MM/DD/YYYY',
-          separator: ' to ',
-          locale: {
-            applyLabel: 'Submit',
-            cancelLabel: 'Clear',
-            fromLabel: 'From',
-            toLabel: 'To',
-            customRangeLabel: 'Custom',
-            daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-            monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-            firstDay: 1
-          }
-        };
-        $('#reportrange span').html(moment().subtract(29, 'days').format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
-        $('#reportrange').daterangepicker(optionSet1, cb);
-        $('#reportrange').on('show.daterangepicker', function() {
-          console.log("show event fired");
-        });
-        $('#reportrange').on('hide.daterangepicker', function() {
-          console.log("hide event fired");
-        });
-        $('#reportrange').on('apply.daterangepicker', function(ev, picker) {
-          console.log("apply event fired, start/end dates are " + picker.startDate.format('MMMM D, YYYY') + " to " + picker.endDate.format('MMMM D, YYYY'));
-        });
-        $('#reportrange').on('cancel.daterangepicker', function(ev, picker) {
-          console.log("cancel event fired");
-        });
-        $('#options1').click(function() {
-          $('#reportrange').data('daterangepicker').setOptions(optionSet1, cb);
-        });
-        $('#options2').click(function() {
-          $('#reportrange').data('daterangepicker').setOptions(optionSet2, cb);
-        });
-        $('#destroy').click(function() {
-          $('#reportrange').data('daterangepicker').remove();
-        });
-      });
-    </script>
-    <!-- /bootstrap-daterangepicker -->
-
-    <!-- Select2 -->
-    <script>
+   
+     <!-- Select2 -->
+     <script>
         $(document).ready(function() {
-          $("#classID").select2({
-            placeholder: "Select Class Name",
+          $(".select2_single").select2({
+            placeholder: "Select Class",
             allowClear: true
           });
         });
       </script>
       <!-- /Select2 -->
-      
+
     </body>
   </html>
   

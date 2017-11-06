@@ -1,0 +1,60 @@
+<template class="section-template">
+    <section id="deleteClass" class="wrapper">
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Delete Class</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <form method="post" id="delete-class-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Class to Delete</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                          <select class="select2_single form-control" tabindex="-1" name="classID" id="classID">
+                            <option></option>
+
+                            <script>
+                                var sqlite3 = require('sqlite3').verbose();
+                                var db = new sqlite3.Database('sqlite/daxuesis.db');
+
+                                db.serialize(function() {
+                                
+                                db.each("SELECT classID, className FROM classes", 
+                                    function(err, row) 
+                                    {   
+                                        var newOption = new Option(row.className, row.classID, true, true);
+                                        $("#classID").append(newOption).trigger('change');
+                                    });
+                                });
+
+                                db.close();
+                            </script>
+
+                          </select>
+                        </div>
+                      </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-danger">Delete Class</button>
+                        </div>
+                      </div>
+                    </form>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+
+    </section>
+</template>

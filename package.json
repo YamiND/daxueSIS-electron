@@ -29,6 +29,7 @@
     "datatables.net-buttons-bs": "^1.4.2",
     "ejs": "^2.5.1",
     "electron-config": "^0.2.1",
+    "font-awesome": "^4.7.0",
     "jquery": "^3.2.1",
     "select2": "^4.0.6-rc.0",
     "sqlite3": "^3.1.13"

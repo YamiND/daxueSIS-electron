@@ -1,0 +1,67 @@
+<template class="section-template">
+    <section id="createClass" class="wrapper">
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Create Class</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <form method="post" id="create-class-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="class-name">Class Name <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <input type="text" id="class-name" name="class-name" required="required" class="form-control col-md-7 col-xs-12">
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="class-time-id">Class Times <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <select class="select2_single createClassTimeSelect form-control" tabindex="-1" name="classTimeID" id="class-time-id" style="display: inline">
+                            <option></option>
+                            <script>
+                                    var sqlite3 = require('sqlite3').verbose();
+                                    var db = new sqlite3.Database('sqlite/daxuesis.db');
+    
+                                    db.serialize(function() {
+                                    
+                                    db.each("SELECT classPeriodID, classStartTime, classEndTime FROM classPeriods", 
+                                        function(err, row) 
+                                        {   
+                                            var newOption = new Option("Class Start Time: " + row.classStartTime + ", Class End Time: " + row.classEndTime, row.classPeriodID, true, true);
+                                            $("#class-time-id").append(newOption).trigger('change');
+                                        });
+                                    });
+    
+                                    db.close();
+                                </script>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success">Create Class</button>
+                        </div>
+                      </div>
+                    </form>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+    </section>
+</template>

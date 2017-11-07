@@ -14,6 +14,7 @@
     <link rel="import" href="sections/home.html">
     <link rel="import" href="sections/assignStudentClass.html">
     <link rel="import" href="sections/viewClasses.html">
+    <link rel="import" href="sections/createClass.html">
     <link rel="import" href="sections/deleteClass.html">
     <!-- END ADDED IMPORT LINKS -->
 
@@ -82,7 +83,7 @@
                         <ul class="nav child_menu">
                           <li><a id="assignStudentClass-menu" data-section="assignStudentClass" href="#">Assign Student Class</a></li>
                           <li><a href="removeStudentClass.php">Remove Student from Class</a></li>
-                          <li><a href="createClass.php">Create Class</a></li>
+                          <li><a id="createClass-menu" data-section="createClass" href="#">Create Class</a></li>
                           <li><a href="editClass.php">Edit Class</a></li>
                           <li><a id="deleteClass-menu" data-section="deleteClass" href="#">Delete Class</a></li>
                           <li><a id="viewClasses-menu" data-section="viewClasses" href="#">View Classes</a></li>
@@ -237,13 +238,35 @@
       <!-- Select2 -->
       <script>
         $(document).ready(function() {
-          $(".select2_single").select2({
-            placeholder: "Select Class",
+          $(".assignStudentClassSelect").select2({
+            placeholder: "Select Student to assign class for",
             allowClear: true
           });
         });
       </script>
       <!-- /Select2 -->
+
+      <!-- Delete Class Select -->
+      <script>
+          $(document).ready(function() {
+            $(".deleteClassSelect").select2({
+              placeholder: "Select Class to Delete",
+              allowClear: true
+            });
+          });
+        </script>
+        <!-- /Delete Class Select -->
+
+      <!-- Create Class Time Select -->
+      <script>
+          $(document).ready(function() {
+            $(".createClassTimeSelect").select2({
+              placeholder: "Select Class Times",
+              allowClear: true
+            });
+          });
+        </script>
+        <!-- /Create Class Time Select -->
 
     </body>
   </html>

@@ -12,16 +12,16 @@
     <!-- ADDED IMPORT LINKS -->
     <link rel="import" href="sections/index.html">
     <link rel="import" href="sections/home.html">
-    <!-- <link rel="import" href="sections/assignStudentClass.html"> -->
+    <link rel="import" href="sections/assignStudentClass.html">
     <link rel="import" href="sections/viewClasses.html">
     <link rel="import" href="sections/deleteClass.html">
     <!-- END ADDED IMPORT LINKS -->
 
     <!-- Bootstrap -->
-    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
-    <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     
     <!-- Custom Theme Style -->
     <link href="assets/css/custom.min.css" rel="stylesheet">
@@ -76,9 +76,8 @@
                     <ul class="nav side-menu">
                       <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="home.php">Dashboard</a></li>
                           <li><a id="index-menu" data-section="index" href="#">Index</a></li>
-                          <li><a id="home-menu" data-section="home" href="#">Home</a></li>
+                          <li><a id="home-menu" data-section="home" href="#">Dashboard</a></li>
                         </ul>
                       </li>         
                       <li><a><i class="fa fa-university"></i> Classes <span class="fa fa-chevron-down"></span></a>
@@ -189,8 +188,8 @@
 
     <!-- Add jQuery and "single window" Support -->
       <script> window.$ = window.jQuery = require('jquery');</script>
-    <script>//window.$ = window.jQuery = require('./assets/js/jquery.min.js');</script>
       <script>window.i18n = new(require('./translations/i18n'));</script>
+
       <script src="assets/js/jquery.scrollex.min.js"></script>
       <script src="assets/js/jquery.scrolly.min.js"></script>
       <script src="assets/js/skel.min.js"></script>
@@ -200,35 +199,32 @@
 
     <!-- Bootstrap -->
     <script>
-      require('./node_modules/bootstrap/dist/js/bootstrap.min')
+      require('bootstrap/dist/js/bootstrap.min.js');
     </script>
 
     <!-- Code needed for menu and translations -->
     <script>
-        require('./assets/js/menu')
-        require('./assets/js/translations')
-        require('./assets/js/ipc')
+        require('./assets/js/menu');
+        require('./assets/js/translations'); 
     </script>
     <!-- End Code needed for menu and translations -->
 
     <!-- Datatables -->
-    <script src="assets/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="assets/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-    <script src="assets/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="assets/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
-    <script src="assets/vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
-    <script src="assets/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="assets/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
-    <script src="assets/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
-    <script src="assets/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
-    <script src="assets/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="assets/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+    <script>
+      require('datatables.net/js/jquery.dataTables.js')();
+      require('datatables.net-bs/js/dataTables.bootstrap.js')();
+      require('datatables.net-buttons/js/dataTables.buttons.min.js')();
+      require('datatables.net-buttons-bs/js/buttons.bootstrap.min.js')();
+      require('datatables.net-buttons/js/buttons.print.js')();
+    </script>
 
     <!-- Custom Theme Scripts -->
     <script src="assets/js/custom.min.js"></script>
 
     <!-- Select2 -->
-    <script src="assets/vendors/select2/dist/js/select2.full.min.js"></script>
+    <script>
+      require('select2/dist/js/select2.full.min.js')();
+    </script>
    
      <!-- Select2 -->
      <script>

@@ -121,7 +121,7 @@
                   <a data-toggle="tooltip" data-placement="top" title="Refresh" onClick="window.location.reload()">
                     <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
                   </a>
-                  <a id="close-btn" data-toggle="tooltip" data-placement="top" title="Logout">
+                  <a class="close-btn" data-toggle="tooltip" data-placement="top" title="Logout">
                     <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
                   </a>
                 </div>
@@ -152,7 +152,7 @@
                           </a>
                         </li>
                         <li><a href="javascript:;">Help</a></li>
-                        <li><a href="includes/logout.php"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                        <li><a class="close-btn"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
                       </ul>
                     </li>
                   </ul>
@@ -184,26 +184,33 @@
         </div>
       </div>
   
-      <!-- Script to close Window by button click ID 'close-btn' -->
+      <!-- Script to close Window by class 'close-btn' -->
       <script>
         const remote = require('electron').remote;
 
-        document.getElementById("close-btn").addEventListener("click", function (e) {
+        // Get all items with the class of 'close-btn'
+        var buttons = document.getElementsByClassName("close-btn");
+        
+        // Add event listener to each button
+        [].forEach.call(buttons, function (button) 
+          {button.addEventListener("click", function (e) 
+            {
               var window = remote.getCurrentWindow();
               window.close();
-          });  
+            });
+          });
       </script>
-      <!-- End Script to close Window by button click ID 'close-btn' -->
+      <!-- End Script to close Window by class 'close-btn' -->
 
       <!-- Add jQuery and "single window" Support -->
-        <script> window.$ = window.jQuery = require('jquery');</script>
-        <script>window.i18n = new(require('./translations/i18n'));</script>
+      <script> window.$ = window.jQuery = require('jquery');</script>
+      <script>window.i18n = new(require('./translations/i18n'));</script>
 
-        <script src="assets/js/jquery.scrollex.min.js"></script>
-        <script src="assets/js/jquery.scrolly.min.js"></script>
-        <script src="assets/js/skel.min.js"></script>
-        <script src="assets/js/util.js"></script>
-        <script src="assets/js/main.js"></script>
+      <script src="assets/js/jquery.scrollex.min.js"></script>
+      <script src="assets/js/jquery.scrolly.min.js"></script>
+      <script src="assets/js/skel.min.js"></script>
+      <script src="assets/js/util.js"></script>
+      <script src="assets/js/main.js"></script>
       <!-- End jQuery and "single window" Support -->
 
       <!-- Bootstrap -->
@@ -213,8 +220,8 @@
 
       <!-- Code needed for menu and translations -->
       <script>
-          require('./assets/js/menu');
-          require('./assets/js/translations'); 
+        require('./assets/js/menu');
+        require('./assets/js/translations'); 
       </script>
       <!-- End Code needed for menu and translations -->
 
@@ -235,23 +242,21 @@
         require('select2/dist/js/select2.full.min.js')();
       </script>
     
-      <!-- Select2 -->
+      <!-- Assign Student to Class - Select Student -->
       <script>
         $(document).ready(function() {
           $(".assignStudentClassSelect").select2({
-            placeholder: "Select Student to assign class for",
-            allowClear: true
+            placeholder: "Select Student to assign class for"
           });
         });
       </script>
-      <!-- /Select2 -->
+      <!-- /Assign Student to Class - Select Student -->
 
       <!-- Delete Class Select -->
       <script>
           $(document).ready(function() {
             $(".deleteClassSelect").select2({
-              placeholder: "Select Class to Delete",
-              allowClear: true
+              placeholder: "Select Class to Delete"
             });
           });
         </script>

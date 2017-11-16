@@ -12,20 +12,41 @@
                   </div>
                   <div class="x_content">
                     <br />
-                    <form method="post" id="create-class-form" class="form-horizontal form-label-left">
+                    <form id="create-class-form" class="form-horizontal form-label-left">
                       <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="class-name">Class Name <span class="required">*</span>
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-class-name">Class Name <span class="required">*</span>
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" id="class-name" name="class-name" required="required" class="form-control col-md-7 col-xs-12">
+                          <input type="text" id="create-class-name" name="create-class-name" required="required" class="form-control col-md-7 col-xs-12">
                         </div>
                       </div>
 
+
                       <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="class-time-id">Class Times <span class="required">*</span>
+                          <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-class-day-id">Class Day(s) <span class="required">*</span>
+                          </label>
+                          <div class="col-md-6 col-sm-6 col-xs-12">
+                            <select class="createClassDaySelect" name="create-class-days" id="create-class-days" multiple="multiple">
+                              <option value="2">Monday</option>
+                              <option value="4">Tuesday</option>
+                              <option value="8">Wednesday</option>
+                              <option value="16">Thursday</option>
+                              <option value="32">Friday</option>
+                              <option value="64">Saturday</option>
+                              <option value="128">Sunday</option>   
+                            </select>
+                          </div>
+                        </div>
+
+
+
+
+
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-class-time-id">Class Times <span class="required">*</span>
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <select class="createClassTimeSelect" tabindex="-1" name="classTimeID" id="class-time-id">
+                          <select class="createClassTimeSelect" tabindex="-1" name="create-class-time-id" id="create-class-time-id">
                             <option></option>
                             <script>
                                     var sqlite3 = require('sqlite3').verbose();
@@ -37,7 +58,7 @@
                                         function(err, row) 
                                         {   
                                             var newOption = new Option("Class Start Time: " + row.classStartTime + ", Class End Time: " + row.classEndTime, row.classPeriodID, true, true);
-                                            $("#class-time-id").append(newOption).trigger('change');
+                                            $("#create-class-time-id").append(newOption).trigger('change');
                                         });
                                     });
     
@@ -50,10 +71,50 @@
                       <div class="ln_solid"></div>
                       <div class="form-group">
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
-                          <button type="submit" class="btn btn-success">Create Class</button> <!--TODO: I still need to add the code for this -->
+                          <button type="submit" class="btn btn-success" id="create-class-btn">Create Class</button> <!--TODO: I still need to add the code for this -->
                         </div>
                       </div>
                     </form>
+
+                    <script>
+
+                      function resetCreateClassForm() // Function for reset form
+                      {
+                          $("#create-class-name").val("");
+                      
+                          $("#create-class-time-id").val("");
+                      }
+
+                      function insertClassRecord() // Get values from create-class-form and insert
+                      {
+                              var classname = $('input:text[id=create-class-name]').val();
+
+                              var classTime = $('input:text[id=create-class-time-id]').val();
+
+                              var classDaySelectedList = $('#create-class-days option:selected');
+
+                              var classDayArray = $.map(classDaySelectedList,function(option) {
+                                  return option.value;
+                              });
+
+                              var classDaysSum = classDayArray.reduce((pv,cv)=>{
+                                return pv + (parseFloat(cv)||0);
+                              },0);
+
+                              console.log(classDaysSum)
+                              
+                             db.transaction(function (tx) { tx.executeSql("INSERT INTO classes (className, classDay, classStartID) VALUES (?, ?, ?)", [classname, classDaysSum, classTime], resetCreateClassForm); });
+
+                      }
+
+
+                      $(document).ready(function ()
+                      {
+                      ;
+                          $("#create-class-btn").click(insertClassRecord);  // Register Event Listener when button click.
+                      });
+                    
+                    </script>
                     
                   </div>
                 </div>

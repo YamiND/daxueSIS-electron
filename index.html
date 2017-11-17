@@ -82,8 +82,6 @@
                       </li>         
                       <li><a><i class="fa fa-university"></i> Classes <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a id="assignStudentClass-menu" data-section="assignStudentClass" href="#">Assign Student Class</a></li>
-                          <li><a href="removeStudentClass.php">Remove Student from Class</a></li>
                           <li><a id="createClass-menu" data-section="createClass" href="#">Create Class</a></li>
                           <li><a id="editClass-menu" data-section="editClass" href="#">Edit Class</a></li>
                           <li><a id="deleteClass-menu" data-section="deleteClass" href="#">Delete Class</a></li>
@@ -101,6 +99,8 @@
                       </li>
                       <li><a><i class="fa fa-child"></i> Students(NYD) <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
+                          <li><a id="assignStudentClass-menu" data-section="assignStudentClass" href="#">Assign Student Class</a></li>
+                          <li><a href="removeStudentClass.php">Remove Student from Class</a></li>
                           <li><a href="studentGrades.php">Student Grades</a></li>
                           <li><a href="#">Add Students</a></li>
                         </ul>
@@ -243,45 +243,40 @@
         require('select2/dist/js/select2.full.min.js')();
       </script>
     
-      <!-- Assign Student to Class - Select Student -->
+      
       <script>
-        $(document).ready(function() {
+        $(document).ready(function() 
+        {
+
+          /* Assign Student to Class - Select Student */
           $(".assignStudentClassSelect").select2({
             placeholder: "Select Student to assign class for"
           });
-        });
-      </script>
-      <!-- /Assign Student to Class - Select Student -->
 
-      <!-- Delete Class Select -->
-      <script>
-          $(document).ready(function() {
-            $(".classNameSelect").select2({
+          /* Class Name Select */
+          $(".classNameSelect").select2({
               placeholder: "Select Class Name"
-            });
           });
-        </script>
-        <!-- /Delete Class Select -->
-
-      <!-- Create Class Time Select -->
-      <script>
-          $(document).ready(function() {
-            $("#create-class-time-id").select2({
-              placeholder: "Select Class Times"
-            });
+          
+          /* Create Class Time Select ID */
+          $("#create-class-time-id").select2({
+            placeholder: "Select Class Times"
           });
-        </script>
-        <!-- /Create Class Time Select -->
 
-        <!-- Create Class Time Select -->
-      <script>
-          $(document).ready(function() {
-            $(".createClassDaySelect").select2({
+          /* Create Class Day Select */
+          $(".createClassDaySelect").select2({
               placeholder: "Select Class Day(s)"
             });
+
+
+          /* Edit Class Time Select ID */
+          $("#edit-class-time-id").select2({
+            placeholder: "Select Class Times"
           });
+
+        });
+        
       </script>
-      <!-- /Create Class Time Select -->
 
     </body>
   </html>

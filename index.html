@@ -62,7 +62,7 @@
                   </div>
                   <div class="profile_info">
                     <span>Welcome,</span>
-                    <h2>DEMO NAME</h2>
+                    <h2 class="userNameField"></h2>
                   </div>
                 </div>
                 <!-- /menu profile quick info -->
@@ -78,6 +78,7 @@
                         <ul class="nav child_menu">
                           <li><a id="index-menu" data-section="index" href="#">Index</a></li>
                           <li><a id="home-menu" data-section="home" href="#">Dashboard</a></li>
+                          <li><a id="gradeStudent-menu" data-section="gradeStudents" href="#">Grade Students</a></li>
                         </ul>
                       </li>         
                       <li><a><i class="fa fa-university"></i> Classes <span class="fa fa-chevron-down"></span></a>
@@ -97,12 +98,13 @@
                           <li><a href="viewAssignments.php">View Assignments</a></li>
                         </ul>
                       </li>
-                      <li><a><i class="fa fa-child"></i> Students(NYD) <span class="fa fa-chevron-down"></span></a>
+                      <li><a><i class="fa fa-child"></i> Students <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a id="assignStudentClass-menu" data-section="assignStudentClass" href="#">Assign Student Class</a></li>
-                          <li><a href="removeStudentClass.php">Remove Student from Class</a></li>
-                          <li><a href="studentGrades.php">Student Grades</a></li>
-                          <li><a href="#">Add Students</a></li>
+                          <li><a id="removeStudentClass-menu" data-section="removeStudentClass" href="#">Remove Student from Class</a></li>
+                          <li><a id="addStudents-menu" data-section="addStudents" href="#">Add Students</a></li>
+                          <li><a id="removeStudents-menu" data-section="removeStudents" href="#">Remove Students</a></li>
+                          <li><a id="viewStudents-menu" data-section="viewStudents" href="#">View Students</a></li>
                         </ul>
                       </li>
                 
@@ -141,7 +143,7 @@
                   <ul class="nav navbar-nav navbar-right">
                     <li class="">
                       <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        <img src="assets/images/defaultProfile.png" alt="">Demo Name
+                        <img src="assets/images/defaultProfile.png" alt=""><span class="userNameField"></span>
                         <span class=" fa fa-angle-down"></span>
                       </a>
                       <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -267,6 +269,27 @@
 
         });
         
+
+        function getUserName()
+        {
+          var sqlite3 = require('sqlite3').verbose();
+          var db = new sqlite3.Database('sqlite/daxuesis.db');
+
+          db.serialize(function() 
+          {
+            db.each("SELECT userFirstName, userLastName FROM user", 
+              function(err, row) 
+              {
+                $('.userNameField').append(row.userFirstName + " " + row.userLastName);
+              });
+            });
+
+            db.close();
+        }
+
+        getUserName();
+
+
       </script>
 
     </body>

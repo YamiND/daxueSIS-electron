@@ -149,7 +149,52 @@
                               {
                                 $('#edit-class-name').val(row.className);
                                 
-                                $('#edit-class-days').val(row.classDay).trigger('change');
+                                var days = [];
+                                var listOfDays = row.classDay;
+                                var hasSun = listOfDays & 1;
+                                var hasSat = listOfDays & 2;
+                                var hasFri = listOfDays & 4;
+                                var hasThu = listOfDays & 8;
+                                var hasWed = listOfDays & 16;
+                                var hasTue = listOfDays & 32;
+                                var hasMon = listOfDays & 64;
+
+                                if (hasSun)
+                                {
+                                    days.push("1");
+                                }
+
+                                if (hasSat)
+                                {
+                                    days.push("2");
+                                }
+
+                                if (hasFri)
+                                {
+                                    days.push("4");
+                                }
+
+                                if (hasThu)
+                                {
+                                    days.push("8");
+                                }
+
+                                if (hasWed)
+                                {
+                                    days.push("16");
+                                }
+
+                                if (hasTue)
+                                {
+                                    days.push("32");
+                                }
+
+                                if (hasMon)
+                                {
+                                    days.push("64");
+                                }
+
+                                $('#edit-class-days').val(days).trigger('change');
 
                                 $('#edit-class-time-id').val(row.classStartID).trigger('change');
                               });

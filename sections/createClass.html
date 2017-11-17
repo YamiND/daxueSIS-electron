@@ -81,39 +81,77 @@
                       function resetCreateClassForm() // Function for reset form
                       {
                           $("#create-class-name").val("");
-                      
                           $("#create-class-time-id").val("");
+                          $("#create-class-days").val("");
+
+                          $("#create-class-time-id").trigger('change');
+                          $("#create-class-days").trigger('change');
                       }
 
                       function insertClassRecord() // Get values from create-class-form and insert
                       {
-                              var classname = $('input:text[id=create-class-name]').val();
+                        var classname = $('input:text[id=create-class-name]').val();
 
-                              var classTime = $('input:text[id=create-class-time-id]').val();
+                        var classStartTime = $('#create-class-time-id').val();
 
-                              var classDaySelectedList = $('#create-class-days option:selected');
+                        var classDaySelectedList = $('#create-class-days option:selected');
 
-                              var classDayArray = $.map(classDaySelectedList,function(option) {
-                                  return option.value;
-                              });
+                        var classDayArray = $.map(classDaySelectedList,function(option) {
+                            return option.value;
+                        });
 
-                              var classDaysSum = classDayArray.reduce((pv,cv)=>{
-                                return pv + (parseFloat(cv)||0);
-                              },0);
+                        var classDaysSum = classDayArray.reduce((pv,cv)=>{
+                          return pv + (parseFloat(cv)||0);
+                        },0);
 
-                              console.log(classDaysSum)
-                              
-                             db.transaction(function (tx) { tx.executeSql("INSERT INTO classes (className, classDay, classStartID) VALUES (?, ?, ?)", [classname, classDaysSum, classTime], resetCreateClassForm); });
+                        var sqlite3 = require('sqlite3').verbose();
+                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+                       
+                        db.serialize(function() 
+                        {
+                          function getClassNameRows(callback)
+                          {
+                            db.all("SELECT count(*) AS classRows FROM classes WHERE className = ? OR classDay = ? & ? AND classStartID = ?", classname, classDaysSum, classDaysSum, classStartTime, function (err, rows)
+                            {
+                              if (err)
+                              {
+                                console.log(err);
+                              }
+                              else
+                              {
+                                callback(rows[0].classRows);
+                              }
+                            });
+                          }
 
+                          function checkClassConflicts(classRows)
+                          {
+                            if(classRows)
+                            {
+                              alert("ERROR: Class Conflict Exists");
+                            }
+                            else
+                            {
+                              var stmt = db.prepare("INSERT INTO classes (className, classDay, classStartID) VALUES (?, ?, ?)");
+                              stmt.run(classname, classDaysSum, classStartTime);
+                              stmt.finalize();
+                              db.close();
+                            }
+                          }
+                          
+                          getClassNameRows(checkClassConflicts); // Get Class Rows, and if there are no conflicts insert into the DB
+                        });
+
+                        resetCreateClassForm();
                       }
-
-
-                      $(document).ready(function ()
+                  
+                      $("#create-class-form").submit(function (e) 
                       {
-                      ;
-                          $("#create-class-btn").click(insertClassRecord);  // Register Event Listener when button click.
-                      });
-                    
+                        e.preventDefault();
+
+                        insertClassRecord();
+                        
+                      }); 
                     </script>
                     
                   </div>

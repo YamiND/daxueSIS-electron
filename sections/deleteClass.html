@@ -12,24 +12,24 @@
                   </div>
                   <div class="x_content">
                     <br />
-                    <form method="post" id="delete-class-form" class="form-horizontal form-label-left">
+                    <form id="delete-class-form" class="form-horizontal form-label-left">
                       <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Class to Delete</label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                          <select class="classNameSelect" tabindex="-1" name="deleteClassID" id="deleteClassID">
+                          <select class="classNameSelect" tabindex="-1" name="delete-class-name" id="delete-class-name">
                             <option></option>
 
                             <script>
                                 var sqlite3 = require('sqlite3').verbose();
                                 var db = new sqlite3.Database('sqlite/daxuesis.db');
 
-                                db.serialize(function() {
-                                
-                                db.each("SELECT classID, className FROM classes", 
+                                db.serialize(function() 
+                                {
+                                  db.each("SELECT classID, className FROM classes", 
                                     function(err, row) 
                                     {   
-                                        var newOption = new Option(row.className, row.classID, true, true);
-                                        $("#deleteClassID").append(newOption).trigger('change');
+                                        var newOption = new Option(row.className, row.classID, false, false);
+                                        $("#delete-class-name").append(newOption);
                                     });
                                 });
 
@@ -42,10 +42,49 @@
                       <div class="ln_solid"></div>
                       <div class="form-group">
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
-                          <button type="submit" class="btn btn-danger">Delete Class</button> <!--TODO: I still need to add the code for this -->
+                          <button type="submit" class="btn btn-danger" id="delete-class-btn">Delete Class</button> <!--TODO: I still need to add the code for this -->
                         </div>
                       </div>
                     </form>
+
+                    <script>
+
+                      function resetDeleteClassForm() // Function for reset form
+                      {
+                        $("#delete-class-name option:selected").remove(); // Remove the option that was selected
+
+                        $("#delete-class-name").val("");
+
+                        $("#delete-class-name").trigger('change');
+                      }
+
+                      function deleteClassRecord() // Get values from delete-class-form and delete
+                      {
+                        var classID = $('#delete-class-name').val();
+
+                        var sqlite3 = require('sqlite3').verbose();
+                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        
+                        db.serialize(function() 
+                        {
+                          var stmt = db.prepare("DELETE FROM classes WHERE classID = ?");
+                          stmt.run(classID);
+                          stmt.finalize();
+                          db.close();
+                        });
+
+                        resetDeleteClassForm();
+                      }
+                  
+                      $("#delete-class-form").submit(function (e) 
+                      {
+                        e.preventDefault();
+
+                        deleteClassRecord();
+                        
+                      }); 
+                    </script>
+
                     
                   </div>
                 </div>

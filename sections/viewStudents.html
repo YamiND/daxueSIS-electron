@@ -1,0 +1,54 @@
+<template class="section-template">
+    <section id="viewStudents" class="wrapper">
+    
+    <!-- page content -->
+    <div class="right_col" role="main">
+        <div class="">
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2>View Classes</h2>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                  <table id="viewStudentsTable" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    
+                    <thead>
+                      <tr>
+                        <th>Student ID</th>
+                        <th>Student English Name</th>
+                        <th>Student Major</th>
+                        <th>Student Skill Level</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <script>
+                            // TODO: Write code to load new data up on view
+                            var viewStudentsTable = $('#viewStudentsTable').DataTable({"order": [[ 0, "dsc" ]]});
+  
+                            var sqlite3 = require('sqlite3').verbose();
+                            var db = new sqlite3.Database('sqlite/daxuesis.db');
+
+                            db.serialize(function() {
+                            
+                            db.each("SELECT studentID, studentEnglishName, studentMajor, studentSkillLevel FROM students", 
+                                function(err, row) 
+                                {   
+                                    viewStudentsTable.row.add( [ row.studentID, row.studentEnglishName, row.studentMajor, row.studentSkillLevel ] ).draw( false );
+                                });
+                            });
+
+                            db.close();
+                        </script>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /page content -->
+    </section>
+</template>

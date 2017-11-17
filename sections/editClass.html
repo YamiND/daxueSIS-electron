@@ -13,67 +13,236 @@
                   <div class="x_content">
                     <br />
                     <div id="form-content"></div>
-                    <form method="post" id="edit-class-form" class="form-horizontal form-label-left">
+                    <form id="edit-select-class-name-form" class="form-horizontal form-label-left">
                       <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Class to Edit</label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                          <select class="classNameSelect" tabindex="-1" name="classID" id="classID">
-                            
-                          </select>
-                        </div>
-                      </div>
-                      <div class="ln_solid"></div>
-                      <div class="form-group">
-                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
-                          <button type="submit" class="btn btn-success">Next</button>
-                        </div>
-                      </div>
-                    </form>
-
-                    <form method="post" id="edit-class-form-2" class="form-horizontal form-label-left">
-                      <input type="hidden" id="selectedClassID" name="selectedClassID">
-                      <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="class-name">Class Name <span class="required">*</span>
-                        </label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" id="class-name" name="class-name" required="required" class="form-control col-md-7 col-xs-12">
-                        </div>
-                      </div>
-
-                      <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="class-time-id">Class Times <span class="required">*</span>
-                        </label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                          <select class="editClassTimeSelect" tabindex="-1" name="classTimeID" id="class-time-id">
-                            <option></option>
-                            <script>
+                            <select class="classNameSelect" tabindex="-1" name="edit-select-class-name" id="edit-select-class-name">
+                                <option></option>
+    
+                                <script>
                                     var sqlite3 = require('sqlite3').verbose();
                                     var db = new sqlite3.Database('sqlite/daxuesis.db');
     
-                                    db.serialize(function() {
-                                    
-                                    db.each("SELECT classPeriodID, classStartTime, classEndTime FROM classPeriods", 
+                                    db.serialize(function() 
+                                    {
+                                      db.each("SELECT classID, className FROM classes", 
                                         function(err, row) 
                                         {   
-                                            var newOption = new Option("Class Start Time: " + row.classStartTime + ", Class End Time: " + row.classEndTime, row.classPeriodID, true, true);
-                                            $("#class-time-id").append(newOption).trigger('change');
+                                            var newOption = new Option(row.className, row.classID, false, false);
+                                            $("#edit-select-class-name").append(newOption);
                                         });
                                     });
     
                                     db.close();
                                 </script>
-                          </select>
+    
+                              </select>
                         </div>
                       </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success" id="edit-select-class-name-btn">Next</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <form id="edit-class-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="edit-class-name">Class Name <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                              <input type="text" id="edit-class-name" name="edit-class-name" required="required" class="form-control col-md-7 col-xs-12">
+                            </div>
+                          </div>
+    
+                          <div class="form-group">
+                              <label class="control-label col-md-3 col-sm-3 col-xs-12" for="edit-class-days">Class Day(s) <span class="required">*</span>
+                              </label>
+                              <div class="col-md-6 col-sm-6 col-xs-12">
+                                <select class="createClassDaySelect" name="edit-class-days" id="edit-class-days" multiple="multiple">
+                                  <option value="2">Monday</option>
+                                  <option value="4">Tuesday</option>
+                                  <option value="8">Wednesday</option>
+                                  <option value="16">Thursday</option>
+                                  <option value="32">Friday</option>
+                                  <option value="64">Saturday</option>
+                                  <option value="128">Sunday</option>   
+                                </select>
+                              </div>
+                            </div>
+    
+                          <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="edit-class-time-id">Class Times <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                              <select class="editClassTimeSelect" tabindex="-1" name="edit-class-time-id" id="edit-class-time-id">
+                                <option></option>
+                                <script>
+                                        var sqlite3 = require('sqlite3').verbose();
+                                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+        
+                                        db.serialize(function() 
+                                        {
+                                        
+                                          db.each("SELECT classPeriodID, classStartTime, classEndTime FROM classPeriods", 
+                                            function(err, row) 
+                                            {   
+                                                var newOption = new Option("Class Start Time: " + row.classStartTime + ", Class End Time: " + row.classEndTime, row.classPeriodID, false, false);
+                                                $("#edit-class-time-id").append(newOption);
+                                            });
+                                        });
+                                        
+                                        db.close();
+                                    </script>
+                              </select>
+                            </div>
+                          </div>
                       
                       <div class="ln_solid"></div>
                       <div class="form-group">
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
-                          <button type="button" class="btn btn-primary" onclick="switchClass()">Switch Class</button>
+                          <button type="button" class="btn btn-primary" onclick="resetEditClassForms()">Switch Class</button>
                           <button type="submit" class="btn btn-success" name="edit" value="edit">Edit Class</button>
                         </div>
                       </div>
                     </form>
+
+                    <script>
+
+                      function resetEditClassForms()
+                      {
+                        // Reset our form values, hide the form, and show the form
+                        $("#edit-class-form").hide();
+                        $("#edit-class-form")[0].reset();
+
+                        $('#edit-select-class-name').val([]).trigger('change');
+                        $("#edit-select-class-name-form").show();
+                      }
+
+                      $(document).ready(function() 
+                      {  
+
+                        $("#edit-class-form").hide();
+
+                        // Pass the data from the old form to the new form and populate it
+                        $('#edit-select-class-name-form').submit(function(e)
+                        {
+                          e.preventDefault(); // Prevent Default Submission
+                          
+                          var classID = $('#edit-select-class-name').val();
+
+                          if (!classID)
+                          {
+                            // If classID is unselected, leave the function early
+                            return -1;
+                          }
+                          
+                          var sqlite3 = require('sqlite3').verbose();
+                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+
+                          db.serialize(function() 
+                          {
+                            db.each("SELECT className, classDay, classStartID FROM classes WHERE classID = ?", classID, 
+                              function(err, row) 
+                              {
+                                $('#edit-class-name').val(row.className);
+                                
+                                $('#edit-class-days').val(row.classDay).trigger('change');
+
+                                $('#edit-class-time-id').val(row.classStartID).trigger('change');
+                              });
+                            });
+
+                            db.close();
+
+                          $("#edit-select-class-name-form").hide();
+                          $("#edit-class-form").show();
+                        });
+                    
+                        // Update the class entry in the database
+                        $('#edit-class-form').submit(function(e)
+                        {
+                          e.preventDefault(); // Prevent Default Submission
+                          
+                          updateClassRecord(); // Call out updateClassRecord function
+
+                          resetEditClassForms();
+                        });
+
+                      });
+                    
+                      function updateClassRecord() // Get values from create-class-form and insert
+                      {
+                        var classID = $('#edit-select-class-name').val();
+
+                        var newClassname = $('#edit-class-name').val();
+
+                        var classStartTime = $('#edit-class-time-id').val();
+
+                        var classDaySelectedList = $('#edit-class-days option:selected');
+
+                        var classDayArray = $.map(classDaySelectedList,function(option) {
+                            return option.value;
+                        });
+
+                        var classDaysSum = classDayArray.reduce((pv,cv)=>{
+                          return pv + (parseFloat(cv)||0);
+                        },0);
+
+                        var sqlite3 = require('sqlite3').verbose();
+                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+                       
+                        db.serialize(function() 
+                        {
+                          function getClassNameRows(callback)
+                          {
+                            db.all("SELECT count(*) AS classRows FROM classes WHERE className = ? AND classID != ? OR classDay = ? & ? AND classStartID = ? AND classID != ?", newClassname, classID, classDaysSum, classDaysSum, classStartTime, classID, function (err, rows)
+                            {
+                              if (err)
+                              {
+                                console.log(err);
+                              }
+                              else
+                              {
+                                callback(rows[0].classRows);
+                              }
+                            });
+                          }
+
+                          function updateClassRow(classRows)
+                          {
+                            if(classRows)
+                            {
+                              alert("ERROR: Class Conflict Exists, cannot update");
+                            }
+                            else
+                            {
+                              //console.log(newClassname + " " + classDaysSum + " " + classStartTime + " " + classID);
+                              var stmt = db.prepare("UPDATE classes SET className = ?, classDay = ?, classStartID = ? WHERE classID = ?");
+                              stmt.run(newClassname, classDaysSum, classStartTime, classID);
+                              stmt.finalize();
+
+                              $("#edit-select-class-name").empty(); // Empty the list and repopulate, I feel like there's a better way
+
+                              db.each("SELECT classID, className FROM classes", 
+                                function(err, row) 
+                                {   
+                                    var newOption = new Option(row.className, row.classID, false, false);
+                                    $("#edit-select-class-name").append(newOption);
+                                });
+
+                              db.close();
+
+                            }
+                          }
+                          
+                          getClassNameRows(updateClassRow); // Get Class Rows, and if there are no conflicts insert into the DB
+                        });
+                      }
+                    </script>
+
                   </div>
                 </div>
               </div>

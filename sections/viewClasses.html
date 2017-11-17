@@ -24,7 +24,8 @@
                     </thead>
                     <tbody>
                         <script>
-                            var t = $('#viewClassesTable').DataTable({"order": [[ 1, "asc" ]]});
+                            // TODO: Write code to load new data up on view
+                            var t = $('#viewClassesTable').DataTable({"order": [[ 3, "dsc" ]]});
   
                             var sqlite3 = require('sqlite3').verbose();
                             var db = new sqlite3.Database('sqlite/daxuesis.db');
@@ -36,14 +37,15 @@
                                 {   
                                     var days = [];
                                     var listOfDays = row.classDay;
+                                    
                                     var hasSun = listOfDays & 1;
-                                    var hasSat = listOfDays & 2;
-                                    var hasFri = listOfDays & 4;
-                                    var hasThu = listOfDays & 8;
-                                    var hasWed = listOfDays & 16;
-                                    var hasTue = listOfDays & 32;
-                                    var hasMon = listOfDays & 64;
-
+                                    var hasMon = listOfDays & 2;
+                                    var hasTue = listOfDays & 4;
+                                    var hasWed = listOfDays & 8;
+                                    var hasThu = listOfDays & 16;
+                                    var hasFri = listOfDays & 32;
+                                    var hasSat = listOfDays & 64;
+                                   
                                     if (hasSun)
                                     {
                                         days.push("Sunday");

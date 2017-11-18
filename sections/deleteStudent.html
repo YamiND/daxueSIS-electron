@@ -1,0 +1,99 @@
+<template class="section-template">
+    <section id="deleteStudent" class="wrapper">
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Delete Student</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <form id="delete-student-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Student to Delete</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                          <select class="deleteStudentNameSelect" tabindex="-1" name="delete-student-name" id="delete-student-name">
+                            <option></option>
+
+                            <script>
+                                var sqlite3 = require('sqlite3').verbose();
+                                var db = new sqlite3.Database('sqlite/daxuesis.db');
+
+                                db.serialize(function() 
+                                {
+                                  db.each("SELECT studentID, studentEnglishName FROM students", 
+                                    function(err, row) 
+                                    {   
+                                        var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
+                                        $("#delete-student-name").append(newOption);
+                                    });
+                                });
+
+                                db.close();
+                            </script>
+
+                          </select>
+                        </div>
+                      </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-danger" id="delete-student-btn">Delete Student</button> <!--TODO: I still need to add the code for this -->
+                        </div>
+                      </div>
+                    </form>
+
+                    <script>
+
+                      function resetDeleteStudentForm() // Function for reset form
+                      {
+                        $("#delete-student-name option:selected").remove(); // Remove the option that was selected
+
+                        $("#delete-student-name").val("");
+
+                        $("#delete-student-name").trigger('change');
+                      }
+
+                      function deleteStudentRecord() // Get values from delete-class-form and delete
+                      {
+                        var studentID = $('#delete-student-name').val();
+
+                        var sqlite3 = require('sqlite3').verbose();
+                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        
+                        db.serialize(function() 
+                        {
+                          var stmt = db.prepare("DELETE FROM students WHERE studentID = ?");
+                          stmt.run(studentID);
+                          stmt.finalize();
+                          db.close();
+                        });
+
+                        resetDeleteStudentForm();
+                      }
+                  
+                      $("#delete-student-form").submit(function (e) 
+                      {
+                        e.preventDefault();
+
+                        deleteStudentRecord();
+                        
+                      }); 
+                    </script>
+
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+
+    </section>
+</template>

@@ -18,6 +18,7 @@
     <link rel="import" href="sections/createStudent.html">
     <link rel="import" href="sections/editClass.html">
     <link rel="import" href="sections/deleteClass.html">
+    <link rel="import" href="sections/deleteStudent.html">
     <link rel="import" href="sections/viewStudents.html">
     <!-- END ADDED IMPORT LINKS -->
 
@@ -278,6 +279,10 @@
 
           $(".createStudentSkillLevelSelect").select2({
             placeholder: "Select Student Skill Level"
+          });
+
+          $(".deleteStudentNameSelect").select2({
+            placeholder: "Select Student to Delete"
           });
 
         });

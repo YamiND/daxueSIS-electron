@@ -7,7 +7,8 @@
   "license": "GPL-3.0",
   "scripts": {
     "start": "./node_modules/.bin/electron .",
-    "rebuild": "electron-rebuild -f -w sqlite3, select2"
+    "rebuild": "electron-rebuild -f -w sqlite3, select2",
+    "build-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/daxuesis.icns --prune=true --out=release-builds"
   },
   "keywords": [
     "SIS"

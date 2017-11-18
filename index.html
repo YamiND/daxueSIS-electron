@@ -104,8 +104,9 @@
                         <ul class="nav child_menu">
                           <li><a id="assignStudentClass-menu" data-section="assignStudentClass" href="#">Assign Student Class</a></li>
                           <li><a id="removeStudentClass-menu" data-section="removeStudentClass" href="#">Remove Student from Class</a></li>
-                          <li><a id="createStudents-menu" data-section="createStudent" href="#">Add Student</a></li>
-                          <li><a id="removeStudents-menu" data-section="removeStudents" href="#">Remove Students</a></li>
+                          <li><a id="createStudent-menu" data-section="createStudent" href="#">Create Student</a></li>
+                          <li><a id="editStudent-menu" data-section="editStudent" href="#">Edit Student</a></li>
+                          <li><a id="deleteStudent-menu" data-section="deleteStudent" href="#">Delete Student</a></li>
                           <li><a id="viewStudents-menu" data-section="viewStudents" href="#">View Students</a></li>
                         </ul>
                       </li>
@@ -271,8 +272,12 @@
             placeholder: "Select Class Times"
           });
 
-          $("#createStudentMajorSelect").select2({
+          $(".createStudentMajorSelect").select2({
             placeholder: "Select Student Major"
+          });
+
+          $(".createStudentSkillLevelSelect").select2({
+            placeholder: "Select Student Skill Level"
           });
 
         });

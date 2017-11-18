@@ -1,0 +1,174 @@
+<template class="section-template">
+    <section id="createStudent" class="wrapper">
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Create Student</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <form id="create-student-form" class="form-horizontal form-label-left">
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-student-id">Student's ID<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                            <input type="text" id="create-student-id" name="create-student-id" required="required" class="form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-student-name">Student's English Name <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <input type="text" id="create-student-name" name="create-student-name" required="required" class="form-control col-md-7 col-xs-12">
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-student-major-id">Student's Major <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <select class="createStudentMajorSelect" tabindex="-1" name="create-student-major-id" id="create-student-major-id">
+                            <option></option>
+                            <script>
+                                    var sqlite3 = require('sqlite3').verbose();
+                                    var db = new sqlite3.Database('sqlite/daxuesis.db');
+    
+                                    db.serialize(function() 
+                                    {
+                                    
+                                      db.each("SELECT studentMajorID, studentMajorName FROM studentMajors", 
+                                        function(err, row) 
+                                        {   
+                                            var newOption = new Option(row.studentMajorName, row.studentMajorID, false, false);
+                                            $("#create-student-major-id").append(newOption);
+                                        });
+                                    });
+                                    
+                                    db.close();
+                                </script>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-student-skill-level-id">Student's Skill Level <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                              <select class="createStudentSkillLevelSelect" tabindex="-1" name="create-student-skill-level-id" id="create-student-skill-level-id">
+                                <option></option>
+                                <script>
+                                        var sqlite3 = require('sqlite3').verbose();
+                                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+        
+                                        db.serialize(function() 
+                                        {
+                                        
+                                          db.each("SELECT studentSkillLevelID, studentSkillLevel FROM studentSkillLevels", 
+                                            function(err, row) 
+                                            {   
+                                                var newOption = new Option(row.studentSkillLevel, row.studentSkillLevelID, false, false);
+                                                $("#create-student-skill-level-id").append(newOption);
+                                            });
+                                        });
+                                        
+                                        db.close();
+                                    </script>
+                              </select>
+                            </div>
+                          </div>
+                      
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success" id="create-student-btn">Create Student</button> <!--TODO: I still need to add the code for this -->
+                        </div>
+                      </div>
+                    </form>
+
+                    <script>
+
+                      function resetCreateStudentForm() // Function for reset form
+                      {
+                        $("#create-student-id").val("");
+                        $("#create-student-name").val("");
+                        $("#create-student-major-id").val("");
+                        $("#create-student-skill-level-id").val("");
+
+                        $("#create-student-major-id").trigger('change');
+                        $("#create-student-skill-level-id").trigger('change');
+                      }
+
+                      function insertStudentRecord() // Get values from create-class-form and insert
+                      {
+                        var studentID = $('#create-student-id').val();
+                        var studentName = $('#create-student-name').val();
+
+                        var studentMajorID = $('#create-student-major-id').val();
+
+                        var studentSkillLevelID = $('#create-student-skill-level-id').val();
+
+                        var sqlite3 = require('sqlite3').verbose();
+                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+                       
+                        db.serialize(function() 
+                        {
+                          function getStudentNameRows(callback)
+                          {
+                            db.all("SELECT count(*) AS studentRows FROM students WHERE studentID = ?", studentID, function (err, rows)
+                            {
+                              if (err)
+                              {
+                                console.log(err);
+                              }
+                              else
+                              {
+                                callback(rows[0].studentRows);
+                              }
+                            });
+                          }
+
+                          function checkStudentConflicts(classRows)
+                          {
+                            if(classRows)
+                            {
+                              alert("ERROR: Student Conflict Exists");
+                            }
+                            else
+                            {
+                              var stmt = db.prepare("INSERT INTO students (studentID, studentEnglishName, studentMajorID, studentSkillLevelID) VALUES (?, ?, ?, ?)");
+                              stmt.run(studentID, studentName, studentMajorID, studentSkillLevelID);
+                              stmt.finalize();
+                              db.close();
+                            }
+                          }
+                          
+                          getStudentNameRows(checkStudentConflicts); // Get Class Rows, and if there are no conflicts insert into the DB
+                        });
+
+                        resetCreateStudentForm();
+                      }
+                  
+                      $("#create-student-form").submit(function (e) 
+                      {
+                        e.preventDefault();
+
+                        insertStudentRecord();
+                        
+                      }); 
+                    </script>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+    </section>
+</template>

@@ -56,31 +56,31 @@
                       </div>
 
                       <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-student-skill-level-id">Student's Skill Level <span class="required">*</span>
-                            </label>
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                              <select class="createStudentSkillLevelSelect" tabindex="-1" name="create-student-skill-level-id" id="create-student-skill-level-id">
-                                <option></option>
-                                <script>
-                                        var sqlite3 = require('sqlite3').verbose();
-                                        var db = new sqlite3.Database('sqlite/daxuesis.db');
-        
-                                        db.serialize(function() 
-                                        {
-                                        
-                                          db.each("SELECT studentSkillLevelID, studentSkillLevel FROM studentSkillLevels", 
-                                            function(err, row) 
-                                            {   
-                                                var newOption = new Option(row.studentSkillLevel, row.studentSkillLevelID, false, false);
-                                                $("#create-student-skill-level-id").append(newOption);
-                                            });
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-student-skill-level-id">Student's Skill Level <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <select class="createStudentSkillLevelSelect" tabindex="-1" name="create-student-skill-level-id" id="create-student-skill-level-id">
+                            <option></option>
+                            <script>
+                                    var sqlite3 = require('sqlite3').verbose();
+                                    var db = new sqlite3.Database('sqlite/daxuesis.db');
+    
+                                    db.serialize(function() 
+                                    {
+                                    
+                                      db.each("SELECT studentSkillLevelID, studentSkillLevel FROM studentSkillLevels", 
+                                        function(err, row) 
+                                        {   
+                                            var newOption = new Option(row.studentSkillLevel, row.studentSkillLevelID, false, false);
+                                            $("#create-student-skill-level-id").append(newOption);
                                         });
-                                        
-                                        db.close();
-                                    </script>
-                              </select>
-                            </div>
-                          </div>
+                                    });
+                                    
+                                    db.close();
+                                </script>
+                          </select>
+                        </div>
+                      </div>
                       
                       <div class="ln_solid"></div>
                       <div class="form-group">

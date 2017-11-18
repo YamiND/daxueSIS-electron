@@ -17,6 +17,7 @@
     <link rel="import" href="sections/createClass.html">
     <link rel="import" href="sections/createStudent.html">
     <link rel="import" href="sections/editClass.html">
+    <link rel="import" href="sections/editStudent.html">
     <link rel="import" href="sections/deleteClass.html">
     <link rel="import" href="sections/deleteStudent.html">
     <link rel="import" href="sections/viewStudents.html">
@@ -284,6 +285,19 @@
           $(".deleteStudentNameSelect").select2({
             placeholder: "Select Student to Delete"
           });
+
+          $(".editStudentNameSelect").select2({
+            placeholder: "Select Student to Edit"
+          });
+
+          $(".editStudentMajorSelect").select2({
+            placeholder: "Select Student Major"
+          });
+
+          $(".editStudentSkillLevelSelect").select2({
+            placeholder: "Select Student Skill Level"
+          });
+
 
         });
         

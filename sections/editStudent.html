@@ -1,0 +1,271 @@
+<template class="section-template">
+    <section id="editStudent" class="wrapper">
+       <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Edit Student</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <div id="form-content"></div>
+                    <form id="edit-select-student-name-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Student to Edit</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <select class="editStudentNameSelect" tabindex="-1" name="edit-select-student-id" id="edit-select-student-id">
+                                <option></option>
+    
+                                <script>
+                                    var sqlite3 = require('sqlite3').verbose();
+                                    var db = new sqlite3.Database('sqlite/daxuesis.db');
+    
+                                    db.serialize(function() 
+                                    {
+                                        db.each("SELECT studentID, studentEnglishName FROM students", 
+                                        function(err, row) 
+                                        {   
+                                            var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
+                                            $("#edit-select-student-name").append(newOption);
+                                        });
+                                    });
+    
+                                    db.close();
+                                </script>
+        
+                            </select>
+                        </div>
+                      </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success" id="edit-select-student-name-btn">Next</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <form id="edit-student-form" class="form-horizontal form-label-left">
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="edit-student-id">Student's ID<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                            <input type="text" id="edit-student-id" name="edit-student-id" required="required" class="form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="edit-student-name">Student Name <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                              <input type="text" id="edit-student-name" name="edit-student-name" required="required" class="form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+    
+                    
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="edit-student-major-id">Student's Major <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <select class="editStudentMajorSelect" tabindex="-1" name="edit-student-major-id" id="edit-student-major-id">
+                                    <option></option>
+                                    <script>
+                                        var sqlite3 = require('sqlite3').verbose();
+                                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+        
+                                        db.serialize(function() 
+                                        {
+                                    
+                                            db.each("SELECT studentMajorID, studentMajorName FROM studentMajors", 
+                                            function(err, row) 
+                                            {   
+                                                var newOption = new Option(row.studentMajorName, row.studentMajorID, false, false);
+                                                $("#edit-student-major-id").append(newOption);
+                                            });
+                                        });
+                                        
+                                        db.close();
+                                    </script>
+                                </select>
+                            </div>
+                            </div>
+    
+                            <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="edit-student-skill-level-id">Student's Skill Level <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <select class="editStudentSkillLevelSelect" tabindex="-1" name="edit-student-skill-level-id" id="edit-student-skill-level-id">
+                                <option></option>
+                                <script>
+                                        var sqlite3 = require('sqlite3').verbose();
+                                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+        
+                                        db.serialize(function() 
+                                        {
+                                        
+                                            db.each("SELECT studentSkillLevelID, studentSkillLevel FROM studentSkillLevels", 
+                                            function(err, row) 
+                                            {   
+                                                var newOption = new Option(row.studentSkillLevel, row.studentSkillLevelID, false, false);
+                                                $("#edit-student-skill-level-id").append(newOption);
+                                            });
+                                        });
+                                        
+                                        db.close();
+                                    </script>
+                                </select>
+                            </div>
+                            </div>
+                        
+                      
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="button" class="btn btn-primary" onclick="resetEditStudentForms()">Switch Student</button>
+                          <button type="submit" class="btn btn-success" name="edit" value="edit">Edit Student</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <script>
+
+                      function resetEditStudentForms()
+                      {
+                        // Reset our form values, hide the form, and show the form
+                        $("#edit-student-form").hide();
+                        $("#edit-student-form")[0].reset();
+
+                        $('#edit-select-student-id').val([]).trigger('change');
+                        $("#edit-select-student-id-form").show();
+                      }
+
+                      $(document).ready(function() 
+                      {  
+
+                        $("#edit-student-form").hide();
+
+                        // Pass the data from the old form to the new form and populate it
+                        $('#edit-select-student-name-form').submit(function(e)
+                        {
+                          e.preventDefault(); // Prevent Default Submission
+                          
+                          var studentID = $('#edit-select-student-id').val();
+
+                          if (!studentID)
+                          {
+                            // If studentID is unselected, leave the function early
+                            return -1;
+                          }
+                          
+                          var sqlite3 = require('sqlite3').verbose();
+                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+
+                          db.serialize(function() 
+                          {
+                            db.each("SELECT studentEnglishName, studentMajorID, studentSkillLevelID FROM students WHERE studentID = ?", studentID, 
+                              function(err, row) 
+                              {
+                                $('#edit-student-id').val(studentID);
+
+                                $('#edit-student-name').val(row.studentEnglishName);
+
+                                $('#edit-student-major-id').val(row.studentMajorID).trigger('change');
+
+                                $('#edit-student-skill-level-id').val(row.studentSkillLevelID).trigger('change');
+                              });
+                            });
+
+                            db.close();
+
+                          $("#edit-select-student-name-form").hide();
+                          $("#edit-student-form").show();
+                        });
+                    
+                        // Update the student entry in the database
+                        $('#edit-student-form').submit(function(e)
+                        {
+                          e.preventDefault(); // Prevent Default Submission
+                          
+                          updateStudentRecord(); // Call out updateStudentRecord function
+
+                          resetEditStudentForms();
+                        });
+
+                      });
+                    
+                      function updateStudentRecord() // Get values from edit-student-form and insert
+                      {
+                        var studentID = $('#edit-student-id').val();
+
+                        var studentEnglishName = $('#edit-student-name').val();
+
+                        var studentMajorID = $('#edit-student-major-id').val();
+
+                        var studentSkillLevelID = $('#edit-student-skill-level-id').val();
+
+                        var sqlite3 = require('sqlite3').verbose();
+                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+                       
+                        db.serialize(function() 
+                        {
+                          function getStudentNameRows(callback)
+                          {
+                            db.all("SELECT count(*) AS studentRows FROM students WHERE studentID = ? AND studentEnglishName = ? AND studentMajorID = ? AND studentSkillLevelID = ? OR studentID = ? AND studentMajorID != ? AND studentSkillLevelID != ?", studentID, studentEnglishName, studentMajorID, studentSkillLevelID, studentMajorID, studentSkillLevelID, function (err, rows)
+                            {
+                              if (err)
+                              {
+                                console.log(err);
+                              }
+                              else
+                              {
+                                callback(rows[0].studentRows);
+                              }
+                            });
+                          }
+
+                          function updateStudentRow(studentRows)
+                          {
+                            if(classRows)
+                            {
+                              alert("ERROR: Student Conflict Exists, cannot update");
+                            }
+                            else
+                            {
+                                // TODO: I should probably add a truly unique identifier for students table
+                              //console.log(newClassname + " " + classDaysSum + " " + classStartTime + " " + classID);
+                              var stmt = db.prepare("UPDATE students SET studentID = ?, studentEnglishName = ?, studentMajorID = ?, studentSkillLevelID WHERE classID = ?");
+                              stmt.run(newClassname, classDaysSum, classStartTime, classID);
+                              stmt.finalize();
+
+                              $("#edit-select-class-name").empty(); // Empty the list and repopulate, I feel like there's a better way
+
+                              db.each("SELECT classID, className FROM classes", 
+                                function(err, row) 
+                                {   
+                                    var newOption = new Option(row.className, row.classID, false, false);
+                                    $("#edit-select-class-name").append(newOption);
+                                });
+
+                              db.close();
+
+                            }
+                          }
+                          
+                          getClassNameRows(updateClassRow); // Get Class Rows, and if there are no conflicts insert into the DB
+                        });
+                      }
+                    </script>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+    </section>
+</template>

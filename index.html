@@ -15,6 +15,7 @@
     <link rel="import" href="sections/assignStudentClass.html">
     <link rel="import" href="sections/viewClasses.html">
     <link rel="import" href="sections/createClass.html">
+    <link rel="import" href="sections/createStudent.html">
     <link rel="import" href="sections/editClass.html">
     <link rel="import" href="sections/deleteClass.html">
     <link rel="import" href="sections/viewStudents.html">
@@ -103,7 +104,7 @@
                         <ul class="nav child_menu">
                           <li><a id="assignStudentClass-menu" data-section="assignStudentClass" href="#">Assign Student Class</a></li>
                           <li><a id="removeStudentClass-menu" data-section="removeStudentClass" href="#">Remove Student from Class</a></li>
-                          <li><a id="addStudents-menu" data-section="addStudents" href="#">Add Students</a></li>
+                          <li><a id="createStudents-menu" data-section="createStudent" href="#">Add Student</a></li>
                           <li><a id="removeStudents-menu" data-section="removeStudents" href="#">Remove Students</a></li>
                           <li><a id="viewStudents-menu" data-section="viewStudents" href="#">View Students</a></li>
                         </ul>
@@ -268,6 +269,10 @@
           /* Edit Class Time Select ID */
           $("#edit-class-time-id").select2({
             placeholder: "Select Class Times"
+          });
+
+          $("#createStudentMajorSelect").select2({
+            placeholder: "Select Student Major"
           });
 
         });

@@ -32,10 +32,10 @@
 
                             db.serialize(function() {
                             
-                            db.each("SELECT studentID, studentEnglishName, studentMajor, studentSkillLevel FROM students", 
+                            db.each("SELECT studentID, studentEnglishName, studentMajors.studentMajorName, studentSkillLevels.studentSkillLevel FROM students INNER JOIN studentMajors ON students.studentMajorID = studentMajors.studentMajorID INNER JOIN studentSkillLevels ON students.studentSkillLevelID = studentSkillLevels.studentSkillLevelID", 
                                 function(err, row) 
                                 {   
-                                    viewStudentsTable.row.add( [ row.studentID, row.studentEnglishName, row.studentMajor, row.studentSkillLevel ] ).draw( false );
+                                    viewStudentsTable.row.add( [ row.studentID, row.studentEnglishName, row.studentMajorName, row.studentSkillLevel ] ).draw( false );
                                 });
                             });
 

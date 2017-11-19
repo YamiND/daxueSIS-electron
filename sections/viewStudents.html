@@ -24,22 +24,21 @@
                     </thead>
                     <tbody>
                         <script>
-                            // TODO: Write code to load new data up on view
-                            var viewStudentsTable = $('#viewStudentsTable').DataTable({"order": [[ 0, "dsc" ]]});
-  
-                            var sqlite3 = require('sqlite3').verbose();
-                            var db = new sqlite3.Database('sqlite/daxuesis.db');
+                          var viewStudentsTable = $('#viewStudentsTable').DataTable({"order": [[ 0, "dsc" ]]});
 
-                            db.serialize(function() {
-                            
-                            db.each("SELECT studentID, studentEnglishName, studentMajors.studentMajorName, studentSkillLevels.studentSkillLevel FROM students INNER JOIN studentMajors ON students.studentMajorID = studentMajors.studentMajorID INNER JOIN studentSkillLevels ON students.studentSkillLevelID = studentSkillLevels.studentSkillLevelID", 
-                                function(err, row) 
-                                {   
-                                    viewStudentsTable.row.add( [ row.studentID, row.studentEnglishName, row.studentMajorName, row.studentSkillLevel ] ).draw( false );
-                                });
-                            });
+                          var sqlite3 = require('sqlite3').verbose();
+                          var db = new sqlite3.Database('sqlite/daxuesis.db');
 
-                            db.close();
+                          db.serialize(function() {
+                          
+                          db.each("SELECT studentID, studentEnglishName, studentMajors.studentMajorName, studentSkillLevels.studentSkillLevel FROM students INNER JOIN studentMajors ON students.studentMajorID = studentMajors.studentMajorID INNER JOIN studentSkillLevels ON students.studentSkillLevelID = studentSkillLevels.studentSkillLevelID", 
+                              function(err, row) 
+                              {   
+                                  viewStudentsTable.row.add( [ row.studentID, row.studentEnglishName, row.studentMajorName, row.studentSkillLevel ] ).draw( false );
+                              });
+                          });
+
+                          db.close();       
                         </script>
                     </tbody>
                   </table>

@@ -38,28 +38,20 @@
                         </div>
 
                       <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-class-time-id">Class Times <span class="required">*</span>
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-class-time-id">Class Periods <span class="required">*</span>
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <select class="createClassTimeSelect" tabindex="-1" name="create-class-time-id" id="create-class-time-id">
-                            <option></option>
-                            <script>
-                                    var sqlite3 = require('sqlite3').verbose();
-                                    var db = new sqlite3.Database('sqlite/daxuesis.db');
-    
-                                    db.serialize(function() 
-                                    {
-                                    
-                                      db.each("SELECT classPeriodID, classStartTime, classEndTime FROM classPeriods", 
-                                        function(err, row) 
-                                        {   
-                                            var newOption = new Option("Class Start Time: " + row.classStartTime + ", Class End Time: " + row.classEndTime, row.classPeriodID, false, false);
-                                            $("#create-class-time-id").append(newOption);
-                                        });
-                                    });
-                                    
-                                    db.close();
-                                </script>
+                          <select class="createClassTimeSelect" name="create-class-time-id" id="create-class-time-id" multiple="multiple">
+                            <option value="1">08:00 - 08:45</option>
+                            <option value="2">08:55 - 09:40 </option>
+                            <option value="4">10:00 - 10:45 </option>
+                            <option value="8">10:55 - 11:40</option>
+                            <option value="16">13:30 - 14:15</option>
+                            <option value="32">14:25 - 15:10</option>
+                            <option value="64">15:30 - 16:15</option>
+                            <option value="128">16:25 - 17:10</option>   
+                            <option value="256">18:30 - 19:15</option> 
+                            <option value="512">19:25 - 20:10</option>                 
                           </select>
                         </div>
                       </div>
@@ -86,9 +78,17 @@
 
                       function insertClassRecord() // Get values from create-class-form and insert
                       {
-                        var classname = $('input:text[id=create-class-name]').val();
+                        var className = $('#create-class-name').val();
 
-                        var classStartTime = $('#create-class-time-id').val();
+                        var classPeriodsSelectedList = $('#create-class-time-id option:selected');
+
+                        var classPeriodsArray = $.map(classPeriodsSelectedList,function(option) {
+                            return option.value;
+                        });
+
+                        var classPeriodsSum = classPeriodsArray.reduce((pv,cv)=>{
+                          return pv + (parseFloat(cv)||0);
+                        },0);
 
                         var classDaySelectedList = $('#create-class-days option:selected');
 
@@ -107,7 +107,7 @@
                         {
                           function getClassNameRows(callback)
                           {
-                            db.all("SELECT count(*) AS classRows FROM classes WHERE className = ? OR classDay = ? & ? AND classStartID = ?", classname, classDaysSum, classDaysSum, classStartTime, function (err, rows)
+                            db.all("SELECT count(*) AS classRows FROM classes WHERE className = ? OR classDay = ? & ? AND classPeriod = ?", className, classDaysSum, classDaysSum, classPeriodsSum, function (err, rows)
                             {
                               if (err)
                               {
@@ -125,13 +125,168 @@
                             if(classRows)
                             {
                               alert("ERROR: Class Conflict Exists");
+                              return -1;
                             }
                             else
                             {
-                              var stmt = db.prepare("INSERT INTO classes (className, classDay, classStartID) VALUES (?, ?, ?)");
-                              stmt.run(classname, classDaysSum, classStartTime);
+                              var stmt = db.prepare("INSERT INTO classes (className, classDay, classPeriod) VALUES (?, ?, ?)");
+                              stmt.run(className, classDaysSum, classPeriodsSum);
                               stmt.finalize();
                               db.close();
+
+                              /* TODO: Revamp this code, maybe functionalize it */
+
+                              var period1Start = "08:00"
+                              var period1End = "08:45"
+
+                              var period2Start = "8:55"
+                              var period2End = "09:40"
+                              
+                              var period3Start = "10:00"
+                              var period3End = "10:45"
+
+                              var period4Start = "10:55"
+                              var period4End = "11:40"
+
+                              var period5Start = "13:30"
+                              var period5End = "14:15"
+
+                              var period6Start = "14:25"
+                              var period6End = "15:10"
+                              
+                              var period7Start = "15:30"
+                              var period7End = "16:15"
+
+                              var period8Start = "16:25"
+                              var period8End = "17:10"
+                              
+                              var period9Start = "18:30"
+                              var period9End = "19:15"
+
+                              var period10Start = "19:25"
+                              var period10End = "20:10"
+
+                              var periods = [];
+
+                              var listOfPeriods = classPeriodsSum;
+
+                              var hasPeriod1 = listOfPeriods & 1;
+                              var hasPeriod2 = listOfPeriods & 2;
+                              var hasPeriod3 = listOfPeriods & 4;
+                              var hasPeriod4 = listOfPeriods & 8;
+                              var hasPeriod5 = listOfPeriods & 16;
+                              var hasPeriod6 = listOfPeriods & 32;
+                              var hasPeriod7 = listOfPeriods & 64;
+                              var hasPeriod8 = listOfPeriods & 128;
+                              var hasPeriod9 = listOfPeriods & 256;
+                              var hasPeriod10 = listOfPeriods & 1024;
+
+                              if (hasPeriod1)
+                              {
+                                  periods.push(period1Start, period1End);
+                              }
+
+                              if (hasPeriod2)
+                              {
+                                  periods.push(period2Start, period2End);
+                              }
+
+                              if (hasPeriod3)
+                              {
+                                  periods.push(period3Start, period3End);
+                              }
+
+                              if (hasPeriod4)
+                              {
+                                  periods.push(period4Start, period4End);
+                              }
+
+                              if (hasPeriod5)
+                              {
+                                  periods.push(period5Start, period5End);
+                              }
+
+                              if (hasPeriod6)
+                              {
+                                  periods.push(period6Start, period6End);
+                              }
+
+                              if (hasPeriod7)
+                              {
+                                  periods.push(period7Start, period7End);
+                              }
+
+                              if (hasPeriod8)
+                              {
+                                  periods.push(period8Start, period8End);
+                              }
+
+                              if (hasPeriod9)
+                              {
+                                  periods.push(period9Start, period9End);
+                              }
+
+                              if (hasPeriod10)
+                              {
+                                  periods.push(period10Start, period10End);
+                              }
+
+                              Array.prototype.last = function() 
+                              {
+                                  return this[this.length-1];
+                              }   
+
+                              var classStartPeriod = periods[0];
+                              var classEndPeriod = periods.last();
+
+                              var days = [];
+                              var listOfDays = classDaysSum;
+                              
+                              var hasSun = listOfDays & 1;
+                              var hasMon = listOfDays & 2;
+                              var hasTue = listOfDays & 4;
+                              var hasWed = listOfDays & 8;
+                              var hasThu = listOfDays & 16;
+                              var hasFri = listOfDays & 32;
+                              var hasSat = listOfDays & 64;
+                              
+                              if (hasSun)
+                              {
+                                  days.push("Sunday");
+                              }
+
+                              if (hasSat)
+                              {
+                                  days.push("Saturday");
+                              }
+
+                              if (hasFri)
+                              {
+                                  days.push("Friday");
+                              }
+
+                              if (hasThu)
+                              {
+                                  days.push("Thursday");
+                              }
+
+                              if (hasWed)
+                              {
+                                  days.push("Wednesday");
+                              }
+
+                              if (hasTue)
+                              {
+                                  days.push("Tuesday");
+                              }
+
+                              if (hasMon)
+                              {
+                                  days.push("Monday");
+                              }
+                              //console.log(className, days.toString(), classStartPeriod, classEndPeriod);
+                              $('#viewClassesTable').DataTable().row.add( [ className, days.toString(), classStartPeriod, classEndPeriod  ] ).draw( false ); // Update our viewClasses table
+                              
                             }
                           }
                           

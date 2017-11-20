@@ -287,6 +287,11 @@
                               //console.log(className, days.toString(), classStartPeriod, classEndPeriod);
                               $('#viewClassesTable').DataTable().row.add( [ className, days.toString(), classStartPeriod, classEndPeriod  ] ).draw( false ); // Update our viewClasses table
                               
+                              // Reload Edit Classes
+                              getClassesList(function() {clearAndLoadClasses("edit-select-class-name")}, "edit-select-class-name");
+                          
+                              // Reload Delete Classes
+                              getClassesList(function() {clearAndLoadClasses("delete-class-name")}, "delete-class-name");
                             }
                           }
                           
@@ -301,6 +306,8 @@
                         e.preventDefault();
 
                         insertClassRecord();
+
+                        
                         
                       }); 
                     </script>

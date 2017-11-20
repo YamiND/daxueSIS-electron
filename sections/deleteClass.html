@@ -38,7 +38,6 @@
 
                       function resetDeleteClassForm() // Function for reset form
                       {
-                        $("#delete-class-name option:selected").remove(); // Remove the option that was selected
 
                         $("#delete-class-name").val("");
 
@@ -58,6 +57,15 @@
                           stmt.run(classID);
                           stmt.finalize();
                           db.close();
+
+                          // Reload Edit Classes
+                          getClassesList(function() {clearAndLoadClasses("edit-select-class-name")}, "edit-select-class-name");
+                          
+                          // Reload Delete Classes
+                          getClassesList(function() {clearAndLoadClasses("delete-class-name")}, "delete-class-name");
+
+                          // Reload View Classes
+                          getClassesDataForViewTable(function() {clearClassesDataTable("viewClassesTable")}, "viewClassesTable");
                         });
 
                         resetDeleteClassForm();

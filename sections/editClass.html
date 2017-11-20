@@ -19,24 +19,9 @@
                         <div class="col-md-9 col-sm-9 col-xs-12">
                             <select class="classNameSelect" tabindex="-1" name="edit-select-class-name" id="edit-select-class-name">
                                 <option></option>
-    
                                 <script>
-                                    var sqlite3 = require('sqlite3').verbose();
-                                    var db = new sqlite3.Database('sqlite/daxuesis.db');
-    
-                                    db.serialize(function() 
-                                    {
-                                      db.each("SELECT classID, className FROM classes", 
-                                        function(err, row) 
-                                        {   
-                                            var newOption = new Option(row.className, row.classID, false, false);
-                                            $("#edit-select-class-name").append(newOption);
-                                        });
-                                    });
-    
-                                    db.close();
+                                    getClassesList(function() {clearAndLoadClasses("edit-select-class-name")}, "edit-select-class-name");
                                 </script>
-    
                               </select>
                         </div>
                       </div>
@@ -344,6 +329,15 @@
                                 });
 
                               db.close();
+
+                              // Reload Edit Classes
+                              getClassesList(function() {clearAndLoadClasses("edit-select-class-name")}, "edit-select-class-name");
+                          
+                              // Reload Delete Classes
+                              getClassesList(function() {clearAndLoadClasses("delete-class-name")}, "delete-class-name");
+
+                              // Reload View Classes
+                              getClassesDataForViewTable(function() {clearClassesDataTable("viewClassesTable")}, "viewClassesTable");
 
                             }
                           }

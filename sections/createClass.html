@@ -38,10 +38,10 @@
                         </div>
 
                       <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-class-time-id">Class Periods <span class="required">*</span>
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-class-periods">Class Periods <span class="required">*</span>
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <select class="createClassTimeSelect" name="create-class-time-id" id="create-class-time-id" multiple="multiple">
+                          <select class="createClassTimeSelect" name="create-class-periods" id="create-class-periods" multiple="multiple">
                             <option value="1">08:00 - 08:45</option>
                             <option value="2">08:55 - 09:40 </option>
                             <option value="4">10:00 - 10:45 </option>
@@ -59,7 +59,7 @@
                       <div class="ln_solid"></div>
                       <div class="form-group">
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
-                          <button type="submit" class="btn btn-success" id="create-class-btn">Create Class</button> <!--TODO: I still need to add the code for this -->
+                          <button type="submit" class="btn btn-success" id="create-class-btn">Create Class</button>
                         </div>
                       </div>
                     </form>
@@ -69,10 +69,10 @@
                       function resetCreateClassForm() // Function for reset form
                       {
                           $("#create-class-name").val("");
-                          $("#create-class-time-id").val("");
+                          $("#create-class-periods").val("");
                           $("#create-class-days").val("");
 
-                          $("#create-class-time-id").trigger('change');
+                          $("#create-class-periods").trigger('change');
                           $("#create-class-days").trigger('change');
                       }
 
@@ -80,7 +80,7 @@
                       {
                         var className = $('#create-class-name').val();
 
-                        var classPeriodsSelectedList = $('#create-class-time-id option:selected');
+                        var classPeriodsSelectedList = $('#create-class-periods option:selected');
 
                         var classPeriodsArray = $.map(classPeriodsSelectedList,function(option) {
                             return option.value;
@@ -284,14 +284,15 @@
                               {
                                   days.push("Monday");
                               }
-                              //console.log(className, days.toString(), classStartPeriod, classEndPeriod);
-                              $('#viewClassesTable').DataTable().row.add( [ className, days.toString(), classStartPeriod, classEndPeriod  ] ).draw( false ); // Update our viewClasses table
-                              
+                            
                               // Reload Edit Classes
                               getClassesList(function() {clearAndLoadClasses("edit-select-class-name")}, "edit-select-class-name");
                           
                               // Reload Delete Classes
                               getClassesList(function() {clearAndLoadClasses("delete-class-name")}, "delete-class-name");
+
+                              // Reload View Classes
+                              getClassesDataForViewTable(function() {clearClassesDataTable("viewClassesTable")}, "viewClassesTable");
                             }
                           }
                           
@@ -317,7 +318,7 @@
               </div>
             </div>
             
-          </div>
+          </div> 
         </div>
         <!-- /page content -->
     </section>

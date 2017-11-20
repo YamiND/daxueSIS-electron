@@ -58,44 +58,36 @@
                           </div>
     
                           <div class="form-group">
-                              <label class="control-label col-md-3 col-sm-3 col-xs-12" for="edit-class-days">Class Day(s) <span class="required">*</span>
-                              </label>
-                              <div class="col-md-6 col-sm-6 col-xs-12">
-                                <select class="createClassDaySelect" name="edit-class-days" id="edit-class-days" multiple="multiple">
-                                  <option value="2">Monday</option>
-                                  <option value="4">Tuesday</option>
-                                  <option value="8">Wednesday</option>
-                                  <option value="16">Thursday</option>
-                                  <option value="32">Friday</option>
-                                  <option value="64">Saturday</option>
-                                  <option value="128">Sunday</option>   
-                                </select>
-                              </div>
-                            </div>
-    
-                          <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="edit-class-time-id">Class Times <span class="required">*</span>
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="edit-class-days">Class Day(s) <span class="required">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
-                              <select class="editClassTimeSelect" tabindex="-1" name="edit-class-time-id" id="edit-class-time-id">
-                                <option></option>
-                                <script>
-                                        var sqlite3 = require('sqlite3').verbose();
-                                        var db = new sqlite3.Database('sqlite/daxuesis.db');
-        
-                                        db.serialize(function() 
-                                        {
-                                        
-                                          db.each("SELECT classPeriodID, classStartTime, classEndTime FROM classPeriods", 
-                                            function(err, row) 
-                                            {   
-                                                var newOption = new Option("Class Start Time: " + row.classStartTime + ", Class End Time: " + row.classEndTime, row.classPeriodID, false, false);
-                                                $("#edit-class-time-id").append(newOption);
-                                            });
-                                        });
-                                        
-                                        db.close();
-                                    </script>
+                              <select class="createClassDaySelect" name="edit-class-days" id="edit-class-days" multiple="multiple">
+                                <option value="1">Sunday</option>
+                                <option value="2">Monday</option>
+                                <option value="4">Tuesday</option>
+                                <option value="8">Wednesday</option>
+                                <option value="16">Thursday</option>
+                                <option value="32">Friday</option>
+                                <option value="64">Saturday</option>
+                              </select>
+                            </div>
+                          </div>
+    
+                          <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="edit-class-periods">Class Periods <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                              <select class="editClassTimeSelect" name="edit-class-periods" id="edit-class-periods" multiple="multiple">
+                                <option value="1">08:00 - 08:45</option>
+                                <option value="2">08:55 - 09:40 </option>
+                                <option value="4">10:00 - 10:45 </option>
+                                <option value="8">10:55 - 11:40</option>
+                                <option value="16">13:30 - 14:15</option>
+                                <option value="32">14:25 - 15:10</option>
+                                <option value="64">15:30 - 16:15</option>
+                                <option value="128">16:25 - 17:10</option>   
+                                <option value="256">18:30 - 19:15</option> 
+                                <option value="512">19:25 - 20:10</option>                 
                               </select>
                             </div>
                           </div>
@@ -144,7 +136,7 @@
 
                           db.serialize(function() 
                           {
-                            db.each("SELECT className, classDay, classStartID FROM classes WHERE classID = ?", classID, 
+                            db.each("SELECT className, classDay, classPeriod FROM classes WHERE classID = ?", classID, 
                               function(err, row) 
                               {
                                 $('#edit-class-name').val(row.className);
@@ -194,9 +186,74 @@
                                     days.push("64");
                                 }
 
+                                var periods = [];
+
+                                var listOfPeriods = row.classPeriod;
+
+                                var hasPeriod1 = listOfPeriods & 1;
+                                var hasPeriod2 = listOfPeriods & 2;
+                                var hasPeriod3 = listOfPeriods & 4;
+                                var hasPeriod4 = listOfPeriods & 8;
+                                var hasPeriod5 = listOfPeriods & 16;
+                                var hasPeriod6 = listOfPeriods & 32;
+                                var hasPeriod7 = listOfPeriods & 64;
+                                var hasPeriod8 = listOfPeriods & 128;
+                                var hasPeriod9 = listOfPeriods & 256;
+                                var hasPeriod10 = listOfPeriods & 1024;
+
+                                if (hasPeriod1)
+                                {
+                                    periods.push("1");
+                                }
+
+                                if (hasPeriod2)
+                                {
+                                  periods.push("2");
+                                }
+
+                                if (hasPeriod3)
+                                {
+                                  periods.push("4");
+                                }
+
+                                if (hasPeriod4)
+                                {
+                                  periods.push("8");
+                                }
+
+                                if (hasPeriod5)
+                                {
+                                  periods.push("16");
+                                }
+
+                                if (hasPeriod6)
+                                {
+                                  periods.push("32");
+                                }
+
+                                if (hasPeriod7)
+                                {
+                                  periods.push("64");
+                                }
+
+                                if (hasPeriod8)
+                                {
+                                  periods.push("128");
+                                }
+
+                                if (hasPeriod9)
+                                {
+                                  periods.push("256");
+                                }
+
+                                if (hasPeriod10)
+                                {
+                                  periods.push("512");
+                                }
+
                                 $('#edit-class-days').val(days).trigger('change');
 
-                                $('#edit-class-time-id').val(row.classStartID).trigger('change');
+                                $('#edit-class-periods').val(periods).trigger('change');
                               });
                             });
 
@@ -224,7 +281,15 @@
 
                         var newClassname = $('#edit-class-name').val();
 
-                        var classStartTime = $('#edit-class-time-id').val();
+                        var classPeriodsSelectedList = $('#edit-class-periods option:selected');
+
+                        var classPeriodsArray = $.map(classPeriodsSelectedList,function(option) {
+                            return option.value;
+                        });
+
+                        var classPeriodsSum = classPeriodsArray.reduce((pv,cv)=>{
+                          return pv + (parseFloat(cv)||0);
+                        },0);
 
                         var classDaySelectedList = $('#edit-class-days option:selected');
 
@@ -243,7 +308,7 @@
                         {
                           function getClassNameRows(callback)
                           {
-                            db.all("SELECT count(*) AS classRows FROM classes WHERE className = ? AND classID != ? OR classDay = ? & ? AND classStartID = ? AND classID != ?", newClassname, classID, classDaysSum, classDaysSum, classStartTime, classID, function (err, rows)
+                            db.all("SELECT count(*) AS classRows FROM classes WHERE className = ? AND classID != ? OR classDay = ? & ? AND classPeriod = ? AND classID != ?", newClassname, classID, classDaysSum, classDaysSum, classPeriodsSum, classID, function (err, rows)
                             {
                               if (err)
                               {
@@ -265,8 +330,8 @@
                             else
                             {
                               //console.log(newClassname + " " + classDaysSum + " " + classStartTime + " " + classID);
-                              var stmt = db.prepare("UPDATE classes SET className = ?, classDay = ?, classStartID = ? WHERE classID = ?");
-                              stmt.run(newClassname, classDaysSum, classStartTime, classID);
+                              var stmt = db.prepare("UPDATE classes SET className = ?, classDay = ?, classPeriod = ? WHERE classID = ?");
+                              stmt.run(newClassname, classDaysSum, classPeriodsSum, classID);
                               stmt.finalize();
 
                               $("#edit-select-class-name").empty(); // Empty the list and repopulate, I feel like there's a better way

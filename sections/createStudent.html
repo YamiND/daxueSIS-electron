@@ -147,8 +147,15 @@
                               stmt.finalize();
                               db.close();
 
-                              $('#viewStudentsTable').DataTable().row.add( [ studentID, studentName, studentMajorName, studentSkillLevelName ] ).draw( false ); // Update our viewStudents table
+                              // Reload Edit Students
+                              getSelectStudentsList(function() {clearAndLoadSelectStudents("edit-select-class-name")}, "edit-select-class-name");
                               
+                              // Reload Delete Students
+                              getSelectStudentsList(function() {clearAndLoadSelectStudents("edit-select-student-id")}, "edit-select-student-id");
+
+                              // Reload View Students
+                              getClassesDataForViewTable(function() {clearClassesDataTable("viewStudentsTable")}, "viewStudentsTable");
+                                  
                             }
                           }
                           

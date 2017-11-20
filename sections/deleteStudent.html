@@ -20,20 +20,7 @@
                             <option></option>
 
                             <script>
-                                var sqlite3 = require('sqlite3').verbose();
-                                var db = new sqlite3.Database('sqlite/daxuesis.db');
-
-                                db.serialize(function() 
-                                {
-                                  db.each("SELECT studentID, studentEnglishName FROM students", 
-                                    function(err, row) 
-                                    {   
-                                        var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
-                                        $("#delete-student-name").append(newOption);
-                                    });
-                                });
-
-                                db.close();
+                                getSelectStudentsList(function() {clearAndLoadSelectStudents("delete-student-name")}, "delete-student-name");
                             </script>
 
                           </select>
@@ -51,8 +38,6 @@
 
                       function resetDeleteStudentForm() // Function for reset form
                       {
-                        $("#delete-student-name option:selected").remove(); // Remove the option that was selected
-
                         $("#delete-student-name").val("");
 
                         $("#delete-student-name").trigger('change');
@@ -71,6 +56,15 @@
                           stmt.run(studentID);
                           stmt.finalize();
                           db.close();
+
+                          // Reload Edit Students
+                          getSelectStudentsList(function() {clearAndLoadSelectStudents("edit-select-class-name")}, "edit-select-class-name");
+                          
+                          // Reload Delete Students
+                          getSelectStudentsList(function() {clearAndLoadSelectStudents("edit-select-student-id")}, "edit-select-student-id");
+
+                          // Reload View Students
+                          getClassesDataForViewTable(function() {clearClassesDataTable("viewStudentsTable")}, "viewStudentsTable");
                         });
 
                         resetDeleteStudentForm();

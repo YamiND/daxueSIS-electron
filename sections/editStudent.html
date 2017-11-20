@@ -21,20 +21,7 @@
                                 <option></option>
     
                                 <script>
-                                    var sqlite3 = require('sqlite3').verbose();
-                                    var db = new sqlite3.Database('sqlite/daxuesis.db');
-    
-                                    db.serialize(function() 
-                                    {
-                                        db.each("SELECT studentID, studentEnglishName FROM students", 
-                                        function(err, row) 
-                                        {   
-                                            var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
-                                            $("#edit-select-student-name").append(newOption);
-                                        });
-                                    });
-    
-                                    db.close();
+                                    getSelectStudentsList(function() {clearAndLoadSelectStudents("edit-select-student-id")}, "edit-select-student-id");
                                 </script>
         
                             </select>
@@ -234,22 +221,18 @@
                             }
                             else
                             {
-                                // TODO: I should probably add a truly unique identifier for students table
-                              //console.log(newClassname + " " + classDaysSum + " " + classStartTime + " " + classID);
                               var stmt = db.prepare("UPDATE students SET studentID = ?, studentEnglishName = ?, studentMajorID = ?, studentSkillLevelID WHERE classID = ?");
                               stmt.run(newClassname, classDaysSum, classStartTime, classID);
                               stmt.finalize();
 
-                              $("#edit-select-class-name").empty(); // Empty the list and repopulate, I feel like there's a better way
+                              // Reload Edit Students
+                              getSelectStudentsList(function() {clearAndLoadSelectStudents("edit-select-class-name")}, "edit-select-class-name");
+                              
+                              // Reload Delete Students
+                              getSelectStudentsList(function() {clearAndLoadSelectStudents("edit-select-student-id")}, "edit-select-student-id");
 
-                              db.each("SELECT classID, className FROM classes", 
-                                function(err, row) 
-                                {   
-                                    var newOption = new Option(row.className, row.classID, false, false);
-                                    $("#edit-select-class-name").append(newOption);
-                                });
-
-                              db.close();
+                              // Reload View Students
+                              getClassesDataForViewTable(function() {clearClassesDataTable("viewStudentsTable")}, "viewStudentsTable");
 
                             }
                           }

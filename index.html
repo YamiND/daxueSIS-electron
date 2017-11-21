@@ -13,12 +13,8 @@
     <link rel="import" href="sections/index.html">
     <link rel="import" href="sections/home.html">
     <link rel="import" href="sections/assignStudentClass.html">
-    
-    <!-- Student Major - Definitely not done 
-    <link rel="import" href="sections/createStudentMajor.html"> -->
 
-
-    <!-- Classes Maybe Done -->
+    <!-- Classes -->
     <link rel="import" href="sections/createClass.html">
     <link rel="import" href="sections/editClass.html">
     <link rel="import" href="sections/deleteClass.html">
@@ -31,6 +27,11 @@
     <link rel="import" href="sections/deleteStudent.html">
     <link rel="import" href="sections/viewStudents.html">
 
+    <!-- Student Majors  - Work in Progress - -->
+    <link rel="import" href="sections/createStudentMajor.html">
+    <link rel="import" href="sections/editStudentMajor.html">
+    <link rel="import" href="sections/deleteStudentMajor.html">
+    <link rel="import" href="sections/viewStudentMajors.html">
 
 
     <!-- END ADDED IMPORT LINKS -->
@@ -59,6 +60,9 @@
 
     <!-- Code to Load Students into create, edit and delete students -->
     <script src="assets/js/getStudents.js" type="text/javascript"></script>
+
+     <!-- Code to Load Student Majors into create, edit and delete student majors -->
+     <script src="assets/js/getStudentMajors.js" type="text/javascript"></script>
     
   </head>
   
@@ -110,6 +114,8 @@
                           <li><a id="viewClasses-menu" data-section="viewClasses" href="#">View Classes</a></li>
                         </ul>
                       </li>
+
+                      <!-- Not yet done -->
                       <li><a><i class="fa fa-pencil-square-o"></i> Assignments <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="gradeAssignment.php">Grade Assignment</a></li>
@@ -119,6 +125,16 @@
                           <li><a href="viewAssignments.php">View Assignments</a></li>
                         </ul>
                       </li>
+
+                      <!-- Not Done yet -->
+                      <li><a><i class="fa fa-users"></i> Teacher <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a id="viewStudentGrades-menu" data-section="viewStudentGrades" href="#">View Student Grades</a></li>
+                          <li><a id="assignStudentClass-menu" data-section="assignStudentClass" href="#">Assign Student to Class</a></li>
+                          <li><a id="removeStudentClass-menu" data-section="removeStudentClass" href="#">Remove Student from Class</a></li>
+                        </ul>
+                      </li>
+
                       <li><a><i class="fa fa-child"></i> Students <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a id="createStudent-menu" data-section="createStudent" href="#">Create Student</a></li>
@@ -128,13 +144,7 @@
                         </ul>
                       </li>
 
-                      <li><a><i class="fa fa-users"></i> Teacher <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a id="viewStudentGrades-menu" data-section="viewStudentGrades" href="#">View Student Grades</a></li>
-                          <li><a id="assignStudentClass-menu" data-section="assignStudentClass" href="#">Assign Student to Class</a></li>
-                          <li><a id="removeStudentClass-menu" data-section="removeStudentClass" href="#">Remove Student from Class</a></li>
-                        </ul>
-                      </li>
+                      
                       <!-- Not yet Done -->
                       <li><a><i class="fa fa-object-group"></i> Student Majors <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
@@ -144,6 +154,7 @@
                           <li><a id="viewStudentMajors-menu" data-section="viewStudentMajors" href="#">View Student Majors</a></li>
                         </ul>
                       </li>
+
                       <!-- Not yet Done -->
                       <li><a><i class="fa fa-level-up"></i> Student Skill Levels <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
@@ -339,6 +350,13 @@
             placeholder: "Select Student Skill Level"
           });
 
+          $(".deleteStudentMajorNameSelect").select2({
+            placeholder: "Select Student Major"
+          });
+
+          $(".editStudentMajorSelect").select2({
+            placeholder: "Select Student Major"
+          });
 
         });
         

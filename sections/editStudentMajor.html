@@ -1,0 +1,180 @@
+<template class="section-template">
+    <section id="editStudentMajor" class="wrapper">
+       <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Edit Student Major</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <div id="form-content"></div>
+                    <form id="edit-select-student-major-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Student Major to Edit</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <select class="editStudentMajorSelect" tabindex="-1" name="edit-select-student-major" id="edit-select-student-major">
+                                <option></option>
+    
+                                <script>
+                                    getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("edit-select-student-major")}, "edit-select-student-major");
+                                </script>
+        
+                            </select>
+                        </div>
+                      </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success" id="edit-select-student-major-btn">Next</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <form id="edit-student-major-form" class="form-horizontal form-label-left">
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="edit-student-major-name">Student Major Name<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="text" id="edit-student-major-name" name="edit-student-major-name" required="required" class="form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+                      
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="button" class="btn btn-primary" onclick="resetEditStudentMajorForms()">Switch Student Major</button>
+                          <button type="submit" class="btn btn-success" name="edit" value="edit">Edit Student Major</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <script>
+
+                      function resetEditStudentMajorForms()
+                      {
+                        // Reset our form values, hide the form, and show the form
+                        $("#edit-student-major-form").hide();
+                        $("#edit-student-major-form")[0].reset();
+
+                        $('#edit-select-student-major').val([]).trigger('change');
+                        $("#edit-select-student-major-form").show();
+                      }
+
+                      $(document).ready(function() 
+                      {  
+
+                        $("#edit-student-major-form").hide();
+
+                        // Pass the data from the old form to the new form and populate it
+                        $('#edit-select-student-major-form').submit(function(e)
+                        {
+                          e.preventDefault(); // Prevent Default Submission
+                          
+                          var studentMajorID = $('#edit-select-student-major').val();
+
+                          if (!studentMajorID)
+                          {
+                            // If studentMajorID is unselected, leave the function early
+                            return -1;
+                          }
+                          
+                          var sqlite3 = require('sqlite3').verbose();
+                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+
+                          db.serialize(function() 
+                          {
+                            db.each("SELECT studentMajorName FROM studentMajors WHERE studentMajorID = ?", studentMajorID, 
+                              function(err, row) 
+                              {
+                                $('#edit-student-major-name').val(row.studentMajorName);
+                              });
+                            });
+
+                            db.close();
+
+                          $("#edit-select-student-major-form").hide();
+                          $("#edit-student-major-form").show();
+                        });
+                    
+                        // Update the student entry in the database
+                        $('#edit-student-major-form').submit(function(e)
+                        {
+                          e.preventDefault(); // Prevent Default Submission
+                          
+                          updateStudentMajorRecord(); // Call out updateStudentMajorRecord function
+
+                          resetEditStudentMajorForms();
+                        });
+
+                      });
+                    
+                      function updateStudentMajorRecord() // Get values from edit-student-major-form and update
+                      {
+                        var studentMajorID = $('#edit-select-student-major').val();
+
+                        var studentMajorName = $('#edit-student-major-name').val();
+
+                        var sqlite3 = require('sqlite3').verbose();
+                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+                       
+                        db.serialize(function() 
+                        {
+                          function getStudentMajorNameRows(callback)
+                          {
+                            db.all("SELECT count(*) AS studentMajorRows FROM studentMajors WHERE studentMajorName = ?", studentMajorName, function (err, rows)
+                            {
+                              if (err)
+                              {
+                                console.log(err);
+                              }
+                              else
+                              {
+                                callback(rows[0].studentMajorRows);
+                              }
+                            });
+                          }
+
+                          function updateStudentMajor(studentMajorRows)
+                          {
+                            if(studentMajorRows)
+                            {
+                              alert("ERROR: Student Major Conflict Exists, cannot update");
+                            }
+                            else
+                            {
+                              var stmt = db.prepare("UPDATE studentMajors SET studentMajorName = ? WHERE studentMajorID = ?");
+                              stmt.run(studentMajorName, studentMajorID);
+                              stmt.finalize();
+
+                                // Reload Edit Student Majors
+                                getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("edit-select-student-major")}, "edit-select-student-major");
+                                
+                                // Reload Delete Student Majors
+                                getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("delete-student-major-id")}, "delete-student-major-id");
+
+                                // Reload View Student Majors
+                                getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("viewStudentMajorsTable")}, "viewStudentMajorsTable");
+                                    
+                            }
+                          }
+                          
+                          getStudentMajorNameRows(updateStudentMajor); // Get Student Major Rows, and if there are no conflicts update into the DB
+                        });
+                      }
+                    </script>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+          </div>
+        </div>
+        <!-- /page content -->
+    </section>
+</template>

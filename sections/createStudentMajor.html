@@ -1,0 +1,115 @@
+<template class="section-template">
+    <section id="createStudentMajor" class="wrapper">
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Create Student Major</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <form id="create-student-major-form" class="form-horizontal form-label-left">
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-student-major-name">Student Major Name<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                            <input type="text" id="create-student-major-name" name="create-student-major-name" required="required" class="form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+                      
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success" id="create-student-major-btn">Create Student Major</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <script>
+
+                      function resetCreateStudentMajorForm() // Function for reset form
+                      {
+                        $("#create-student-major-name").val("");
+
+                        $("#create-student-major-name").trigger('change');
+                      }
+
+                      function insertStudentMajorRecord() // Get values from create-class-form and insert
+                      {
+                        var studentMajorName = $('#create-student-major-name').val();
+
+                        var sqlite3 = require('sqlite3').verbose();
+                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+                       
+                        db.serialize(function() 
+                        {
+                          function getStudentMajorNameRows(callback)
+                          {
+                            db.all("SELECT count(*) AS studentMajorRows FROM studentMajors WHERE studentMajorName = ?", studentMajorName, function (err, rows)
+                            {
+                              if (err)
+                              {
+                                console.log(err);
+                              }
+                              else
+                              {
+                                callback(rows[0].studentMajorRows);
+                              }
+                            });
+                          }
+
+                          function checkStudentMajorConflicts(studentMajorRows)
+                          {
+                            if(studentMajorRows)
+                            {
+                              alert("ERROR: Student Major Conflict Exists");
+                            }
+                            else
+                            {
+                              var stmt = db.prepare("INSERT INTO studentMajors (studentMajorName) VALUES (?)");
+                              stmt.run(studentMajorName);
+                              stmt.finalize();
+                              db.close();
+
+                                // Reload Edit Student Majors
+                                getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("edit-select-student-major")}, "edit-select-student-major");
+                                
+                                // Reload Delete Student Majors
+                                getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("delete-student-major-id")}, "delete-student-major-id");
+
+                                // Reload View Student Majors
+                                getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("viewStudentMajorsTable")}, "viewStudentMajorsTable");
+                                  
+                            }
+                          }
+                          
+                          getStudentMajorNameRows(checkStudentMajorConflicts); // Get Student Major Rows, and if there are no conflicts insert into the DB
+                        });
+
+                        resetCreateStudentMajorForm();
+                        
+                      }
+                  
+                      $("#create-student-major-form").submit(function (e) 
+                      {
+                        e.preventDefault();
+
+                        insertStudentMajorRecord();
+                        
+                      }); 
+                    </script>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+    </section>
+</template>

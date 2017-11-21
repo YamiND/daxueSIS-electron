@@ -1,0 +1,94 @@
+<template class="section-template">
+    <section id="deleteStudentMajor" class="wrapper">
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Delete Student Major</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <form id="delete-student-major-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Student Major to Delete</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                          <select class="deleteStudentMajorNameSelect" tabindex="-1" name="delete-student-major-id" id="delete-student-major-id">
+                            <option></option>
+
+                            <script>
+                                getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("delete-student-major-id")}, "delete-student-major-id");
+                            </script>
+
+                          </select>
+                        </div>
+                      </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-danger" id="delete-student-major-btn">Delete Student Major</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <script>
+
+                      function resetDeleteStudentMajorForm() // Function for reset form
+                      {
+                        $("#delete-student-major-id").val("");
+
+                        $("#delete-student-major-id").trigger('change');
+                      }
+
+                      function deleteStudentMajorRecord() // Get values from delete-class-form and delete
+                      {
+                        var studentMajorID = $('#delete-student-major-id').val();
+
+                        var sqlite3 = require('sqlite3').verbose();
+                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        
+                        db.serialize(function() 
+                        {
+                          var stmt = db.prepare("DELETE FROM studentMajors WHERE studentMajorID = ?");
+                          stmt.run(studentMajorID);
+                          stmt.finalize();
+                          db.close();
+
+                          // Reload Edit Student Majors
+                          getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("edit-select-student-major")}, "edit-select-student-major");
+                          
+                          // Reload Delete Student Majors
+                          getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("delete-student-major-id")}, "delete-student-major-id");
+
+                          // Reload View Student Majors
+                          getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("viewStudentMajorsTable")}, "viewStudentMajorsTable");
+                            
+                        });
+
+                        resetDeleteStudentMajorForm();
+                      }
+                  
+                      $("delete-student-major-form").submit(function (e) 
+                      {
+                        e.preventDefault();
+
+                        deleteStudentMajorRecord();
+                        
+                      }); 
+                    </script>
+
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+
+    </section>
+</template>

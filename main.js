@@ -4,7 +4,7 @@ const app = electron.app;
 var path = require('path');
 var fs = require('fs');
 
-const DEBUG = false;
+const DEBUG = true;
 
 function checkDirectorySync(directory) {  
   try {

@@ -20,7 +20,7 @@
                             <select class="classNameSelect" tabindex="-1" name="edit-select-class-name" id="edit-select-class-name">
                                 <option></option>
                                 <script>
-                                    getClassesList(function() {clearAndLoadClasses("edit-select-class-name")}, "edit-select-class-name");
+                                    getClassesList("edit-select-class-name", $.noop);
                                 </script>
                               </select>
                         </div>
@@ -96,177 +96,169 @@
 
                         $('#edit-select-class-name').val([]).trigger('change');
                         $("#edit-select-class-name-form").show();
+
+                        getClassesList("edit-select-class-name", function () {getClassesList("delete-class-name", function (){ getClassesDataForViewTable("viewClassesTable") })}); // Reload Class Table)
                       }
 
                       $(document).ready(function() 
                       {  
-
                         $("#edit-class-form").hide();
+                      });
 
-                        // Pass the data from the old form to the new form and populate it
-                        $('#edit-select-class-name-form').submit(function(e)
+                      // Pass the data from the old form to the new form and populate it
+                      $('#edit-select-class-name-form').submit(
+                      function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+                        
+                        var classID = $('#edit-select-class-name').val();
+
+                        if (!classID)
                         {
-                          e.preventDefault(); // Prevent Default Submission
-                          
-                          var classID = $('#edit-select-class-name').val();
+                          // If classID is unselected, leave the function early
+                          return -1;
+                        }
+                        
+                        if (DEBUG)
+                        {
+                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        }
+                        else
+                        {
+                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                        }
 
-                          if (!classID)
-                          {
-                            // If classID is unselected, leave the function early
-                            return -1;
-                          }
-                          
-                          if (DEBUG)
-                          {
-                            var db = new sqlite3.Database('sqlite/daxuesis.db');
-                          }
-                          else
-                          {
-                            var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
-                          }
+                        db.serialize(function() 
+                        {
+                          db.each("SELECT className, classDay, classPeriod FROM classes WHERE classID = ?", classID, 
+                            function(err, row) 
+                            {
+                              $('#edit-class-name').val(row.className);
+                              
+                              var days = [];
+                              var listOfDays = row.classDay;
+                              var hasSun = listOfDays & 1;
+                              var hasSat = listOfDays & 2;
+                              var hasFri = listOfDays & 4;
+                              var hasThu = listOfDays & 8;
+                              var hasWed = listOfDays & 16;
+                              var hasTue = listOfDays & 32;
+                              var hasMon = listOfDays & 64;
 
-                          db.serialize(function() 
-                          {
-                            db.each("SELECT className, classDay, classPeriod FROM classes WHERE classID = ?", classID, 
-                              function(err, row) 
+                              if (hasSun)
                               {
-                                $('#edit-class-name').val(row.className);
-                                
-                                var days = [];
-                                var listOfDays = row.classDay;
-                                var hasSun = listOfDays & 1;
-                                var hasSat = listOfDays & 2;
-                                var hasFri = listOfDays & 4;
-                                var hasThu = listOfDays & 8;
-                                var hasWed = listOfDays & 16;
-                                var hasTue = listOfDays & 32;
-                                var hasMon = listOfDays & 64;
+                                  days.push("1");
+                              }
 
-                                if (hasSun)
-                                {
-                                    days.push("1");
-                                }
+                              if (hasSat)
+                              {
+                                  days.push("2");
+                              }
 
-                                if (hasSat)
-                                {
-                                    days.push("2");
-                                }
+                              if (hasFri)
+                              {
+                                  days.push("4");
+                              }
 
-                                if (hasFri)
-                                {
-                                    days.push("4");
-                                }
+                              if (hasThu)
+                              {
+                                  days.push("8");
+                              }
 
-                                if (hasThu)
-                                {
-                                    days.push("8");
-                                }
+                              if (hasWed)
+                              {
+                                  days.push("16");
+                              }
 
-                                if (hasWed)
-                                {
-                                    days.push("16");
-                                }
+                              if (hasTue)
+                              {
+                                  days.push("32");
+                              }
 
-                                if (hasTue)
-                                {
-                                    days.push("32");
-                                }
+                              if (hasMon)
+                              {
+                                  days.push("64");
+                              }
 
-                                if (hasMon)
-                                {
-                                    days.push("64");
-                                }
+                              var periods = [];
 
-                                var periods = [];
+                              var listOfPeriods = row.classPeriod;
 
-                                var listOfPeriods = row.classPeriod;
+                              var hasPeriod1 = listOfPeriods & 1;
+                              var hasPeriod2 = listOfPeriods & 2;
+                              var hasPeriod3 = listOfPeriods & 4;
+                              var hasPeriod4 = listOfPeriods & 8;
+                              var hasPeriod5 = listOfPeriods & 16;
+                              var hasPeriod6 = listOfPeriods & 32;
+                              var hasPeriod7 = listOfPeriods & 64;
+                              var hasPeriod8 = listOfPeriods & 128;
+                              var hasPeriod9 = listOfPeriods & 256;
+                              var hasPeriod10 = listOfPeriods & 1024;
 
-                                var hasPeriod1 = listOfPeriods & 1;
-                                var hasPeriod2 = listOfPeriods & 2;
-                                var hasPeriod3 = listOfPeriods & 4;
-                                var hasPeriod4 = listOfPeriods & 8;
-                                var hasPeriod5 = listOfPeriods & 16;
-                                var hasPeriod6 = listOfPeriods & 32;
-                                var hasPeriod7 = listOfPeriods & 64;
-                                var hasPeriod8 = listOfPeriods & 128;
-                                var hasPeriod9 = listOfPeriods & 256;
-                                var hasPeriod10 = listOfPeriods & 1024;
+                              if (hasPeriod1)
+                              {
+                                  periods.push("1");
+                              }
 
-                                if (hasPeriod1)
-                                {
-                                    periods.push("1");
-                                }
+                              if (hasPeriod2)
+                              {
+                                periods.push("2");
+                              }
 
-                                if (hasPeriod2)
-                                {
-                                  periods.push("2");
-                                }
+                              if (hasPeriod3)
+                              {
+                                periods.push("4");
+                              }
 
-                                if (hasPeriod3)
-                                {
-                                  periods.push("4");
-                                }
+                              if (hasPeriod4)
+                              {
+                                periods.push("8");
+                              }
 
-                                if (hasPeriod4)
-                                {
-                                  periods.push("8");
-                                }
+                              if (hasPeriod5)
+                              {
+                                periods.push("16");
+                              }
 
-                                if (hasPeriod5)
-                                {
-                                  periods.push("16");
-                                }
+                              if (hasPeriod6)
+                              {
+                                periods.push("32");
+                              }
 
-                                if (hasPeriod6)
-                                {
-                                  periods.push("32");
-                                }
+                              if (hasPeriod7)
+                              {
+                                periods.push("64");
+                              }
 
-                                if (hasPeriod7)
-                                {
-                                  periods.push("64");
-                                }
+                              if (hasPeriod8)
+                              {
+                                periods.push("128");
+                              }
 
-                                if (hasPeriod8)
-                                {
-                                  periods.push("128");
-                                }
+                              if (hasPeriod9)
+                              {
+                                periods.push("256");
+                              }
 
-                                if (hasPeriod9)
-                                {
-                                  periods.push("256");
-                                }
+                              if (hasPeriod10)
+                              {
+                                periods.push("512");
+                              }
 
-                                if (hasPeriod10)
-                                {
-                                  periods.push("512");
-                                }
+                              $('#edit-class-days').val(days).trigger('change');
 
-                                $('#edit-class-days').val(days).trigger('change');
-
-                                $('#edit-class-periods').val(periods).trigger('change');
-                              });
+                              $('#edit-class-periods').val(periods).trigger('change');
                             });
+                          });
 
-                            db.close();
+                          db.close();
 
-                          $("#edit-select-class-name-form").hide();
-                          $("#edit-class-form").show();
-                        });
-                    
-                        // Update the class entry in the database
-                        $('#edit-class-form').submit(function(e)
-                        {
-                          e.preventDefault(); // Prevent Default Submission
-                          
-                          updateClassRecord(); // Call out updateClassRecord function
-
-                          resetEditClassForms();
-                        });
-
+                        $("#edit-select-class-name-form").hide();
+                        $("#edit-class-form").show();
                       });
                     
-                      function updateClassRecord() // Get values from create-class-form and insert
+
+                      function updateClassRecord(callback) // Get values from create-class-form and insert
                       {
                         var classID = $('#edit-select-class-name').val();
 
@@ -303,60 +295,40 @@
                        
                         db.serialize(function() 
                         {
-                          function getClassNameRows(callback)
+                          db.all("SELECT count(*) AS classRows FROM classes WHERE className = ? AND classID != ? OR classDay = ? & ? AND classPeriod = ? AND classID != ?", newClassname, classID, classDaysSum, classDaysSum, classPeriodsSum, classID, function (err, rows)
                           {
-                            db.all("SELECT count(*) AS classRows FROM classes WHERE className = ? AND classID != ? OR classDay = ? & ? AND classPeriod = ? AND classID != ?", newClassname, classID, classDaysSum, classDaysSum, classPeriodsSum, classID, function (err, rows)
+                            if (err)
                             {
-                              if (err)
-                              {
-                                console.log(err);
-                              }
-                              else
-                              {
-                                callback(rows[0].classRows);
-                              }
-                            });
-                          }
-
-                          function updateClassRow(classRows)
-                          {
-                            if(classRows)
-                            {
-                              alert("ERROR: Class Conflict Exists, cannot update");
+                              console.log(err);
                             }
                             else
                             {
-                              //console.log(newClassname + " " + classDaysSum + " " + classStartTime + " " + classID);
-                              var stmt = db.prepare("UPDATE classes SET className = ?, classDay = ?, classPeriod = ? WHERE classID = ?");
-                              stmt.run(newClassname, classDaysSum, classPeriodsSum, classID);
-                              stmt.finalize();
+                              var classRows = rows[0].classRows
+                              
+                              if(classRows)
+                              {
+                                alert("ERROR: Class Conflict Exists, cannot update");
+                              }
+                              else
+                              {
+                                var stmt = db.prepare("UPDATE classes SET className = ?, classDay = ?, classPeriod = ? WHERE classID = ?");
+                                stmt.run(newClassname, classDaysSum, classPeriodsSum, classID);
+                                stmt.finalize();
 
-                              $("#edit-select-class-name").empty(); // Empty the list and repopulate, I feel like there's a better way
-
-                              db.each("SELECT classID, className FROM classes", 
-                                function(err, row) 
-                                {   
-                                    var newOption = new Option(row.className, row.classID, false, false);
-                                    $("#edit-select-class-name").append(newOption);
-                                });
-
-                              db.close();
-
-                              // Reload Edit Classes
-                              getClassesList(function() {clearAndLoadClasses("edit-select-class-name")}, "edit-select-class-name");
-                          
-                              // Reload Delete Classes
-                              getClassesList(function() {clearAndLoadClasses("delete-class-name")}, "delete-class-name");
-
-                              // Reload View Classes
-                              getClassesDataForViewTable(function() {clearClassesDataTable("viewClassesTable")}, "viewClassesTable");
-
+                                db.close();
+                              }
                             }
-                          }
-                          
-                          getClassNameRows(updateClassRow); // Get Class Rows, and if there are no conflicts insert into the DB
+                          });
                         });
                       }
+
+                      // Update the class entry in the database
+                      $('#edit-class-form').submit(function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+                        
+                        updateClassRecord(resetEditClassForms); // Call out updateClassRecord function
+                      });
                     </script>
 
                   </div>

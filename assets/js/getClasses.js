@@ -1,15 +1,11 @@
-function clearAndLoadClasses(idField)
-{
-    $("#" + idField).empty();
-}
-
-function getClassesList(callback, idField)
+function getClassesList(idField, callback)
 {
     callback();
+    console.log("getClassesList Function has been called");
 
     if (DEBUG)
     {
-      var db = new sqlite3.Database('sqlite/daxuesis.db');
+      var db = new sqlite3.Database('sqlite/daxuesis.db')  ;
     }
     else
     {
@@ -18,38 +14,29 @@ function getClassesList(callback, idField)
 
     db.serialize(function() 
     {
+        $("#" + idField).empty();
         db.each("SELECT classID, className FROM classes", 
         function(err, row) 
         {   
             var newOption = new Option(row.className, row.classID, false, false);
             $("#" + idField).append(newOption);
         });
+
+        db.close();
     });
-
-    db.close();
 }
 
-function clearClassesDataTable(idField)
+function getClassesDataForViewTable(idField, db)
 {
-    $("#" + idField).DataTable().clear();
-}
+    console.log("Reload Table called");
 
-function getClassesDataForViewTable(callback, idField)
-{
-    callback();
-
-    if (DEBUG)
+    db.serialize(
+    function() 
     {
-      var db = new sqlite3.Database('sqlite/daxuesis.db');
-    }
-    else
-    {
-      var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
-    }
-
-    db.serialize(function() {
+        $("#" + idField).DataTable().clear();
+        
     
-    db.each("SELECT className, classDay, classPeriod FROM classes ORDER BY classDay ASC", 
+        db.each("SELECT className, classDay, classPeriod FROM classes ORDER BY classDay ASC", 
         function(err, row) 
         {   
             var period1Start = "08:00"
@@ -204,6 +191,4 @@ function getClassesDataForViewTable(callback, idField)
             $("#" + idField).DataTable().row.add( [ row.className, days.toString(), classStartPeriod, classEndPeriod ] ).draw( false );
         });
     });
-
-    db.close();
 }

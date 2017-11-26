@@ -20,7 +20,7 @@
                             <option></option>
 
                             <script>
-                              getClassesList(function() {clearAndLoadClasses("delete-class-name")}, "delete-class-name");
+                              getClassesList("delete-class-name", $.noop);
                             </script>
 
                           </select>
@@ -38,51 +38,52 @@
 
                       function resetDeleteClassForm() // Function for reset form
                       {
+                       // $("#delete-class-name").val("");
+                       // $("#delete-class-name").trigger('change');
 
-                        $("#delete-class-name").val("");
-
-                        $("#delete-class-name").trigger('change');
+                        getClassesList("edit-select-class-name", function () {getClassesList("delete-class-name", function (){ getClassesDataForViewTable("viewClassesTable") })}); // Reload Class Table)
                       }
 
-                      function deleteClassRecord() // Get values from delete-class-form and delete
+                      function deleteClassRecord(callback) // Get values from delete-class-form and delete
                       {
                         var classID = $('#delete-class-name').val();
 
                         if (DEBUG)
                         {
-                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+                          var db = new sqlite3.Database('sqlite/daxuesis.db', 
+                          function (error)
+                          {
+                            db.serialize(function() 
+                            {
+                              var stmt = db.prepare("DELETE FROM classes WHERE classID = ?");
+                              stmt.run(classID);
+                              stmt.finalize();
+                              db.close();
+                            });
+                          });
                         }
                         else
                         {
-                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"), 
+                          function (error)
+                          {
+                            db.serialize(function() 
+                            {
+                              var stmt = db.prepare("DELETE FROM classes WHERE classID = ?");
+                              stmt.run(classID);
+                              stmt.finalize();
+                              db.close();
+                            });
+                          });
                         }
-                        
-                        db.serialize(function() 
-                        {
-                          var stmt = db.prepare("DELETE FROM classes WHERE classID = ?");
-                          stmt.run(classID);
-                          stmt.finalize();
-                          db.close();
-
-                          // Reload Edit Classes
-                          getClassesList(function() {clearAndLoadClasses("edit-select-class-name")}, "edit-select-class-name");
-                          
-                          // Reload Delete Classes
-                          getClassesList(function() {clearAndLoadClasses("delete-class-name")}, "delete-class-name");
-
-                          // Reload View Classes
-                          getClassesDataForViewTable(function() {clearClassesDataTable("viewClassesTable")}, "viewClassesTable");
-                        });
-
-                        resetDeleteClassForm();
+                        callback();
                       }
                   
                       $("#delete-class-form").submit(function (e) 
                       {
                         e.preventDefault();
 
-                        deleteClassRecord();
-                        
+                        deleteClassRecord(function () {resetDeleteClassForm()});
                       }); 
                     </script>
 

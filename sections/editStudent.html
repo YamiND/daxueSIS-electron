@@ -60,8 +60,14 @@
                                 <select class="editStudentMajorSelect" tabindex="-1" name="edit-student-major-id" id="edit-student-major-id">
                                     <option></option>
                                     <script>
-                                        var sqlite3 = require('sqlite3').verbose();
-                                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+                                        if (DEBUG)
+                                        {
+                                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+                                        }
+                                        else
+                                        {
+                                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                                        }
         
                                         db.serialize(function() 
                                         {
@@ -87,8 +93,14 @@
                                 <select class="editStudentSkillLevelSelect" tabindex="-1" name="edit-student-skill-level-id" id="edit-student-skill-level-id">
                                 <option></option>
                                 <script>
-                                        var sqlite3 = require('sqlite3').verbose();
-                                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+                                        if (DEBUG)
+                                        {
+                                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+                                        }
+                                        else
+                                        {
+                                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                                        }
         
                                         db.serialize(function() 
                                         {
@@ -147,8 +159,14 @@
                             return -1;
                           }
                           
-                          var sqlite3 = require('sqlite3').verbose();
-                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+                          if (DEBUG)
+                          {
+                            var db = new sqlite3.Database('sqlite/daxuesis.db');
+                          }
+                          else
+                          {
+                            var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                          }
 
                           db.serialize(function() 
                           {
@@ -193,8 +211,14 @@
 
                         var studentSkillLevelID = $('#edit-student-skill-level-id').val();
 
-                        var sqlite3 = require('sqlite3').verbose();
-                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        if (DEBUG)
+                        {
+                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        }
+                        else
+                        {
+                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                        }
                        
                         db.serialize(function() 
                         {

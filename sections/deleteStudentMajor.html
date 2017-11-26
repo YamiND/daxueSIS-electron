@@ -36,47 +36,56 @@
 
                     <script>
 
-                      function resetDeleteStudentMajorForm() // Function for reset form
+                      function reloadSelectAndTableData()
                       {
-                        $("#delete-student-major-id").val("");
+                        // Reload Edit Student Majors
+                        getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("edit-select-student-major")}, "edit-select-student-major");
+                          
+                        // Reload Delete Student Majors
+                        getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("delete-student-major-id")}, "delete-student-major-id");
 
-                        $("#delete-student-major-id").trigger('change');
+                        // Reload View Student Majors
+                        getStudentMajorsDataForViewTable(function() {clearStudentMajorsDataTable("viewStudentMajorsTable")}, "viewStudentMajorsTable");        
                       }
 
-                      function deleteStudentMajorRecord() // Get values from delete-class-form and delete
+                      function deleteStudentMajorRecord(callback) // Get values from delete-class-form and delete
                       {
                         var studentMajorID = $('#delete-student-major-id').val();
 
-                        var sqlite3 = require('sqlite3').verbose();
-                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        if (DEBUG)
+                        {
+                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        }
+                        else
+                        {
+                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                        }
                         
                         db.serialize(function() 
                         {
                           var stmt = db.prepare("DELETE FROM studentMajors WHERE studentMajorID = ?");
-                          stmt.run(studentMajorID);
+                          stmt.run(studentMajorID, function(err) 
+                          {
+                            if(err)
+                            {
+                              throw err;
+                            }
+                          });
                           stmt.finalize();
-                          db.close();
 
-                          // Reload Edit Student Majors
-                          getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("edit-select-student-major")}, "edit-select-student-major");
-                          
-                          // Reload Delete Student Majors
-                          getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("delete-student-major-id")}, "delete-student-major-id");
+                          callback();   
+                              
+                        }); 
+                        db.close();  
 
-                          // Reload View Student Majors
-                          getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("viewStudentMajorsTable")}, "viewStudentMajorsTable");
-                            
-                        });
-
-                        resetDeleteStudentMajorForm();
+                        
                       }
                   
-                      $("delete-student-major-form").submit(function (e) 
+                      $("#delete-student-major-form").submit(function (e) 
                       {
                         e.preventDefault();
 
-                        deleteStudentMajorRecord();
-                        
+                        deleteStudentMajorRecord(function () { reloadSelectAndTableData() });               
                       }); 
                     </script>
 

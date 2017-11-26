@@ -42,8 +42,14 @@
                       {
                         var studentMajorName = $('#create-student-major-name').val();
 
-                        var sqlite3 = require('sqlite3').verbose();
-                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        if (DEBUG)
+                        {
+                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        }
+                        else
+                        {
+                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                        }
                        
                         db.serialize(function() 
                         {
@@ -75,19 +81,19 @@
                               stmt.finalize();
                               db.close();
 
-                                // Reload Edit Student Majors
-                                getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("edit-select-student-major")}, "edit-select-student-major");
+                              // Reload Edit Student Majors
+                              getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("edit-select-student-major")}, "edit-select-student-major");
                                 
-                                // Reload Delete Student Majors
-                                getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("delete-student-major-id")}, "delete-student-major-id");
+                              // Reload Delete Student Majors
+                              getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("delete-student-major-id")}, "delete-student-major-id");
 
-                                // Reload View Student Majors
-                                getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("viewStudentMajorsTable")}, "viewStudentMajorsTable");
-                                  
+                              // Reload View Student Majors
+                              getStudentMajorsDataForViewTable(function() {clearStudentMajorsDataTable("viewStudentMajorsTable")}, "viewStudentMajorsTable");   
+                                    
                             }
                           }
                           
-                          getStudentMajorNameRows(checkStudentMajorConflicts); // Get Student Major Rows, and if there are no conflicts insert into the DB
+                          getStudentMajorNameRows(function () {checkStudentMajorConflicts()}); // Get Student Major Rows, and if there are no conflicts insert into the DB
                         });
 
                         resetCreateStudentMajorForm();
@@ -98,8 +104,7 @@
                       {
                         e.preventDefault();
 
-                        insertStudentMajorRecord();
-                        
+                        insertStudentMajorRecord();                
                       }); 
                     </script>
                     

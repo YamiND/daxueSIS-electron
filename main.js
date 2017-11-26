@@ -1,14 +1,67 @@
-//handle setupevents as quickly as possible
-const setupEvents = require('./installers/setupEvents')
-if (setupEvents.handleSquirrelEvent()) {
-  // squirrel event handled and app will exit in 1000ms, so don't do anything else
-  return;
+const electron = require('electron');
+// Module to control application life.
+const app = electron.app;
+var path = require('path');
+var fs = require('fs');
+
+const DEBUG = false;
+
+function checkDirectorySync(directory) {  
+  try {
+    fs.statSync(directory);
+  } catch(e) {
+    fs.mkdirSync(directory);
+  }
 }
 
-const electron = require('electron')
-// Module to control application life.
-const app = electron.app
-var path = require('path')
+function createDatabase(callback)
+{
+  callback();
+
+  if (!fs.existsSync(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"))) 
+  {
+    var sqlite3 = require('sqlite3').verbose();
+    let db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"), sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, function(err) {
+
+      if (err) console.log(err.message);
+      
+      db.serialize(function() 
+      {
+        var createTableSQL = [
+                              "PRAGMA foreign_keys = off;","BEGIN TRANSACTION;",
+                              "DROP TABLE IF EXISTS classes;",
+                              "CREATE TABLE classes (classID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, className VARCHAR (45) NOT NULL, classDay INT NOT NULL, classPeriod INT NOT NULL);",
+                              "DROP TABLE IF EXISTS studentClasses;",
+                              "CREATE TABLE studentClasses (studentRefID INT REFERENCES students (studentID) ON DELETE CASCADE, classRefID INTEGER REFERENCES classes (classID) ON DELETE CASCADE);",
+                              "DROP TABLE IF EXISTS studentMajors;",
+                              "CREATE TABLE studentMajors (studentMajorID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, studentMajorName STRING NOT NULL UNIQUE);",
+                              "DROP TABLE IF EXISTS students;",
+                              "CREATE TABLE students (studentDBID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, studentEnglishName  VARCHAR (45), studentMajorID INTEGER REFERENCES studentMajors (studentMajorID) ON DELETE CASCADE, studentSkillLevelID INT NOT NULL REFERENCES studentSkillLevels (studentSkillLevelID) ON DELETE CASCADE, studentID INTEGER UNIQUE NOT NULL);",
+                              "DROP TABLE IF EXISTS studentSkillLevels;",
+                              "CREATE TABLE studentSkillLevels (studentSkillLevelID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, studentSkillLevel INTEGER UNIQUE NOT NULL);",
+                              "DROP TABLE IF EXISTS user;",
+                              "CREATE TABLE user (userID INT UNIQUE PRIMARY KEY NOT NULL, userFirstName STRING NOT NULL, userLastName STRING NOT NULL, userPassword STRING);", 
+                              "COMMIT TRANSACTION;",
+                              "PRAGMA foreign_keys = on;"
+                            ];
+
+        for(var i=0; i< createTableSQL.length; i++)
+        {
+          console.log("execute sql : " + createTableSQL[i]);
+          db.run(createTableSQL[i], function(error) 
+          {
+            if (error) 
+            {
+              throw error;
+            }
+          });
+        }                       
+      }); 
+
+      db.close();
+    });
+  }
+}
 
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
@@ -28,7 +81,7 @@ function createWindow () {
     minWidth: 1281,
     minHeight: 800,
     show: false,
-    icon: path.join(__dirname, 'assets/icons/png/64x64.png')
+    icon: path.join(__dirname, 'assets/icons/daxuesis.icns')
   })
 
   // and load the index.html of the app.
@@ -51,6 +104,11 @@ function createWindow () {
   })
 
   require('./menu/mainmenu')
+  
+  if (!DEBUG)
+  {
+    createDatabase(function () {checkDirectorySync(path.join(app.getPath("userData"), "sqlite"))}); // Check if sqlite dir exists 
+  }
 }
 
 // This method will be called when Electron has finished

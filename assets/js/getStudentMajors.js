@@ -1,22 +1,31 @@
 function clearAndLoadSelectStudentMajors(idField)
 {
-    $("#" + idField).empty();
+    $("#" + idField).empty(); 
 }
 
 function getSelectStudentMajorsList(callback, idField)
 {
     callback();
 
-    var sqlite3 = require('sqlite3').verbose();
-    var db = new sqlite3.Database('sqlite/daxuesis.db');
+    if (DEBUG)
+    {
+      var db = new sqlite3.Database('sqlite/daxuesis.db');
+    }
+    else
+    {
+      var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+    }
 
     db.serialize(function() 
     {
-    
-      db.each("SELECT studentMajorID, studentMajorName FROM studentMajors", 
-        function(err, row) 
-        {   
-            var newOption = new Option(row.studentMajorName, row.studentMajorID, false, false);
+        db.each("SELECT studentMajorID, studentMajorName FROM studentMajors", function (err, row) 
+        { 
+            if (err)
+            {
+                throw err;
+            }
+
+            var newOption = new Option(row.studentMajorName, row.studentMajorID, false, false);     
             $("#" + idField).append(newOption);
         });
     });
@@ -33,18 +42,29 @@ function getStudentMajorsDataForViewTable(callback, idField)
 {
     callback();
     
-    var sqlite3 = require('sqlite3').verbose();
-    var db = new sqlite3.Database('sqlite/daxuesis.db');
-
-    db.serialize(function() {
+    if (DEBUG)
+    {
+      var db = new sqlite3.Database('sqlite/daxuesis.db');
+    }
+    else
+    {
+      var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+    }
     
-    db.each("SELECT studentMajorID, studentMajorName FROM studentMajors", 
-        function(err, row) 
+    db.serialize(function() 
+    {
+        db.each("SELECT studentMajorID, studentMajorName FROM studentMajors", function (err, row)
         {   
-            $("#" + idField).DataTable().row.add( [ row.studentMajorID, row.studentMajorName ] ).draw( false );
+            if (err)
+            {
+                throw err;
+            }
+            else
+            {
+                $("#" + idField).DataTable().row.add( [ row.studentMajorID, row.studentMajorName ] ).draw( false );
+            }
         });
     });
-
+    
     db.close();  
-
 }

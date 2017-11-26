@@ -83,8 +83,14 @@
                             return -1;
                           }
                           
-                          var sqlite3 = require('sqlite3').verbose();
-                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+                          if (DEBUG)
+                          {
+                            var db = new sqlite3.Database('sqlite/daxuesis.db');
+                          }
+                          else
+                          {
+                            var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                          }
 
                           db.serialize(function() 
                           {
@@ -119,8 +125,14 @@
 
                         var studentMajorName = $('#edit-student-major-name').val();
 
-                        var sqlite3 = require('sqlite3').verbose();
-                        var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        if (DEBUG)
+                        {
+                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        }
+                        else
+                        {
+                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                        }
                        
                         db.serialize(function() 
                         {
@@ -158,7 +170,7 @@
                                 getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("delete-student-major-id")}, "delete-student-major-id");
 
                                 // Reload View Student Majors
-                                getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("viewStudentMajorsTable")}, "viewStudentMajorsTable");
+                                getStudentMajorsDataForViewTable(function() {clearStudentMajorsDataTable("viewStudentMajorsTable")}, "viewStudentMajorsTable");   
                                     
                             }
                           }

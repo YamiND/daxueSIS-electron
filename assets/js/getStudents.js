@@ -7,8 +7,14 @@ function getSelectStudentsList(callback, idField)
 {
     callback();
 
-    var sqlite3 = require('sqlite3').verbose();
-    var db = new sqlite3.Database('sqlite/daxuesis.db');
+    if (DEBUG)
+    {
+      var db = new sqlite3.Database('sqlite/daxuesis.db');
+    }
+    else
+    {
+      var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+    }
 
     db.serialize(function() 
     {
@@ -34,8 +40,14 @@ function getStudentsDataForViewTable(callback, idField)
 {
     callback();
     
-    var sqlite3 = require('sqlite3').verbose();
-    var db = new sqlite3.Database('sqlite/daxuesis.db');
+    if (DEBUG)
+    {
+        var db = new sqlite3.Database('sqlite/daxuesis.db');
+    }
+    else
+    {
+        var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+    }
 
     db.serialize(function() {
     

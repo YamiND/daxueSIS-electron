@@ -16,11 +16,28 @@
                       <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Student to Delete</label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                          <select class="deleteStudentNameSelect" tabindex="-1" name="delete-student-name" id="delete-student-name">
-                            <option></option>
+                          <select class="deleteStudentNameSelect" name="delete-student-name" id="delete-student-name">
 
                             <script>
-                                getSelectStudentsList(function() {clearAndLoadSelectStudents("delete-student-name")}, "delete-student-name");
+                              if (DEBUG)
+                              {
+                                var db = new sqlite3.Database('sqlite/daxuesis.db')  ;
+                              }
+                              else
+                              {
+                                var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                              }
+
+                              db.serialize(function() 
+                              {
+                                db.each("SELECT studentID, studentEnglishName FROM students", 
+                                function(err, row) 
+                                {   
+                                  var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
+                                  $("#delete-student-name").append(newOption);
+                                });
+                                db.close();
+                              });
                             </script>
 
                           </select>
@@ -35,13 +52,6 @@
                     </form>
 
                     <script>
-
-                      function resetDeleteStudentForm() // Function for reset form
-                      {
-                        $("#delete-student-name").val("");
-
-                        $("#delete-student-name").trigger('change');
-                      }
 
                       function deleteStudentRecord() // Get values from delete-class-form and delete
                       {
@@ -58,30 +68,40 @@
                         
                         db.serialize(function() 
                         {
-                          var stmt = db.prepare("DELETE FROM students WHERE studentID = ?");
-                          stmt.run(studentID);
-                          stmt.finalize();
-                          db.close();
+                          db.prepare("DELETE FROM students WHERE studentID = ?").run(studentID).finalize();
 
-                          // Reload Edit Students
-                          getSelectStudentsList(function() {clearAndLoadSelectStudents("edit-select-class-name")}, "edit-select-class-name");
+                          /* BEGIN RELOAD EDIT AND DELETE STUDENT DATA */
+                          $("#edit-select-student-id").empty();
+                          $("#delete-student-name").empty();
+
+                          db.each("SELECT studentID, studentEnglishName FROM students", 
+                          function(err, row) 
+                          {   
+                              var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
+                              var newOption2 = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
+                              $("#edit-select-student-id").append(newOption);
+                              $("#delete-student-name").append(newOption2);
+
+                          });
                           
-                          // Reload Delete Students
-                          getSelectStudentsList(function() {clearAndLoadSelectStudents("delete-student-name")}, "delete-student-name");
+                          $("#viewStudentsTable").DataTable().clear();
+    
+                          db.each("SELECT studentID, studentEnglishName, studentMajors.studentMajorName, studentSkillLevels.studentSkillLevel FROM students INNER JOIN studentMajors ON students.studentMajorID = studentMajors.studentMajorID INNER JOIN studentSkillLevels ON students.studentSkillLevelID = studentSkillLevels.studentSkillLevelID", 
+                          function(err, row) 
+                          {   
+                              $("#viewStudentsTable").DataTable().row.add( [ row.studentID, row.studentEnglishName, row.studentMajorName, row.studentSkillLevel ] ).draw( false );
+                          });
+                          /* END RELOAD STUDENT DATA */
 
-                          // Reload View Students
-                          getClassesDataForViewTable(function() {clearClassesDataTable("viewStudentsTable")}, "viewStudentsTable");
+                          db.close();    
                         });
-
-                        resetDeleteStudentForm();
                       }
                   
                       $("#delete-student-form").submit(function (e) 
                       {
                         e.preventDefault();
 
-                        deleteStudentRecord();
-                        
+                        deleteStudentRecord();            
                       }); 
                     </script>
 

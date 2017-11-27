@@ -32,8 +32,7 @@
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-student-major-id">Student's Major <span class="required">*</span>
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <select class="createStudentMajorSelect" tabindex="-1" name="create-student-major-id" id="create-student-major-id">
-                            <option></option>
+                          <select class="createStudentMajorSelect" name="create-student-major-id" id="create-student-major-id">
                             <script>
                                     if (DEBUG)
                                     {
@@ -46,16 +45,14 @@
     
                                     db.serialize(function() 
                                     {
-                                    
                                       db.each("SELECT studentMajorID, studentMajorName FROM studentMajors", 
-                                        function(err, row) 
-                                        {   
-                                            var newOption = new Option(row.studentMajorName, row.studentMajorID, false, false);
-                                            $("#create-student-major-id").append(newOption);
-                                        });
+                                      function(err, row) 
+                                      {   
+                                          var newOption = new Option(row.studentMajorName, row.studentMajorID, false, false);
+                                          $("#create-student-major-id").append(newOption);
+                                      });
+                                      db.close();
                                     });
-                                    
-                                    db.close();
                                 </script>
                           </select>
                         </div>
@@ -68,28 +65,28 @@
                           <select class="createStudentSkillLevelSelect" tabindex="-1" name="create-student-skill-level-id" id="create-student-skill-level-id">
                             <option></option>
                             <script>
-                                    if (DEBUG)
-                                    {
-                                      var db = new sqlite3.Database('sqlite/daxuesis.db');
-                                    }
-                                    else
-                                    {
-                                      var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
-                                    }
-    
-                                    db.serialize(function() 
-                                    {
-                                    
-                                      db.each("SELECT studentSkillLevelID, studentSkillLevel FROM studentSkillLevels", 
-                                        function(err, row) 
-                                        {   
-                                            var newOption = new Option(row.studentSkillLevel, row.studentSkillLevelID, false, false);
-                                            $("#create-student-skill-level-id").append(newOption);
-                                        });
-                                    });
-                                    
-                                    db.close();
-                                </script>
+                              if (DEBUG)
+                              {
+                                var db = new sqlite3.Database('sqlite/daxuesis.db');
+                              }
+                              else
+                              {
+                                var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                              }
+
+                              db.serialize(function() 
+                              {
+                                db.each("SELECT studentSkillLevelID, studentSkillLevel FROM studentSkillLevels", 
+                                function(err, row) 
+                                {   
+                                    var newOption = new Option(row.studentSkillLevel, row.studentSkillLevelID, false, false);
+                                    $("#create-student-skill-level-id").append(newOption);
+                                });
+                                db.close();
+                              });
+                              
+                              
+                            </script>
                           </select>
                         </div>
                       </div>
@@ -115,7 +112,7 @@
                         $("#create-student-skill-level-id").trigger('change');
                       }
 
-                      function insertStudentRecord() // Get values from create-class-form and insert
+                      function insertStudentRecord(callback) // Get values from create-student-form and insert
                       {
                         var studentID = $('#create-student-id').val();
                         var studentName = $('#create-student-name').val();
@@ -137,50 +134,35 @@
                        
                         db.serialize(function() 
                         {
-                          function getStudentNameRows(callback)
-                          {
-                            db.all("SELECT count(*) AS studentRows FROM students WHERE studentID = ?", studentID, function (err, rows)
-                            {
-                              if (err)
-                              {
-                                console.log(err);
-                              }
-                              else
-                              {
-                                callback(rows[0].studentRows);
-                              }
-                            });
-                          }
-
-                          function checkStudentConflicts(studentRows)
-                          {
-                            if(studentRows)
-                            {
-                              alert("ERROR: Student Conflict Exists");
-                            }
-                            else
-                            {
-                              var stmt = db.prepare("INSERT INTO students (studentID, studentEnglishName, studentMajorID, studentSkillLevelID) VALUES (?, ?, ?, ?)");
-                              stmt.run(studentID, studentName, studentMajorID, studentSkillLevelID);
-                              stmt.finalize();
-                              db.close();
-
-                              // Reload Edit Students
-                              getSelectStudentsList(function() {clearAndLoadSelectStudents("edit-select-class-name")}, "edit-select-class-name");
-                              
-                              // Reload Delete Students
-                              getSelectStudentsList(function() {clearAndLoadSelectStudents("delete-student-name")}, "delete-student-name");
-
-                              // Reload View Students
-                              getClassesDataForViewTable(function() {clearClassesDataTable("viewStudentsTable")}, "viewStudentsTable");
-                                  
-                            }
-                          }
+                          db.prepare("INSERT INTO students (studentID, studentEnglishName, studentMajorID, studentSkillLevelID) VALUES (?, ?, ?, ?)").run(studentID, studentName, studentMajorID, studentSkillLevelID).finalize();
                           
-                          getStudentNameRows(checkStudentConflicts); // Get Class Rows, and if there are no conflicts insert into the DB
+                          /* BEGIN RELOAD EDIT AND DELETE STUDENT DATA */
+                          $("#edit-select-student-id").empty();
+                          $("#delete-student-name").empty();
+
+                          db.each("SELECT studentID, studentEnglishName FROM students", 
+                          function(err, row) 
+                          {   
+                              var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
+                              var newOption2 = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
+                              $("#edit-select-student-id").append(newOption);
+                              $("#delete-student-name").append(newOption2);
+
+                          });
+                          
+                          $("#viewStudentsTable").DataTable().clear();
+    
+                          db.each("SELECT studentID, studentEnglishName, studentMajors.studentMajorName, studentSkillLevels.studentSkillLevel FROM students INNER JOIN studentMajors ON students.studentMajorID = studentMajors.studentMajorID INNER JOIN studentSkillLevels ON students.studentSkillLevelID = studentSkillLevels.studentSkillLevelID", 
+                          function(err, row) 
+                          {   
+                              $("#viewStudentsTable").DataTable().row.add( [ row.studentID, row.studentEnglishName, row.studentMajorName, row.studentSkillLevel ] ).draw( false );
+                          });
+                          /* END RELOAD STUDENT DATA */
+
+                          db.close();
                         });
 
-                        resetCreateStudentForm();
+                        callback();
                         
                       }
                   
@@ -188,8 +170,12 @@
                       {
                         e.preventDefault();
 
-                        insertStudentRecord();
-                        
+                        insertStudentRecord(
+                          function() 
+                          {
+                            resetCreateStudentForm();
+                          }
+                        );
                       }); 
                     </script>
                     

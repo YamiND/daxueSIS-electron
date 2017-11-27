@@ -17,11 +17,27 @@
                       <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Student to Edit</label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <select class="editStudentNameSelect" tabindex="-1" name="edit-select-student-id" id="edit-select-student-id">
-                                <option></option>
-    
+                            <select class="editStudentNameSelect" name="edit-select-student-id" id="edit-select-student-id">
                                 <script>
-                                    getSelectStudentsList(function() {clearAndLoadSelectStudents("edit-select-student-id")}, "edit-select-student-id");
+                                  if (DEBUG)
+                                  {
+                                    var db = new sqlite3.Database('sqlite/daxuesis.db')  ;
+                                  }
+                                  else
+                                  {
+                                    var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                                  }
+
+                                  db.serialize(function() 
+                                  {
+                                    db.each("SELECT studentID, studentEnglishName FROM students", 
+                                    function(err, row) 
+                                    {   
+                                      var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
+                                      $("#edit-select-student-id").append(newOption);
+                                    });
+                                    db.close();
+                                  });
                                 </script>
         
                             </select>
@@ -57,8 +73,7 @@
                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="edit-student-major-id">Student's Major <span class="required">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                <select class="editStudentMajorSelect" tabindex="-1" name="edit-student-major-id" id="edit-student-major-id">
-                                    <option></option>
+                                <select class="editStudentMajorSelect" name="edit-student-major-id" id="edit-student-major-id">
                                     <script>
                                         if (DEBUG)
                                         {
@@ -71,16 +86,14 @@
         
                                         db.serialize(function() 
                                         {
-                                    
-                                            db.each("SELECT studentMajorID, studentMajorName FROM studentMajors", 
-                                            function(err, row) 
-                                            {   
-                                                var newOption = new Option(row.studentMajorName, row.studentMajorID, false, false);
-                                                $("#edit-student-major-id").append(newOption);
-                                            });
-                                        });
-                                        
-                                        db.close();
+                                          db.each("SELECT studentMajorID, studentMajorName FROM studentMajors", 
+                                          function(err, row) 
+                                          {   
+                                              var newOption = new Option(row.studentMajorName, row.studentMajorID, false, false);
+                                              $("#edit-student-major-id").append(newOption);
+                                          });
+                                          db.close();
+                                        });  
                                     </script>
                                 </select>
                             </div>
@@ -90,34 +103,31 @@
                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="edit-student-skill-level-id">Student's Skill Level <span class="required">*</span>
                             </label>
                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                <select class="editStudentSkillLevelSelect" tabindex="-1" name="edit-student-skill-level-id" id="edit-student-skill-level-id">
-                                <option></option>
+                              <select class="editStudentSkillLevelSelect" name="edit-student-skill-level-id" id="edit-student-skill-level-id">
                                 <script>
-                                        if (DEBUG)
-                                        {
-                                          var db = new sqlite3.Database('sqlite/daxuesis.db');
-                                        }
-                                        else
-                                        {
-                                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
-                                        }
-        
-                                        db.serialize(function() 
-                                        {
-                                        
-                                            db.each("SELECT studentSkillLevelID, studentSkillLevel FROM studentSkillLevels", 
-                                            function(err, row) 
-                                            {   
-                                                var newOption = new Option(row.studentSkillLevel, row.studentSkillLevelID, false, false);
-                                                $("#edit-student-skill-level-id").append(newOption);
-                                            });
-                                        });
-                                        
-                                        db.close();
-                                    </script>
-                                </select>
+                                  if (DEBUG)
+                                  {
+                                    var db = new sqlite3.Database('sqlite/daxuesis.db');
+                                  }
+                                  else
+                                  {
+                                    var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                                  }
+  
+                                  db.serialize(function() 
+                                  {
+                                    db.each("SELECT studentSkillLevelID, studentSkillLevel FROM studentSkillLevels", 
+                                    function(err, row) 
+                                    {   
+                                        var newOption = new Option(row.studentSkillLevel, row.studentSkillLevelID, false, false);
+                                        $("#edit-student-skill-level-id").append(newOption);
+                                    });
+                                    db.close();
+                                  });   
+                                </script>
+                              </select>
                             </div>
-                            </div>
+                          </div>
                         
                       
                       <div class="ln_solid"></div>
@@ -194,14 +204,18 @@
                         {
                           e.preventDefault(); // Prevent Default Submission
                           
-                          updateStudentRecord(); // Call out updateStudentRecord function
+                          updateStudentRecord(
+                          function ()
+                          {
+                            resetEditStudentForms();
+                          }); // Call out updateStudentRecord function
 
-                          resetEditStudentForms();
+                          
                         });
 
                       });
                     
-                      function updateStudentRecord() // Get values from edit-student-form and insert
+                      function updateStudentRecord(callback) // Get values from edit-student-form and insert
                       {
                         var studentID = $('#edit-student-id').val();
 
@@ -222,47 +236,34 @@
                        
                         db.serialize(function() 
                         {
-                          function getStudentNameRows(callback)
-                          {
-                            db.all("SELECT count(*) AS studentRows FROM students WHERE studentID = ? AND studentEnglishName = ? AND studentMajorID = ? AND studentSkillLevelID = ? OR studentID = ? AND studentMajorID != ? AND studentSkillLevelID != ?", studentID, studentEnglishName, studentMajorID, studentSkillLevelID, studentMajorID, studentSkillLevelID, function (err, rows)
-                            {
-                              if (err)
-                              {
-                                console.log(err);
-                              }
-                              else
-                              {
-                                callback(rows[0].studentRows);
-                              }
-                            });
-                          }
+                      
+                          db.prepare("UPDATE students SET studentID = ?, studentEnglishName = ?, studentMajorID = ?, studentSkillLevelID WHERE classID = ?").run(newClassname, classDaysSum, classStartTime, classID).finalize();
 
-                          function updateStudentRow(studentRows)
-                          {
-                            if(classRows)
-                            {
-                              alert("ERROR: Student Conflict Exists, cannot update");
-                            }
-                            else
-                            {
-                              var stmt = db.prepare("UPDATE students SET studentID = ?, studentEnglishName = ?, studentMajorID = ?, studentSkillLevelID WHERE classID = ?");
-                              stmt.run(newClassname, classDaysSum, classStartTime, classID);
-                              stmt.finalize();
+                          /* BEGIN RELOAD EDIT AND DELETE STUDENT DATA */
+                          $("#edit-select-student-id").empty();
+                          $("#delete-student-name").empty();
 
-                              // Reload Edit Students
-                              getSelectStudentsList(function() {clearAndLoadSelectStudents("edit-select-class-name")}, "edit-select-class-name");
-                              
-                              // Reload Delete Students
-                              getSelectStudentsList(function() {clearAndLoadSelectStudents("edit-select-student-id")}, "edit-select-student-id");
-
-                              // Reload View Students
-                              getClassesDataForViewTable(function() {clearClassesDataTable("viewStudentsTable")}, "viewStudentsTable");
-
-                            }
-                          }
+                          db.each("SELECT studentID, studentEnglishName FROM students", 
+                          function(err, row) 
+                          {   
+                            var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
+                            var newOption2 = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
+                            $("#edit-select-student-id").append(newOption);
+                            $("#delete-student-name").append(newOption2);
+                          });
                           
-                          getStudentNameRows(updateStudentRow); // Get Class Rows, and if there are no conflicts insert into the DB
+                          $("#viewStudentsTable").DataTable().clear();
+    
+                          db.each("SELECT studentID, studentEnglishName, studentMajors.studentMajorName, studentSkillLevels.studentSkillLevel FROM students INNER JOIN studentMajors ON students.studentMajorID = studentMajors.studentMajorID INNER JOIN studentSkillLevels ON students.studentSkillLevelID = studentSkillLevels.studentSkillLevelID", 
+                          function(err, row) 
+                          {   
+                              $("#viewStudentsTable").DataTable().row.add( [ row.studentID, row.studentEnglishName, row.studentMajorName, row.studentSkillLevel ] ).draw( false );
+                          });
+                          /* END RELOAD STUDENT DATA */
+
+                          db.close(); 
                         });
+                        callback();
                       }
                     </script>
 

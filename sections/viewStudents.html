@@ -26,7 +26,26 @@
                         <script>
                           var viewStudentsTable = $('#viewStudentsTable').DataTable({"order": [[ 0, "dsc" ]]});
 
-                          getStudentsDataForViewTable(function() {clearStudentsDataTable("viewStudentsTable")}, "viewStudentsTable");    
+                          if (DEBUG)
+                          {
+                            var db = new sqlite3.Database('sqlite/daxuesis.db');
+                          }
+                          else
+                          {
+                            var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                          }     
+
+                          db.serialize(function() {
+                            $("#viewStudentsTable").DataTable().clear();
+    
+                            db.each("SELECT studentID, studentEnglishName, studentMajors.studentMajorName, studentSkillLevels.studentSkillLevel FROM students INNER JOIN studentMajors ON students.studentMajorID = studentMajors.studentMajorID INNER JOIN studentSkillLevels ON students.studentSkillLevelID = studentSkillLevels.studentSkillLevelID", 
+                            function(err, row) 
+                            {   
+                                $("#viewStudentsTable").DataTable().row.add( [ row.studentID, row.studentEnglishName, row.studentMajorName, row.studentSkillLevel ] ).draw( false );
+                            });
+                          });
+
+                          db.close();  
                         </script>
                     </tbody>
                   </table>

@@ -140,14 +140,13 @@
                           $("#edit-select-student-id").empty();
                           $("#delete-student-name").empty();
 
-                          db.each("SELECT studentID, studentEnglishName FROM students", 
+                          db.each("SELECT studentID, studentEnglishName, studentDBID FROM students", 
                           function(err, row) 
                           {   
-                              var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
-                              var newOption2 = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
-                              $("#edit-select-student-id").append(newOption);
-                              $("#delete-student-name").append(newOption2);
-
+                            var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentDBID, false, false);
+                            var newOption2 = new Option(row.studentID + " - " + row.studentEnglishName, row.studentDBID, false, false);
+                            $("#edit-select-student-id").append(newOption);
+                            $("#delete-student-name").append(newOption2);
                           });
                           
                           $("#viewStudentsTable").DataTable().clear();

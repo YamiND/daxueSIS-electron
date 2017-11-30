@@ -30,10 +30,10 @@
 
                               db.serialize(function() 
                               {
-                                db.each("SELECT studentID, studentEnglishName FROM students", 
+                                db.each("SELECT studentID, studentEnglishName, studentDBID FROM students", 
                                 function(err, row) 
                                 {   
-                                  var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
+                                  var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentDBID, false, false);
                                   $("#delete-student-name").append(newOption);
                                 });
                                 db.close();
@@ -55,7 +55,7 @@
 
                       function deleteStudentRecord() // Get values from delete-class-form and delete
                       {
-                        var studentID = $('#delete-student-name').val();
+                        var studentDBID = $('#delete-student-name').val();
 
                         if (DEBUG)
                         {
@@ -68,20 +68,19 @@
                         
                         db.serialize(function() 
                         {
-                          db.prepare("DELETE FROM students WHERE studentID = ?").run(studentID).finalize();
+                          db.prepare("DELETE FROM students WHERE studentDBID = ?").run(studentDBID).finalize();
 
                           /* BEGIN RELOAD EDIT AND DELETE STUDENT DATA */
                           $("#edit-select-student-id").empty();
                           $("#delete-student-name").empty();
 
-                          db.each("SELECT studentID, studentEnglishName FROM students", 
+                          db.each("SELECT studentID, studentEnglishName, studentDBID FROM students", 
                           function(err, row) 
                           {   
-                              var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
-                              var newOption2 = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
-                              $("#edit-select-student-id").append(newOption);
-                              $("#delete-student-name").append(newOption2);
-
+                            var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentDBID, false, false);
+                            var newOption2 = new Option(row.studentID + " - " + row.studentEnglishName, row.studentDBID, false, false);
+                            $("#edit-select-student-id").append(newOption);
+                            $("#delete-student-name").append(newOption2);
                           });
                           
                           $("#viewStudentsTable").DataTable().clear();

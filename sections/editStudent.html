@@ -30,10 +30,10 @@
 
                                   db.serialize(function() 
                                   {
-                                    db.each("SELECT studentID, studentEnglishName FROM students", 
+                                    db.each("SELECT studentDBID, studentID, studentEnglishName FROM students", 
                                     function(err, row) 
                                     {   
-                                      var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
+                                      var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentDBID, false, false);
                                       $("#edit-select-student-id").append(newOption);
                                     });
                                     db.close();
@@ -145,15 +145,14 @@
                       {
                         // Reset our form values, hide the form, and show the form
                         $("#edit-student-form").hide();
-                        $("#edit-student-form")[0].reset();
+                        //$("#edit-student-form")[0].reset();
 
                         $('#edit-select-student-id').val([]).trigger('change');
-                        $("#edit-select-student-id-form").show();
+                        $("#edit-select-student-name-form").show();
                       }
 
                       $(document).ready(function() 
                       {  
-
                         $("#edit-student-form").hide();
 
                         // Pass the data from the old form to the new form and populate it
@@ -161,9 +160,11 @@
                         {
                           e.preventDefault(); // Prevent Default Submission
                           
-                          var studentID = $('#edit-select-student-id').val();
+                          var studentDBID = $('#edit-select-student-id').val();
 
-                          if (!studentID)
+                          console.log(studentDBID);
+
+                          if (!studentDBID)
                           {
                             // If studentID is unselected, leave the function early
                             return -1;
@@ -180,10 +181,10 @@
 
                           db.serialize(function() 
                           {
-                            db.each("SELECT studentEnglishName, studentMajorID, studentSkillLevelID FROM students WHERE studentID = ?", studentID, 
+                            db.each("SELECT studentEnglishName, studentMajorID, studentSkillLevelID, studentID FROM students WHERE studentDBID = ?", studentDBID, 
                               function(err, row) 
                               {
-                                $('#edit-student-id').val(studentID);
+                                $('#edit-student-id').val(row.studentID);
 
                                 $('#edit-student-name').val(row.studentEnglishName);
 
@@ -217,6 +218,8 @@
                     
                       function updateStudentRecord(callback) // Get values from edit-student-form and insert
                       {
+                        var studentDBID = $('#edit-select-student-id').val();
+
                         var studentID = $('#edit-student-id').val();
 
                         var studentEnglishName = $('#edit-student-name').val();
@@ -237,17 +240,17 @@
                         db.serialize(function() 
                         {
                       
-                          db.prepare("UPDATE students SET studentID = ?, studentEnglishName = ?, studentMajorID = ?, studentSkillLevelID WHERE classID = ?").run(newClassname, classDaysSum, classStartTime, classID).finalize();
+                          db.prepare("UPDATE students SET studentID = ?, studentEnglishName = ?, studentMajorID = ?, studentSkillLevelID = ? WHERE studentDBID = ?").run(studentID, studentEnglishName, studentMajorID, studentSkillLevelID, studentDBID).finalize();
 
                           /* BEGIN RELOAD EDIT AND DELETE STUDENT DATA */
                           $("#edit-select-student-id").empty();
                           $("#delete-student-name").empty();
 
-                          db.each("SELECT studentID, studentEnglishName FROM students", 
+                          db.each("SELECT studentID, studentEnglishName, studentDBID FROM students", 
                           function(err, row) 
                           {   
-                            var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
-                            var newOption2 = new Option(row.studentID + " - " + row.studentEnglishName, row.studentID, false, false);
+                            var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentDBID, false, false);
+                            var newOption2 = new Option(row.studentID + " - " + row.studentEnglishName, row.studentDBID, false, false);
                             $("#edit-select-student-id").append(newOption);
                             $("#delete-student-name").append(newOption2);
                           });

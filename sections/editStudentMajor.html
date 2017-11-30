@@ -17,11 +17,29 @@
                       <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Student Major to Edit</label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <select class="editStudentMajorSelect" tabindex="-1" name="edit-select-student-major" id="edit-select-student-major">
-                                <option></option>
-    
+                            <select class="editStudentMajorSelect" name="edit-select-student-major" id="edit-select-student-major">
                                 <script>
-                                    getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("edit-select-student-major")}, "edit-select-student-major");
+                                  if (DEBUG)
+                                  {
+                                    var db = new sqlite3.Database('sqlite/daxuesis.db');
+                                  }
+                                  else
+                                  {
+                                    var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                                  }
+                                
+                                  db.serialize(function() 
+                                  { 
+                                    db.each("SELECT studentMajorID, studentMajorName FROM studentMajors", 
+                                    function (err, row) 
+                                    { 
+                                      var newOption = new Option(row.studentMajorName, row.studentMajorID, false, false);  
+
+                                      $("#edit-select-student-major").append(newOption);
+                                    });
+
+                                    db.close();
+                                  });
                                 </script>
         
                             </select>
@@ -59,7 +77,7 @@
                       {
                         // Reset our form values, hide the form, and show the form
                         $("#edit-student-major-form").hide();
-                        $("#edit-student-major-form")[0].reset();
+                        //$("#edit-student-major-form")[0].reset();
 
                         $('#edit-select-student-major').val([]).trigger('change');
                         $("#edit-select-student-major-form").show();
@@ -112,14 +130,14 @@
                         {
                           e.preventDefault(); // Prevent Default Submission
                           
-                          updateStudentMajorRecord(); // Call out updateStudentMajorRecord function
-
-                          resetEditStudentMajorForms();
+                          updateStudentMajorRecord(function (){
+                            resetEditStudentMajorForms();
+                          }); // Call out updateStudentMajorRecord function
                         });
 
                       });
                     
-                      function updateStudentMajorRecord() // Get values from edit-student-major-form and update
+                      function updateStudentMajorRecord(callback) // Get values from edit-student-major-form and update
                       {
                         var studentMajorID = $('#edit-select-student-major').val();
 
@@ -136,47 +154,33 @@
                        
                         db.serialize(function() 
                         {
-                          function getStudentMajorNameRows(callback)
-                          {
-                            db.all("SELECT count(*) AS studentMajorRows FROM studentMajors WHERE studentMajorName = ?", studentMajorName, function (err, rows)
-                            {
-                              if (err)
-                              {
-                                console.log(err);
-                              }
-                              else
-                              {
-                                callback(rows[0].studentMajorRows);
-                              }
-                            });
-                          }
+                          db.prepare("UPDATE studentMajors SET studentMajorName = ? WHERE studentMajorID = ?").run(studentMajorName, studentMajorID).finalize();
 
-                          function updateStudentMajor(studentMajorRows)
-                          {
-                            if(studentMajorRows)
-                            {
-                              alert("ERROR: Student Major Conflict Exists, cannot update");
-                            }
-                            else
-                            {
-                              var stmt = db.prepare("UPDATE studentMajors SET studentMajorName = ? WHERE studentMajorID = ?");
-                              stmt.run(studentMajorName, studentMajorID);
-                              stmt.finalize();
+                          /* BEGIN RELOAD EDIT AND DELETE STUDENT MAJOR DATA */
+                          $("#edit-select-student-major").empty();
+                          $("#delete-student-major-id").empty();
 
-                                // Reload Edit Student Majors
-                                getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("edit-select-student-major")}, "edit-select-student-major");
-                                
-                                // Reload Delete Student Majors
-                                getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("delete-student-major-id")}, "delete-student-major-id");
+                          db.each("SELECT studentMajorID, studentMajorName FROM studentMajors", 
+                          function (err, row) 
+                          { 
+                            var newOption = new Option(row.studentMajorName, row.studentMajorID, false, false);  
+                            var newOption2 = new Option(row.studentMajorName, row.studentMajorID, false, false);    
+                            $("#edit-select-student-major").append(newOption);
+                            $("#delete-student-major-id").append(newOption2);
+                          });
 
-                                // Reload View Student Majors
-                                getStudentMajorsDataForViewTable(function() {clearStudentMajorsDataTable("viewStudentMajorsTable")}, "viewStudentMajorsTable");   
-                                    
-                            }
-                          }
-                          
-                          getStudentMajorNameRows(updateStudentMajor); // Get Student Major Rows, and if there are no conflicts update into the DB
+                          $("#viewStudentMajorsTable").DataTable().clear();
+                            
+                          db.each("SELECT studentMajorID, studentMajorName FROM studentMajors", 
+                          function (err, row)
+                          {   
+                            $("#viewStudentMajorsTable").DataTable().row.add( [ row.studentMajorID, row.studentMajorName ] ).draw( false );
+                          });
+                          /* END RELOAD STUDENT MAJOR DATA */ 
+
+                          db.close();  
                         });
+                        callback();
                       }
                     </script>
 

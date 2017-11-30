@@ -24,7 +24,26 @@
                         <script>
                           var viewStudentMajorsTable = $('#viewStudentMajorsTable').DataTable({"order": [[ 0, "dsc" ]]});
 
-                          getStudentMajorsDataForViewTable(function() {clearStudentMajorsDataTable("viewStudentMajorsTable")}, "viewStudentMajorsTable");    
+                          if (DEBUG)
+                          {
+                            var db = new sqlite3.Database('sqlite/daxuesis.db');
+                          }
+                          else
+                          {
+                            var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                          }
+                          
+                          db.serialize(function() {
+                            $("#viewStudentMajorsTable").DataTable().clear();
+                            
+                            db.each("SELECT studentMajorID, studentMajorName FROM studentMajors", 
+                            function (err, row)
+                            {   
+                              $("#viewStudentMajorsTable").DataTable().row.add( [ row.studentMajorID, row.studentMajorName ] ).draw( false );
+                            });
+                          });
+                          
+                          db.close();    
                         </script>
                     </tbody>
                   </table>

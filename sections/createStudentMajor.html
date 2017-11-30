@@ -38,7 +38,7 @@
                         $("#create-student-major-name").trigger('change');
                       }
 
-                      function insertStudentMajorRecord() // Get values from create-class-form and insert
+                      function insertStudentMajorRecord(callback) // Get values from create-class-form and insert
                       {
                         var studentMajorName = $('#create-student-major-name').val();
 
@@ -52,59 +52,44 @@
                         }
                        
                         db.serialize(function() 
-                        {
-                          function getStudentMajorNameRows(callback)
-                          {
-                            db.all("SELECT count(*) AS studentMajorRows FROM studentMajors WHERE studentMajorName = ?", studentMajorName, function (err, rows)
-                            {
-                              if (err)
-                              {
-                                console.log(err);
-                              }
-                              else
-                              {
-                                callback(rows[0].studentMajorRows);
-                              }
-                            });
-                          }
-
-                          function checkStudentMajorConflicts(studentMajorRows)
-                          {
-                            if(studentMajorRows)
-                            {
-                              alert("ERROR: Student Major Conflict Exists");
-                            }
-                            else
-                            {
-                              var stmt = db.prepare("INSERT INTO studentMajors (studentMajorName) VALUES (?)");
-                              stmt.run(studentMajorName);
-                              stmt.finalize();
-                              db.close();
-
-                              // Reload Edit Student Majors
-                              getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("edit-select-student-major")}, "edit-select-student-major");
-                                
-                              // Reload Delete Student Majors
-                              getSelectStudentMajorsList(function() {clearAndLoadSelectStudentMajors("delete-student-major-id")}, "delete-student-major-id");
-
-                              // Reload View Student Majors
-                              getStudentMajorsDataForViewTable(function() {clearStudentMajorsDataTable("viewStudentMajorsTable")}, "viewStudentMajorsTable");   
-                                    
-                            }
-                          }
+                        { 
+                          db.prepare("INSERT INTO studentMajors (studentMajorName) VALUES (?)").run(studentMajorName).finalize();
                           
-                          getStudentMajorNameRows(function () {checkStudentMajorConflicts()}); // Get Student Major Rows, and if there are no conflicts insert into the DB
-                        });
+                          /* BEGIN RELOAD EDIT AND DELETE STUDENT MAJOR DATA */
+                          $("#edit-select-student-major").empty();
+                          $("#delete-student-major-id").empty();
 
-                        resetCreateStudentMajorForm();
-                        
+                          db.each("SELECT studentMajorID, studentMajorName FROM studentMajors", 
+                          function (err, row) 
+                          { 
+                            var newOption = new Option(row.studentMajorName, row.studentMajorID, false, false);  
+                            var newOption2 = new Option(row.studentMajorName, row.studentMajorID, false, false);    
+                            $("#edit-select-student-major").append(newOption);
+                            $("#delete-student-major-id").append(newOption2);
+                          });
+
+                          $("#viewStudentMajorsTable").DataTable().clear();
+                            
+                          db.each("SELECT studentMajorID, studentMajorName FROM studentMajors", 
+                          function (err, row)
+                          {   
+                            $("#viewStudentMajorsTable").DataTable().row.add( [ row.studentMajorID, row.studentMajorName ] ).draw( false );
+                          });
+                          /* END RELOAD STUDENT MAJOR DATA */ 
+                          
+                          db.close();
+                        });
+                        callback();
                       }
                   
                       $("#create-student-major-form").submit(function (e) 
                       {
                         e.preventDefault();
 
-                        insertStudentMajorRecord();                
+                        insertStudentMajorRecord(function ()
+                        {
+                          resetCreateStudentMajorForm();
+                        });                
                       }); 
                     </script>
                     

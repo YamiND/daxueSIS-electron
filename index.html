@@ -12,14 +12,16 @@
     <!-- ADDED IMPORT LINKS -->
     <link rel="import" href="sections/index.html">
     <link rel="import" href="sections/home.html">
+
+    <!-- Teacher Links - Work In Progress - -->
     <link rel="import" href="sections/assignStudentClass.html">
+    <link rel="import" href="sections/viewStudentClass.html">
 
     <!-- Classes -->
     <link rel="import" href="sections/createClass.html">
     <link rel="import" href="sections/editClass.html">
     <link rel="import" href="sections/deleteClass.html">
     <link rel="import" href="sections/viewClasses.html">
-
 
     <!-- Students -->
     <link rel="import" href="sections/createStudent.html">
@@ -33,7 +35,7 @@
     <link rel="import" href="sections/deleteStudentMajor.html">
     <link rel="import" href="sections/viewStudentMajors.html">
 
-    <!-- Student Skill Levels - Work in Progress -->
+    <!-- Student Skill Levels -->
     <link rel="import" href="sections/createStudentSkillLevel.html">
     <link rel="import" href="sections/editStudentSkillLevel.html">
     <link rel="import" href="sections/deleteStudentSkillLevel.html">
@@ -118,23 +120,12 @@
                         </ul>
                       </li>
 
-                      <!-- Not yet done -->
-                      <li><a><i class="fa fa-pencil-square-o"></i> Assignments <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a id="gradeAssignment-menu" data-section="gradeAssignment" href="#">Grade Assignment</a></li>
-                          <li><a id="createAssignment-menu" data-section="createAssignment" href="#">Create Assignment</a></li>
-                          <li><a id="editAssignment-menu" data-section="editAssignment" href="#">Edit Assignment</a></li>
-                          <li><a id="deleteAssignment-menu" data-section="deleteAssignment" href="#">Delete Assignment</a></li>
-                          <li><a id="viewAssignments-menu" data-section="viewAssignments" href="#">View Assignments</a></li>
-                        </ul>
-                      </li>
-
                       <!-- Not Done yet -->
                       <li><a><i class="fa fa-users"></i> Teacher <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a id="viewStudentGrades-menu" data-section="viewStudentGrades" href="#">View Student Grades</a></li>
                           <li><a id="assignStudentClass-menu" data-section="assignStudentClass" href="#">Assign Student to Class</a></li>
                           <li><a id="removeStudentClass-menu" data-section="removeStudentClass" href="#">Remove Student from Class</a></li>
+                          <li><a id="viewStudentClass-menu" data-section="viewStudentClass" href="#">View Students in Class</a></li>
                         </ul>
                       </li>
 
@@ -156,7 +147,6 @@
                         </ul>
                       </li>
 
-                      <!-- Not yet Done -->
                       <li><a><i class="fa fa-level-up"></i> Student Skill Levels <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a id="createStudentSkillLevel-menu" data-section="createStudentSkillLevel" href="#">Create Student Skill Level</a></li>

@@ -1,0 +1,138 @@
+<template class="section-template">
+    <section id="viewStudentClass" class="wrapper">
+       <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Edit Class</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <div id="form-content"></div>
+                    <form id="viewStudentClass-select-class-name-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Class to view Students</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <select class="classNameSelect" name="viewStudentClass-select-class-name" id="viewStudentClass-select-class-name">
+                                <script>
+                                  //$("#edit-select-class-name").empty();
+                                  if (DEBUG)
+                                  {
+                                    var db = new sqlite3.Database('sqlite/daxuesis.db')  ;
+                                  }
+                                  else
+                                  {
+                                    var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                                  }
+                                  
+                                  db.each("SELECT classID, className FROM classes", 
+                                  function(err, row) 
+                                  {   
+                                      var newOption = new Option(row.className, row.classID, false, false);
+                                      $("#viewStudentClass-select-class-name").append(newOption);
+                                      
+                                  });
+                                </script>
+                              </select>
+                        </div>
+                      </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success" id="viewStudentClass-select-class-name-btn">Next</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <form id="viewStudentClass-view-class-form" class="form-horizontal form-label-left">
+                        <div class="form-group">
+                            <table id="viewStudentClass-table" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                                    
+                                <thead>
+                                    <tr>
+                                    <th>Student ID</th>
+                                    <th>Student English Name</th>
+                                    <th>Student Major</th>
+                                    <th>Student Skill Level</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <script>
+                                        var viewStudentClassTable = $('#viewStudentClass-table').DataTable({"order": [[ 0, "dsc" ]]});
+                                    </script>
+                                </tbody>
+                            </table>
+                        </div>
+                      
+                        <div class="ln_solid"></div>
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                            <button type="button" class="btn btn-primary" onclick="resetViewStudentsTable()">Switch Class</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <script>
+
+                      function resetViewStudentsTable()
+                      {
+                        // Reset our form values, hide the form, and show the form
+                        $("#viewStudentClass-view-class-form").hide();
+
+                        $('#viewStudentClass-select-class-name').val([]).trigger('change');
+                        $("#viewStudentClass-select-class-name-form").show();
+                      }
+
+                      $(document).ready(function() 
+                      {  
+                        $("#viewStudentClass-view-class-form").hide();
+                      });
+
+                      // Pass the data from the old form to the new form and populate it
+                      $('#viewStudentClass-select-class-name-form').submit(
+                      function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+                        
+                        var classID = $('#viewStudentClass-select-class-name').val();
+
+                        if (DEBUG)
+                        {
+                            var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        }
+                        else
+                        {
+                            var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                        }     
+
+                        db.serialize(function() {
+                            $("#viewStudentClass-table").DataTable().clear();
+
+                            db.each("SELECT studentID, studentEnglishName, studentMajors.studentMajorName, studentSkillLevels.studentSkillLevel FROM students INNER JOIN studentMajors ON students.studentMajorID = studentMajors.studentMajorID INNER JOIN studentSkillLevels ON students.studentSkillLevelID = studentSkillLevels.studentSkillLevelID INNER JOIN studentClasses ON students.studentDBID = studentClasses.studentRefDBID WHERE studentClasses.classRefID = ?", classID, 
+                            function(err, row) 
+                            {   
+                                $("#viewStudentClass-table").DataTable().row.add( [ row.studentID, row.studentEnglishName, row.studentMajorName, row.studentSkillLevel ] ).draw( false );
+                            });
+
+                            db.close(); 
+                        });
+
+                        $("#viewStudentClass-select-class-name-form").hide();
+                        $("#viewStudentClass-view-class-form").show();
+                      });
+                    </script>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+    </section>
+</template>

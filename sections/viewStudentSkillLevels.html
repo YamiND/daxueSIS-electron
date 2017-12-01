@@ -1,0 +1,57 @@
+<template class="section-template">
+    <section id="viewStudentSkillLevels" class="wrapper">
+    
+    <!-- page content -->
+    <div class="right_col" role="main">
+        <div class="">
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2>View Student Skill Levels</h2>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                  <table id="viewStudentSkillLevelsTable" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    
+                    <thead>
+                      <tr>
+                        <th>Skill Level ID</th>
+                        <th>Student Skill Level</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <script>
+                          var viewStudentSkillLevelsTable = $('#viewStudentSkillLevelsTable').DataTable({"order": [[ 0, "dsc" ]]});
+
+                          if (DEBUG)
+                          {
+                            var db = new sqlite3.Database('sqlite/daxuesis.db');
+                          }
+                          else
+                          {
+                            var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                          }
+                          
+                          db.serialize(function() {
+                            $("#viewStudentSkillLevelsTable").DataTable().clear();
+                            
+                            db.each("SELECT studentSkillLevelID, studentSkillLevel FROM studentSkillLevels", 
+                            function (err, row)
+                            {   
+                              $("#viewStudentSkillLevelsTable").DataTable().row.add( [ row.studentSkillLevelID, row.studentSkillLevel ] ).draw( false );
+                            });
+                            db.close(); 
+                          });       
+                        </script>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /page content -->
+    </section>
+</template>

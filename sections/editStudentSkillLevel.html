@@ -1,0 +1,199 @@
+<template class="section-template">
+    <section id="editStudentSkillLevel" class="wrapper">
+       <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Edit Student Skill Level</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <div id="form-content"></div>
+                    <form id="edit-select-student-skill-level-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Student Skill Level to Edit</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <select class="editStudentMajorSelect" name="edit-select-student-skill-level" id="edit-select-student-skill-level">
+                                <script>
+                                  if (DEBUG)
+                                  {
+                                    var db = new sqlite3.Database('sqlite/daxuesis.db');
+                                  }
+                                  else
+                                  {
+                                    var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                                  }
+                                
+                                  db.serialize(function() 
+                                  { 
+                                    db.each("SELECT studentSkillLevelID, studentSkillLevel FROM studentSkillLevels", 
+                                    function (err, row) 
+                                    { 
+                                      var newOption = new Option(row.studentSkillLevel, row.studentSkillLevelID, false, false);    
+                                      $("#edit-select-student-skill-level").append(newOption);
+                                    });
+
+                                    db.close();
+                                  });
+                                </script>
+        
+                            </select>
+                        </div>
+                      </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success" id="edit-select-student-skill-level-btn">Next</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <form id="edit-student-skill-level-form" class="form-horizontal form-label-left">
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="edit-student-skill-level">Student Skill Level<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="text" id="edit-student-skill-level" name="edit-student-skill-level" required="required" class="form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+                      
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="button" class="btn btn-primary" onclick="resetEditStudentSkillLevelForms()">Switch Student Skill Level</button>
+                          <button type="submit" class="btn btn-success" name="edit" value="edit">Edit Student Skill Level</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <script>
+
+                      function resetEditStudentSkillLevelForms()
+                      {
+                        // Reset our form values, hide the form, and show the form
+                        $("#edit-student-skill-level-form").hide();
+                        //$("#edit-student-major-form")[0].reset();
+
+                        $('#edit-select-student-skill-level').val([]).trigger('change');
+                        $("#edit-select-student-skill-level-form").show();
+                      }
+
+                      $(document).ready(function() 
+                      {  
+
+                        $("#edit-student-skill-level-form").hide();
+
+                        // Pass the data from the old form to the new form and populate it
+                        $('#edit-select-student-skill-level-form').submit(function(e)
+                        {
+                          e.preventDefault(); // Prevent Default Submission
+                          
+                          var studentSkillLevelID = $('#edit-select-student-skill-level').val();
+
+                          console.log(studentSkillLevelID);
+
+                          if (!studentSkillLevelID)
+                          {
+                            // If studentSkillLevelID is unselected, leave the function early
+                            return -1;
+                          }
+                          
+                          if (DEBUG)
+                          {
+                            var db = new sqlite3.Database('sqlite/daxuesis.db');
+                          }
+                          else
+                          {
+                            var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                          }
+
+                            db.serialize(function() 
+                            {
+                                db.each("SELECT studentSkillLevel FROM studentSkillLevels WHERE studentSkillLevelID = ?", studentSkillLevelID, 
+                                function(err, row) 
+                                {
+                                    $('#edit-student-skill-level').val(row.studentSkillLevel);
+                                });
+
+                                db.close();
+                            });
+
+                            
+
+                          $("#edit-select-student-skill-level-form").hide();
+                          $("#edit-student-skill-level-form").show();
+                        });
+                    
+                        // Update the student entry in the database
+                        $('#edit-student-skill-level-form').submit(function(e)
+                        {
+                          e.preventDefault(); // Prevent Default Submission
+                          
+                          updateStudentSkillLevelRecord(function (){
+                            resetEditStudentSkillLevelForms();
+                          }); // Call out updateStudentMajorRecord function
+                        });
+
+                      });
+                    
+                      function updateStudentSkillLevelRecord(callback) // Get values from edit-student-major-form and update
+                      {
+                        var studentSkillLevelID = $('#edit-select-student-skill-level').val();
+
+                        var studentSkillLevel = $('#edit-student-skill-level').val();
+
+                        if (DEBUG)
+                        {
+                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        }
+                        else
+                        {
+                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                        }
+                       
+                        db.serialize(function() 
+                        {
+                          db.prepare("UPDATE studentSkillLevels SET studentSkillLevel = ? WHERE studentSkillLevelID = ?").run(studentSkillLevel, studentSkillLevelID).finalize();
+
+                          /* BEGIN RELOAD EDIT AND DELETE STUDENT SKILL LEVEL DATA */
+                          $("#edit-select-student-skill-level").empty();
+                          $("#delete-student-skill-level-id").empty();
+
+                          db.each("SELECT studentSkillLevelID, studentSkillLevel FROM studentSkillLevels", 
+                          function (err, row) 
+                          { 
+                            var newOption = new Option(row.studentSkillLevel, row.studentSkllLevelID, false, false);  
+                            var newOption2 = new Option(row.studentSkillLevel, row.studentSkllLevelID, false, false);    
+                            $("#edit-select-student-skill-level").append(newOption);
+                            $("#delete-student-skill-level-id").append(newOption2);
+                          });
+
+                          $("#viewStudentSkillLevelsTable").DataTable().clear();
+                            
+                          db.each("SELECT studentSkillLevelID, studentSkillLevel FROM studentSkillLevels", 
+                          function (err, row)
+                          {   
+                            $("#viewStudentSkillLevelsTable").DataTable().row.add( [ row.studentSkillLevelID, row.studentSkillLevel ] ).draw( false );
+                          });
+                          /* END RELOAD STUDENT SKILL LEVEL DATA */ 
+
+                          db.close();  
+                        });
+                        callback();
+                      }
+                    </script>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+          </div>
+        </div>
+        <!-- /page content -->
+    </section>
+</template>

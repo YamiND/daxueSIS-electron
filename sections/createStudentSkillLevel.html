@@ -1,0 +1,105 @@
+<template class="section-template">
+    <section id="createStudentSkillLevel" class="wrapper">
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Create Student Skill Level</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <form id="create-student-skill-level-form" class="form-horizontal form-label-left">
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="create-student-skill-level">Student Skill Level<span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                            <input type="text" id="create-student-skill-level" name="create-student-skill-level" required="required" class="form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+                      
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success" id="create-student-skill-level-btn">Create Student Skill Level</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <script>
+
+                      function resetCreateStudentSkillLevelForm() // Function for reset form
+                      {
+                        $("#create-student-skill-level").val("");
+
+                        $("#create-student-skill-level").trigger('change');
+                      }
+
+                      function insertStudentSkillLevelRecord(callback) // Get values from create-class-form and insert
+                      {
+                        var studentSkillLevel = $('#create-student-skill-level').val();
+
+                        if (DEBUG)
+                        {
+                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        }
+                        else
+                        {
+                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                        }
+                       
+                        db.serialize(function() 
+                        { 
+                          db.prepare("INSERT INTO studentSkillLevels (studentSkillLevel) VALUES (?)").run(studentSkillLevel).finalize();
+                          
+                          /* BEGIN RELOAD EDIT AND DELETE STUDENT SKILL LEVEL DATA */
+                          $("#edit-select-student-skill-level").empty();
+                          $("#delete-student-skill-level-id").empty();
+
+                          db.each("SELECT studentSkillLevelID, studentSkillLevel FROM studentSkillLevels", 
+                          function (err, row) 
+                          { 
+                            var newOption = new Option(row.studentSkillLevel, row.studentSkillLevelID, false, false);  
+                            var newOption2 = new Option(row.studentSkillLevel, row.studentSkillLevelID, false, false);    
+                            $("#edit-select-student-skill-level").append(newOption);
+                            $("#delete-student-skill-level-id").append(newOption2);
+                          });
+
+                          $("#viewStudentSkillLevelsTable").DataTable().clear();
+                            
+                          db.each("SELECT studentSkillLevelID, studentSkillLevel FROM studentSkillLevels", 
+                          function (err, row)
+                          {   
+                            $("#viewStudentSkillLevelsTable").DataTable().row.add( [ row.studentSkillLevelID, row.studentSkillLevel ] ).draw( false );
+                          });
+                          /* END RELOAD STUDENT SKILL LEVEL DATA */ 
+                          
+                          db.close();
+                        });
+                        callback();
+                      }
+                  
+                      $("#create-student-skill-level-form").submit(function (e) 
+                      {
+                        e.preventDefault();
+
+                        insertStudentSkillLevelRecord(function ()
+                        {
+                            resetCreateStudentSkillLevelForm();
+                        });                
+                      }); 
+                    </script>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+    </section>
+</template>

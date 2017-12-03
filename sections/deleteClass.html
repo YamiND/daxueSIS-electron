@@ -71,11 +71,17 @@
                           /* BEGIN RELOAD DATA IN EDIT AND DELETE */
                           $("#delete-class-name").empty();
                           $("#edit-select-class-name").empty();
+                          $("#removeStudentClass-select-class-name").empty();
+                          $("#addStudentClass-select-class-name").empty();
                           db.each("SELECT classID, className FROM classes", 
                           function(err, row) 
                           {   
                               var newOption = new Option(row.className, row.classID, false, false);
                               var newOption2 = new Option(row.className, row.classID, false, false);
+                              var newOption3 = new Option(row.className, row.classID, false, false);
+                              var newOption4 = new Option(row.className, row.classID, false, false);
+                              $("#addStudentClass-select-class-name").append(newOption4);
+                              $("#removeStudentClass-select-class-name").append(newOption3);
                               $("#delete-class-name").append(newOption2);
                               $("#edit-select-class-name").append(newOption);
                           });

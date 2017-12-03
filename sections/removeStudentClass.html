@@ -1,0 +1,172 @@
+<template class="section-template">
+    <section id="removeStudentClass" class="wrapper">
+       <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Remove Student from Class</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <div id="form-content"></div>
+                    <form id="removeStudentClass-select-class-name-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Class to remove Student from</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <select class="classNameSelect" name="removeStudentClass-select-class-name" id="removeStudentClass-select-class-name">
+                                <script>
+                                  //$("#edit-select-class-name").empty();
+                                  if (DEBUG)
+                                  {
+                                    var db = new sqlite3.Database('sqlite/daxuesis.db')  ;
+                                  }
+                                  else
+                                  {
+                                    var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                                  }
+                                  
+                                  db.each("SELECT classID, className FROM classes", 
+                                  function(err, row) 
+                                  {   
+                                      var newOption = new Option(row.className, row.classID, false, false);
+                                      $("#removeStudentClass-select-class-name").append(newOption); 
+                                  });
+                                </script>
+                              </select>
+                        </div>
+                      </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success" id="removeStudentClass-select-class-name-btn">Next</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <form id="removeStudentClass-select-student-form" class="form-horizontal form-label-left">
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Student to remove from Class</label>
+                            <div class="col-md-9 col-sm-9 col-xs-12">
+                                <select class="editStudentNameSelect" name="removeStudentClass-select-student-id" id="removeStudentClass-select-student-id">
+            
+                                </select>
+                            </div>
+                          </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="button" class="btn btn-primary" onclick="resetRemoveStudentClassForms()">Switch Class</button>
+                          <button type="submit" class="btn btn-success" name="edit" value="edit">Remove Student from Class</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <script>
+
+                      function resetRemoveStudentClassForms()
+                      {
+                        // Reset our form values, hide the form, and show the form
+                        $("#removeStudentClass-select-student-form").hide();
+
+                        $('#removeStudentClass-select-class-name').val([]).trigger('change');
+                        $("#removeStudentClass-select-class-name-form").show();
+                      }
+
+                      $(document).ready(function() 
+                      {  
+                        $("#removeStudentClass-select-student-form").hide();
+                      });
+
+                      // Pass the data from the old form to the new form and populate it
+                      $('#removeStudentClass-select-class-name-form').submit(
+                      function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+                        
+                        var classID = $('#removeStudentClass-select-class-name').val();
+
+                        if (!classID)
+                        {
+                          // If classID is unselected, leave the function early
+                          return -1;
+                        }
+                        
+                        if (DEBUG)
+                        {
+                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        }
+                        else
+                        {
+                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                        }
+
+                        db.serialize(function() 
+                        {
+                          $("#removeStudentClass-select-student-id").empty();
+                          db.each("SELECT studentDBID, studentID, studentEnglishName, studentSkillLevels.studentSkillLevel FROM students INNER JOIN studentSkillLevels ON students.studentSkillLevelID = studentSkillLevels.studentSkillLevelID INNER JOIN studentClasses ON students.studentDBID = studentClasses.studentRefDBID WHERE students.studentDBID IN ( SELECT students.studentDBID FROM students, studentClasses WHERE studentClasses.studentRefDBID = students.studentDBID AND studentClasses.classRefID = ?) AND studentClasses.classRefID = ?", classID, classID, 
+                            function(err, row) 
+                            {
+                                var newOption = new Option(row.studentID + " " + row.studentEnglishName + " " + row.studentSkillLevel, row.studentDBID, false, false);
+                                $("#removeStudentClass-select-student-id").append(newOption);
+                            });
+                            db.close();
+                        });
+
+                        $("#removeStudentClass-select-class-name-form").hide();
+                        $("#removeStudentClass-select-student-form").show();
+                      });
+                    
+
+                      function removeStudentClassRecord(callback) // Get values from create-class-form and insert
+                      {
+                        var studentDBID = $('#removeStudentClass-select-student-id').val();
+                        var classID = $('#removeStudentClass-select-class-name').val();
+
+                        if (DEBUG)
+                        {
+                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        }
+                        else
+                        {
+                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                        }
+                       
+                        db.serialize(function() 
+                        {
+                            db.prepare("DELETE FROM studentClasses WHERE studentRefDBID = ? AND classRefID = ?").run(studentDBID, classID).finalize();
+
+                            // I don't think I need to do any reload here      
+                        
+                            db.close();    
+                        });
+
+                        callback(); // Load the reset form here (I hope)
+                      }
+
+                      // Update the student class entry in the database
+                      $('#removeStudentClass-select-student-form').submit(function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+                        
+                        removeStudentClassRecord(
+                          function () 
+                          {
+                            resetRemoveStudentClassForms()
+                          }); // Call out updateStudentClassRecord function
+                      });
+                    </script>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+    </section>
+</template>

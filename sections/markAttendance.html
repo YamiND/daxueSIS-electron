@@ -1,0 +1,237 @@
+<template class="section-template">
+    <section id="markAttendance" class="wrapper">
+       <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Mark Student Attendance</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <div id="form-content"></div>
+                    <form id="markAttendance-select-class-name-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Class to Mark Attendance</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <select class="classNameSelect" name="markAttendance-select-class-name" id="markAttendance-select-class-name">
+                                <script>
+                                  if (DEBUG)
+                                  {
+                                    var db = new sqlite3.Database('sqlite/daxuesis.db')  ;
+                                  }
+                                  else
+                                  {
+                                    var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                                  }
+                                  
+                                  db.each("SELECT classID, className FROM classes", 
+                                  function(err, row) 
+                                  {   
+                                      var newOption = new Option(row.className, row.classID, false, false);
+                                      $("#markAttendance-select-class-name").append(newOption);
+                                      
+                                  });
+                                </script>
+                              </select>
+                        </div>
+                      </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success" id="markAttendance-select-class-name-btn">Next</button>
+                        </div>
+                      </div>
+                    </form>
+
+                  <div id="markAttendance-showHideDiv">
+                    <form id="markAttendance-select-attendance-form" class="form-horizontal form-label-left">
+                    <table id="markAttendance-student-table" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                      <thead>
+                          <tr>
+                              <th>Attended: <input type="checkbox" name="select_all" value="1" id="markAttendance-select-all"></th>
+                              <th>Student ID</th>
+                              <th>Student Name</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <script>
+                              var markAttendanceStudentTable = $('#markAttendance-student-table').DataTable({
+                                'columnDefs': [{
+                                                'targets': 0,
+                                                'searchable': false,
+                                                'orderable': false,
+                                                'className': 'dt-body-center',
+                                              }],
+                                              'order': [[1, 'asc']]
+                                });
+
+                                // Handle click on "Select all" control
+                                $('#markAttendance-select-all').on('click', function(){
+                                    // Get all rows with search applied
+                                    var rows = markAttendanceStudentTable.rows({ 'search': 'applied' }).nodes();
+                                    // Check/uncheck checkboxes for all rows in the table
+                                    $('input[type="checkbox"]', rows).prop('checked', this.checked);
+                                });
+
+                                // Handle click on checkbox to set state of "Select all" control
+                                $('#markAttendance-student-table tbody').on('change', 'input[type="checkbox"]', function(){
+                                    // If checkbox is not checked
+                                    if(!this.checked){
+                                      var el = $('#markAttendance-select-all').get(0);
+                                      // If "Select all" control is checked and has 'indeterminate' property
+                                      if(el && el.checked && ('indeterminate' in el)){
+                                          // Set visual state of "Select all" control
+                                          // as 'indeterminate'
+                                          el.indeterminate = true;
+                                      }
+                                    }
+                                });
+
+                          </script>
+                        
+                        </tbody>
+                      </table>
+                      
+                        <div class="ln_solid"></div>
+                        <div class="form-group">
+                          <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                            <button type="button" class="btn btn-primary" onclick="resetMarkAttendance()">Change Class</button>
+                            <button type="submit" class="btn btn-success" name="markAttendanceButton">Apply Attendance</button>
+                          </div>
+                        </div>
+                    </form>
+                  </div>
+
+                    
+                    <script>
+
+                      function resetMarkAttendance()
+                      {
+                        // Reset our form values, hide the form, and show the form
+                        $("#markAttendance-showHideDiv").hide();
+
+                        $('#markAttendance-select-class-name').val([]).trigger('change');
+                        $("#markAttendance-select-class-name-form").show();
+                      }
+
+                      $(document).ready(function() 
+                      {  
+                        $("#markAttendance-showHideDiv").hide();
+                      });
+
+                      // Pass the data from the old form to the new form and populate it
+                      $('#markAttendance-select-class-name-form').submit(
+                      function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+                        
+                        var classID = $('#markAttendance-select-class-name').val();
+
+                        if (!classID)
+                        {
+                          // If classID is unselected, leave the function early
+                          return -1;
+                        }
+                        
+                        if (DEBUG)
+                        {
+                          var db = new sqlite3.Database('sqlite/daxuesis.db');
+                        }
+                        else
+                        {
+                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                        }
+
+                        db.serialize(function() 
+                        {
+                          $("#markAttendance-select-class-name").empty();
+                          db.each("SELECT studentDBID, studentID, studentEnglishName FROM students INNER JOIN studentClasses ON students.studentDBID = studentClasses.studentRefDBID WHERE students.studentDBID IN ( SELECT students.studentDBID FROM students, studentClasses WHERE studentClasses.studentRefDBID = students.studentDBID AND studentClasses.classRefID = ?) AND studentClasses.classRefID = ?", classID, classID,  
+                            function(err, row) 
+                            {
+                              $("#markAttendance-student-table").DataTable().row.add( [ '<input type="checkbox" name="markAttendanceCheckbox[]" value="' + $('<div/>').text(row.studentDBID).html() + '">', row.studentID, row.studentEnglishName ] ).draw( false );
+                            });
+                            db.close();
+                        });
+
+                        $("#markAttendance-select-class-name-form").hide();
+                        $("#markAttendance-showHideDiv").show();
+                      });
+                    
+
+                    
+                      $('#markAttendance-select-attendance-form').submit(function(e)
+                      {
+                        e.preventDefault();
+
+                        var currentDate = new Date();
+                        var fullDate = currentDate.getFullYear() + "-" + currentDate.getMonth() + "-" + currentDate.getDate();
+
+                        $("input:checkbox:not(:checked)").each(function ()
+                        {
+                          var studentHereDBID = $(this).attr("value");
+                          
+                          // STUDENTS WHO WERE NOT HERE GET DENIED
+                          /*if (DEBUG)
+                          {
+                            var db = new sqlite3.Database('sqlite/daxuesis.db');
+                          }
+                          else
+                          {
+                            var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                          }
+                        
+                          db.serialize(function() 
+                          {
+                              db.prepare("INSERT INTO studentAttendance (studentRefDBID, classRefID, attendanceDate, attendedClass) VALUES (?, ?, ?, ?)").run(studentDBID, classID).finalize();
+
+                              // I don't think I need to do any reload here      
+                          
+                              db.close();    
+                          });*/
+
+                        });
+                        //var data = markAttendanceStudentTable.$('input[type="checkbox"]').serialize();
+                        $("input:checked").each(function () 
+                        {
+                           // STUDENTS WHO WERE HERE GET ACCEPTANCE
+                          var studentHereDBID = $(this).attr("value");
+                          
+                          
+                          /*if (DEBUG)
+                          {
+                            var db = new sqlite3.Database('sqlite/daxuesis.db');
+                          }
+                          else
+                          {
+                            var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                          }
+                        
+                          db.serialize(function() 
+                          {
+                              db.prepare("INSERT INTO studentAttendance (studentRefDBID, classRefID, attendanceDate, attendedClass) VALUES (?, ?, ?, ?)").run(studentDBID, classID).finalize();
+
+                              // I don't think I need to do any reload here      
+                          
+                              db.close();    
+                          });*/
+
+                      });
+                       
+                      });
+
+                    </script>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+    </section>
+</template>

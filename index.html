@@ -13,6 +13,9 @@
     <link rel="import" href="sections/index.html">
     <link rel="import" href="sections/home.html">
 
+    <!-- Attendance - Work In Progress - -->
+    <link rel="import" href="sections/markAttendance.html">
+
     <!-- Teacher Links - Work In Progress - -->
     <link rel="import" href="sections/addStudentClass.html">
     <link rel="import" href="sections/removeStudentClass.html">
@@ -111,7 +114,15 @@
                           <li><a id="index-menu" data-section="index" href="#">Index</a></li>
                           <li><a id="home-menu" data-section="home" href="#">Dashboard</a></li>
                         </ul>
-                      </li>         
+                      </li>  
+                      
+                      <li><a><i class="fa fa-calendar"></i> Attendance <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a id="markAttendance-menu" data-section="markAttendance" href="#">Mark Attendance</a></li>
+                          <li><a id="viewAttendance-menu" data-section="viewAttendance" href="#">View Attendance</a></li>
+                        </ul>
+                      </li>
+
                       <li><a><i class="fa fa-university"></i> Classes <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a id="createClass-menu" data-section="createClass" href="#">Create Class</a></li>
@@ -121,7 +132,6 @@
                         </ul>
                       </li>
 
-                      <!-- Not Done yet -->
                       <li><a><i class="fa fa-users"></i> Teacher <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a id="addStudentClass-menu" data-section="addStudentClass" href="#">Add Student to Class</a></li>

@@ -29,10 +29,12 @@
     "datatables.net-buttons": "^1.4.2",
     "datatables.net-buttons-bs": "^1.4.2",
     "datatables.net-responsive-bs": "^2.2.0",
+    "daterangepicker": "^2.1.25",
     "ejs": "^2.5.1",
     "electron-config": "^0.2.1",
     "font-awesome": "^4.7.0",
     "jquery": "^3.2.1",
+    "papaparse": "^4.3.6",
     "select2": "^4.0.6-rc.0",
     "sqlite3": "^3.1.13"
   }

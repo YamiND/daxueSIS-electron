@@ -297,10 +297,24 @@
         require('select2/dist/js/select2.full.min.js')();
       </script>
     
-      
+      <!-- Date Range Picker -->
+      <script>
+        require('daterangepicker');
+      </script>  
+
       <script>
         $(document).ready(function() 
         {
+
+          $('#markAttendance-date-select').daterangepicker(
+            {
+              locale: {
+                format: 'YYYY-MM-DD'
+                    },
+                singleDatePicker: true,
+              }, function(start) {
+                console.log(start);
+            });
 
           /* Assign Student to Class - Select Student */
           $(".assignStudentClassSelect").select2({

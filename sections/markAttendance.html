@@ -124,6 +124,8 @@
 
                         $('#markAttendance-select-class-name').val([]).trigger('change');
                         $("#markAttendance-select-class-name-form").show();
+
+                        $("#markAttendance-student-table").DataTable().clear();
                       }
 
                       $(document).ready(function() 
@@ -159,17 +161,17 @@
                         {
                           // SELECT studentDBID, studentID, studentEnglishName, studentAttendance.attendedClass FROM students LEFT JOIN studentAttendance ON students.studentDBID = studentAttendance.studentRefDBID INNER JOIN studentClasses ON students.studentDBID = studentClasses.studentRefDBID WHERE students.studentDBID IN ( SELECT students.studentDBID FROM students, studentClasses WHERE studentClasses.studentRefDBID = students.studentDBID AND studentClasses.classRefID = 1) AND studentClasses.classRefID = 1
                           //$("#markAttendance-select-class-name").empty();
-                          db.each("SELECT studentDBID, studentID, studentEnglishName, studentAttendance.attendedClass FROM students LEFT JOIN studentAttendance ON students.studentDBID = studentAttendance.studentRefDBID AND studentAttendance.attendanceDate = ? INNER JOIN studentClasses ON students.studentDBID = studentClasses.studentRefDBID WHERE students.studentDBID IN ( SELECT students.studentDBID FROM students, studentClasses WHERE studentClasses.studentRefDBID = students.studentDBID AND studentClasses.classRefID = ?) AND studentClasses.classRefID = ?", attendanceSelectedDate, classID, classID,  
+                          db.each("SELECT studentDBID, studentID, studentEnglishName, studentAttendance.attendedClass, studentAttendance.attendanceID FROM students LEFT JOIN studentAttendance ON students.studentDBID = studentAttendance.studentRefDBID AND studentAttendance.attendanceDate = ? INNER JOIN studentClasses ON students.studentDBID = studentClasses.studentRefDBID WHERE students.studentDBID IN ( SELECT students.studentDBID FROM students, studentClasses WHERE studentClasses.studentRefDBID = students.studentDBID AND studentClasses.classRefID = ?) AND studentClasses.classRefID = ?", attendanceSelectedDate, classID, classID,  
                             function(err, row) 
                             { 
-                              if (row.attendedClass == null)
+                              if (row.attendedClass == null || row.attendedClass == "0")
                               {
                                 //console.log(row.studentDBID + " does not have an attendance record for: " + attendanceSelectedDate);
-                                $("#markAttendance-student-table").DataTable().row.add( [ '<input type="checkbox" value="' + $('<div/>').text(row.studentDBID).html() + '">', row.studentID, row.studentEnglishName ] ).draw( false );
+                                $("#markAttendance-student-table").DataTable().row.add( [ '<input class="markAttendanceTable-attendedClassCheckbox" type="checkbox" value="' + $('<div/>').text(row.studentDBID + "," + row.attendanceID).html() + '">', row.studentID, row.studentEnglishName ] ).draw( false );
                               }
                               else
                               {
-                                $("#markAttendance-student-table").DataTable().row.add( [ '<input type="checkbox" value="' + $('<div/>').text(row.studentDBID).html() + '" checked>', row.studentID, row.studentEnglishName ] ).draw( false );
+                                $("#markAttendance-student-table").DataTable().row.add( [ '<input class="markAttendanceTable-attendedClassCheckbox" type="checkbox" value="' + $('<div/>').text(row.studentDBID + "," + row.attendanceID).html() + '" checked>', row.studentID, row.studentEnglishName ] ).draw( false );
                               }
                             });
                             db.close();
@@ -197,23 +199,33 @@
 
                         db.serialize(function() 
                         {
-                          $("input[type=checkbox]").each(function ()
+                          $(".markAttendanceTable-attendedClassCheckbox").each(function ()
                           {
                             var studentHereCheckbox = this.checked;
-                            var studentDBID = $(this).attr("value");
+                            var checkboxArray = $(this).attr("value").split(",");
+                            var studentDBID = checkboxArray[0];
+                            var attendanceID = checkboxArray[1];
+                            //console.log(checkboxArray);
+                            //console.log(attendanceID);
+                          //console.log("Attendance ID: " + attendanceID + ", Student ID: " + studentDBID + " , Was Here: " + studentHereCheckbox + ", Class ID: " + classID + ", Attendance Date: " + attendanceSelectedDate);
 
-                            console.log("Student ID: " + studentDBID + " , Was Here: " + studentHereCheckbox);
-
-                            //db.run("UPDATE studentAttendance SET attendedClass = ? WHERE studentRefDBID = ? AND classRefID = ? AND attendanceDate = ?", studentHereCheckbox, studentDBID, classID, attendanceSelectedDate); 
-                            //TODO: Fix this to make it an upsert-like action
-                            db.prepare("INSERT OR REPLACE INTO studentAttendance (attendanceID, studentRefDBID, classRefID, attendanceDate, attendedClass) VALUES ( (SELECT attendanceID FROM studentAttendance WHERE studentRefDBID = ? AND classRefID = ?) ?, ?, ?, ?)").run(studentDBID, classID, studentDBID, classID, attendanceSelectedDate, studentHereCheckbox).finalize();   
-                                 
+                            if (attendanceID == "null")
+                            {
+                              //console.log("ATTENDANCE ID IS NULL");
+                              db.prepare("INSERT INTO studentAttendance (studentRefDBID, classRefID, attendanceDate, attendedClass) VALUES (?, ?, ?, ?)").run(studentDBID, classID, attendanceSelectedDate, studentHereCheckbox).finalize(); 
+                            }
+                            else
+                            {
+                              //console.log("ATTENDANCE ID IS NOT NULL");
+                              db.prepare("UPDATE studentAttendance SET attendedClass = ? WHERE attendanceID = ?").run(studentHereCheckbox, attendanceID).finalize(); 
+                            } 
+                            
                           });
-
-                          db.close(); 
                         });
+                        db.close();
+                        resetMarkAttendance();
                       });
-
+                      
                     </script>
 
                   </div>

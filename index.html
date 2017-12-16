@@ -15,6 +15,7 @@
 
     <!-- Attendance - Work In Progress - -->
     <link rel="import" href="sections/markAttendance.html">
+    <link rel="import" href="sections/viewAttendance.html">
 
     <!-- Teacher Links - Work In Progress - -->
     <link rel="import" href="sections/addStudentClass.html">
@@ -312,9 +313,15 @@
                 format: 'YYYY-MM-DD'
                     },
                 singleDatePicker: true,
-              }, function(start) {
-                console.log(start);
-            });
+              });
+
+            $('#viewAttendance-date-select').daterangepicker(
+            {
+              locale: {
+                format: 'YYYY-MM-DD'
+                    },
+                singleDatePicker: true,
+              });
 
           /* Assign Student to Class - Select Student */
           $(".assignStudentClassSelect").select2({

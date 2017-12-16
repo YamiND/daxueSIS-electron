@@ -31,6 +31,8 @@ function createDatabase(callback)
                               "PRAGMA foreign_keys = off;","BEGIN TRANSACTION;",
                               "DROP TABLE IF EXISTS classes;",
                               "CREATE TABLE classes (classID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, className VARCHAR (45) NOT NULL, classDay INT NOT NULL, classPeriod INT NOT NULL);",
+                              "DROP TABLE IF EXISTS studentAttendance;",
+                              "CREATE TABLE studentAttendance (attendanceID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, studentRefDBID INTEGER REFERENCES students (studentDBID) ON DELETE CASCADE, classRefID INTEGER REFERENCES classes (classID) ON DELETE CASCADE, attendanceDate DATE, attendedClass BOOLEAN);",
                               "DROP TABLE IF EXISTS studentClasses;",
                               "CREATE TABLE studentClasses (studentRefID INT REFERENCES students (studentID) ON DELETE CASCADE, classRefID INTEGER REFERENCES classes (classID) ON DELETE CASCADE);",
                               "DROP TABLE IF EXISTS studentMajors;",

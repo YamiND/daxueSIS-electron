@@ -1,0 +1,17 @@
+TODO List
+
+Save DB File to the Flash Drive
+	Perhaps I should use a file dialog if it can't find the DB
+	Maybe have it choose the location and read that from a saved config?
+
+
+Self Attendance
+	Students should be able to select their ID (or Name?) from Class List
+	  This mode the date should be prefilled to today's date 
+	  Record the time that the student logged themselves as attended 
+		This can be a NULL in the DB for the Admin mode
+
+Assignments/Grading
+	*Sigh* I should implement an assignments/grading mode into this
+
+Weight System (Sadface)

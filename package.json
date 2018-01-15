@@ -8,7 +8,8 @@
   "scripts": {
     "start": "electron .",
     "rebuild": "electron-rebuild -f -w sqlite3, select2",
-    "build-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/daxuesis.icns --prune=true --out=release-builds"
+    "build-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/daxuesis.icns --prune=true --out=release-builds",
+    "build-win": "electron-packager . --overwrite --platform=win32 --arch=x64 --icon=assets/icons/windowsIcon.ico --prune=true --out=release-builds --version-string.CompanyName=\"Yami Tech\" --version-string.FileDescription=\"Windows Build of DaXueSIS\" --version-string.ProductName=\"DaXueSIS\""
   },
   "keywords": [
     "SIS"

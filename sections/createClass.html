@@ -26,13 +26,13 @@
                           </label>
                           <div class="col-md-6 col-sm-6 col-xs-12">
                             <select class="createClassDaySelect" name="create-class-days" id="create-class-days" multiple="multiple">
-                              <option value="1">Sunday</option>   
-                              <option value="2">Monday</option>
-                              <option value="4">Tuesday</option>
-                              <option value="8">Wednesday</option>
-                              <option value="16">Thursday</option>
-                              <option value="32">Friday</option>
-                              <option value="64">Saturday</option>
+                              <option value="1">Monday</option>
+                              <option value="2">Tuesday</option>
+                              <option value="4">Wednesday</option>
+                              <option value="8">Thursday</option>
+                              <option value="16">Friday</option>
+                              <option value="32">Saturday</option>
+                              <option value="64">Sunday</option> 
                             </select>
                           </div>
                         </div>
@@ -243,47 +243,50 @@
                               var days = [];
                               var listOfDays = row.classDay;
                               
-                              var hasSun = listOfDays & 1;
-                              var hasMon = listOfDays & 2;
-                              var hasTue = listOfDays & 4;
-                              var hasWed = listOfDays & 8;
-                              var hasThu = listOfDays & 16;
-                              var hasFri = listOfDays & 32;
-                              var hasSat = listOfDays & 64;
                               
-                              if (hasSun)
+                              // Figure out what days the class has
+                              var hasMon = listOfDays & 1;
+                              var hasTue = listOfDays & 2;
+                              var hasWed = listOfDays & 4;
+                              var hasThu = listOfDays & 8;
+                              var hasFri = listOfDays & 16;
+                              var hasSat = listOfDays & 32;
+                              var hasSun = listOfDays & 64;
+                             
+                              // Check to see what days a class has and push result to array
+                              if (hasMon)
                               {
-                                  days.push("Sunday");
-                              }
-
-                              if (hasSat)
-                              {
-                                  days.push("Saturday");
-                              }
-
-                              if (hasFri)
-                              {
-                                  days.push("Friday");
-                              }
-
-                              if (hasThu)
-                              {
-                                  days.push("Thursday");
-                              }
-
-                              if (hasWed)
-                              {
-                                  days.push("Wednesday");
+                                  days.push("1");
                               }
 
                               if (hasTue)
                               {
-                                  days.push("Tuesday");
+                                  days.push("2");
                               }
 
-                              if (hasMon)
+                              if (hasWed)
                               {
-                                  days.push("Monday");
+                                  days.push("4");
+                              }
+
+                              if (hasThu)
+                              {
+                                  days.push("8");
+                              }
+
+                              if (hasFri)
+                              {
+                                  days.push("16");
+                              }
+
+                              if (hasSat)
+                              {
+                                  days.push("32");
+                              }
+
+                              if (hasSun)
+                              {
+                                  days.push("64");
                               }
 
                               $("#viewClassesTable").DataTable().row.add( [ row.className, days.toString(), classStartPeriod, classEndPeriod ] ).draw( false );

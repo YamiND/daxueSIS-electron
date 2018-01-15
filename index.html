@@ -69,10 +69,11 @@
     <link href="node_modules/select2/dist/css/select2.min.css" rel="stylesheet">
 
     <script>
-      const DEBUG = true;
+      const DEBUG = false;
       const sqlite3 = require('sqlite3').verbose();
       const path = require('path');
       const app = require('electron').remote.app;
+      const appDir = path.dirname(require.main.filename);
     </script>
   </head>
   
@@ -394,7 +395,8 @@
           }
           else
           {
-            var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+           // var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+           var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
           }
 
           db.serialize(function() 

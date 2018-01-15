@@ -4,7 +4,10 @@ const app = electron.app;
 var path = require('path');
 var fs = require('fs');
 
-const DEBUG = true;
+var appDir = path.dirname(require.main.filename);
+console.log(appDir);
+
+const DEBUG = false;
 
 function checkDirectorySync(directory) {  
   try {
@@ -14,15 +17,19 @@ function checkDirectorySync(directory) {
   }
 }
 
+
+
+
 function createDatabase(callback)
 {
   callback();
 
-  if (!fs.existsSync(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"))) 
+  //if (!fs.existsSync(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"))) 
+  if (!fs.existsSync(path.join(appDir, "sqlite", "daxuesis.db"))) 
   {
     var sqlite3 = require('sqlite3').verbose();
-    let db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"), sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, function(err) {
-
+    //let db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"), sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, function(err) {
+    let db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"), sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, function(err) {
       if (err) console.log(err.message);
       
       db.serialize(function() 
@@ -84,7 +91,9 @@ function createWindow () {
     minHeight: 800,
     show: false,
     icon: path.join(__dirname, 'assets/icons/daxuesis.icns')
+
   })
+
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`)
@@ -109,7 +118,8 @@ function createWindow () {
   
   if (!DEBUG)
   {
-    createDatabase(function () {checkDirectorySync(path.join(app.getPath("userData"), "sqlite"))}); // Check if sqlite dir exists 
+    //createDatabase(function () {checkDirectorySync(path.join(app.getPath("userData"), "sqlite"))}); // Check if sqlite dir exists 
+    createDatabase(function () {checkDirectorySync(path.join(appDir, "sqlite"))}); // Check if sqlite dir exists 
   }
 }
 

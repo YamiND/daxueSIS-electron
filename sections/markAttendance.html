@@ -25,7 +25,8 @@
                                   }
                                   else
                                   {
-                                    var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                                    var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                                    //var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
                                   }
                                   
                                   db.each("SELECT classID, className FROM classes", 
@@ -154,7 +155,8 @@
                         }
                         else
                         {
-                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                          var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                          //var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
                         }
 
                         db.serialize(function() 
@@ -194,7 +196,8 @@
                         }
                         else
                         {
-                          var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
+                          var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                         // var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
                         }
 
                         db.serialize(function() 

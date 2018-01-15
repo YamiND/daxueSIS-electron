@@ -100,16 +100,8 @@
                           return pv + (parseFloat(cv)||0);
                         },0);
 
-                        if (DEBUG)
-                        {
-                          var db = new sqlite3.Database('sqlite/daxuesis.db');
-                        }
-                        else
-                        {
-                         // var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
-                         var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
-                        }  
-                        
+                        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                                        
                         db.serialize(function() 
                         {       
                           db.prepare("INSERT INTO classes (className, classDay, classPeriod) VALUES (?, ?, ?)").run(className, classDaysSum, classPeriodsSum).finalize();

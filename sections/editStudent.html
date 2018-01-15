@@ -19,15 +19,9 @@
                         <div class="col-md-9 col-sm-9 col-xs-12">
                             <select class="editStudentNameSelect" name="edit-select-student-id" id="edit-select-student-id">
                                 <script>
-                                  if (DEBUG)
-                                  {
-                                    var db = new sqlite3.Database('sqlite/daxuesis.db')  ;
-                                  }
-                                  else
-                                  {
-                                    var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
-                                    //var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
-                                  }
+                                  
+                                  var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                                   
 
                                   db.serialize(function() 
                                   {
@@ -76,15 +70,9 @@
                             <div class="col-md-6 col-sm-6 col-xs-12">
                                 <select class="editStudentMajorSelect" name="edit-student-major-id" id="edit-student-major-id">
                                     <script>
-                                        if (DEBUG)
-                                        {
-                                          var db = new sqlite3.Database('sqlite/daxuesis.db');
-                                        }
-                                        else
-                                        {
-                                          var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
-                                          //var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
-                                        }
+                                        
+                                        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                                          
         
                                         db.serialize(function() 
                                         {
@@ -107,15 +95,9 @@
                             <div class="col-md-6 col-sm-6 col-xs-12">
                               <select class="editStudentSkillLevelSelect" name="edit-student-skill-level-id" id="edit-student-skill-level-id">
                                 <script>
-                                  if (DEBUG)
-                                  {
-                                    var db = new sqlite3.Database('sqlite/daxuesis.db');
-                                  }
-                                  else
-                                  {
-                                    var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
-                                   // var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
-                                  }
+                                  
+                                  var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                                   
   
                                   db.serialize(function() 
                                   {
@@ -173,15 +155,9 @@
                             return -1;
                           }
                           
-                          if (DEBUG)
-                          {
-                            var db = new sqlite3.Database('sqlite/daxuesis.db');
-                          }
-                          else
-                          {
-                            var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
-                            //var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
-                          }
+                          
+                          var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                            
 
                           db.serialize(function() 
                           {
@@ -232,15 +208,9 @@
 
                         var studentSkillLevelID = $('#edit-student-skill-level-id').val();
 
-                        if (DEBUG)
-                        {
-                          var db = new sqlite3.Database('sqlite/daxuesis.db');
-                        }
-                        else
-                        {
-                          var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
-                         // var db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"));
-                        }
+                        
+                        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                         
                        
                         db.serialize(function() 
                         {

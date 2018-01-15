@@ -7,7 +7,7 @@ var fs = require('fs');
 var appDir = path.dirname(require.main.filename);
 console.log(appDir);
 
-const DEBUG = false;
+const DEBUG = true;
 
 function checkDirectorySync(directory) {  
   try {
@@ -28,7 +28,7 @@ function createDatabase(callback)
   if (!fs.existsSync(path.join(appDir, "sqlite", "daxuesis.db"))) 
   {
     var sqlite3 = require('sqlite3').verbose();
-    //let db = new sqlite3.Database(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"), sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, function(err) {
+    
     let db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"), sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, function(err) {
       if (err) console.log(err.message);
       
@@ -97,9 +97,12 @@ function createWindow () {
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`)
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
 
+  if (DEBUG)
+  {
+    // Open the DevTools in Debug mode.
+    mainWindow.webContents.openDevTools()
+  }
 
   // Show the mainwindow when it is loaded and ready to show
   mainWindow.once('ready-to-show', () => {

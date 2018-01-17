@@ -5,7 +5,6 @@ var path = require('path');
 var fs = require('fs');
 
 var appDir = path.dirname(require.main.filename);
-console.log(appDir);
 
 const DEBUG = true;
 

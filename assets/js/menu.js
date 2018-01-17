@@ -21,7 +21,7 @@ function(n) {
         document.body.addEventListener('click', function (event) {
           if (event.target.dataset.section) {
             navigation.menu.hideAllSections()
-            navigation.menu.showSection(event)
+            navigation.menu.showSection(event) 
           }
         })
       },
@@ -29,7 +29,7 @@ function(n) {
       showSection: function(event) {
         const sectionId = event.target.dataset.section
         $('#' + sectionId).show()
-        $('#' + sectionId + ' section').show()
+        $('#' + sectionId + ' section').show() 
       },
 
       showStartSection: function() {

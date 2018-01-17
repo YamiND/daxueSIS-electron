@@ -24,6 +24,7 @@
     "electron-rebuild": "^1.6.0"
   },
   "dependencies": {
+    "bcrypt": "^1.0.3",
     "bootstrap": "^3.3.7",
     "datatables.net": "^1.10.16",
     "datatables.net-bs": "^1.10.16",

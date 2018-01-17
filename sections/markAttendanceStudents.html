@@ -13,136 +13,116 @@
                   <div class="x_content">
                     <br />
                     <div id="form-content"></div>
-                    <form id="markAttendance-select-class-name-form" class="form-horizontal form-label-left">
+                    <form id="markAttendanceStudents-select-class-name-form" class="form-horizontal form-label-left">
                       <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Class to Mark Attendance</label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <select class="classNameSelect" name="markAttendance-select-class-name" id="markAttendance-select-class-name">
+                            <select class="classNameSelect" name="markAttendanceStudents-select-class-name" id="markAttendanceStudents-select-class-name">
                                 <script>
                                   
-                                    var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
-                                    
+                                  /* 
+                                    Extra Notes:
 
+                                    I would have selected the class based on the time, but classroom computer times are often wrong
+                                    I know the date could also be messed up, but I haven't had that happen yet
+
+                                    This is how I could do it in the future if I could trust the classroom computer time
+                                    var dt = new Date();
+
+                                    console.log(dt.getHours() + ":" + dt.getMinutes());
+                                  */
+                      
                                   var currentDay = new Date().getDay();
+                                  var currentDayBinary = Math.pow(2,currentDay - 1); // Convert the day into binary to select it
 
-                                  var currentDayBinary = Math.pow(2,currentDay); // Convert the day into binary to select it
-
-                                  console.log(currentDayBinary);
+                                  /*console.log("Current Day: " + currentDay);
+                                  console.log("Binary of Current Day: " + currentDayBinary);
+                                  */
                                   
+                                  var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));  
+
                                   db.each("SELECT classID, className FROM classes WHERE classDay &?", currentDayBinary,
                                   function(err, row) 
                                   {   
                                       var newOption = new Option(row.className, row.classID, false, false);
-                                      $("#markAttendance-select-class-name").append(newOption);
+                                      $("#markAttendanceStudents-select-class-name").append(newOption);
                                       
                                   });
                                 </script>
                               </select>
                         </div>
                       </div>
-                      <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="markAttendance-date-select">Attendance Date <span class="required">*</span>
-                        </label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" class="form-control has-feedback-left" id="markAttendance-date-select" name="markAttendance-date-select" placeholder="Select Attendance Date">
-                          <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
-                        </div>
-                      </div>
 
                       <div class="ln_solid"></div>
                       <div class="form-group">
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
-                          <button type="submit" class="btn btn-success" id="markAttendance-select-class-name-btn">Next</button>
+                          <button type="submit" class="btn btn-success" id="markAttendanceStudents-select-class-name-btn">Next</button>
                         </div>
                       </div>
                     </form>
 
                 
-                    <form id="markAttendance-select-attendance-form" class="form-horizontal form-label-left">
-                      <table id="markAttendanceStudents-student-table" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-                        <thead>
-                          <tr>
-                              <th>Attended: <input type="checkbox" name="select_all" value="1" id="markAttendance-select-all"></th>
-                              <th>Student ID</th>
-                              <th>Student Name</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <script>
-                              var markAttendanceStudentTable = $('#markAttendance-student-table').DataTable({
-                                "pageLength": 100,
-                                'columnDefs': [{
-                                                'targets': 0,
-                                                'searchable': false,
-                                                'orderable': false,
-                                                'className': 'dt-body-center',
-                                              }],
-                                              'order': [[1, 'asc']]
-                                });
-
-                                // Handle click on "Select all" control
-                                $('#markAttendance-select-all').on('click', function(){
-                                    // Get all rows with search applied
-                                    var rows = markAttendanceStudentTable.rows({ 'search': 'applied' }).nodes();
-                                    // Check/uncheck checkboxes for all rows in the table
-                                    $('input[type="checkbox"]', rows).prop('checked', this.checked);
-                                });
-
-                                // Handle click on checkbox to set state of "Select all" control
-                                $('#markAttendance-student-table tbody').on('change', 'input[type="checkbox"]', function(){
-                                    // If checkbox is not checked
-                                    if(!this.checked){
-                                      var el = $('#markAttendance-select-all').get(0);
-                                      // If "Select all" control is checked and has 'indeterminate' property
-                                      if(el && el.checked && ('indeterminate' in el)){
-                                          // Set visual state of "Select all" control
-                                          // as 'indeterminate'
-                                          el.indeterminate = true;
-                                      }
-                                    }
-                                });
-
-                          </script>
-                        
-                        </tbody>
-                      </table>
+                    <form id="markAttendanceStudents-select-attendance-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Student to Mark Attendance</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <select class="studentNameSelect" name="markAttendanceStudents-select-student-name" id="markAttendanceStudents-select-student-name" multiple="multiple">
+                                <script>
+                                  
+                                  /* 
+                                    Student list will be generated from the class select form
+                                  */
+                                  
+                                </script>
+                              </select>
+                        </div>
+                      </div>
                       
                       <div class="ln_solid"></div>
                       <div class="form-group">
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
-                          <button type="button" class="btn btn-primary" onclick="resetMarkAttendance()">Change Class</button>
-                          <button type="submit" class="btn btn-success" name="markAttendanceButton">Apply Attendance</button>
+                          <button type="button" class="btn btn-primary" onclick="resetMarkAttendanceStudents()">Change Class</button>
+                          <button type="submit" class="btn btn-success" name="markAttendanceStudentsButton">Apply Attendance</button>
                         </div>
                       </div>
                     </form>
 
                     <script>
 
-                      function resetMarkAttendance()
+                      function resetMarkAttendanceStudents()
                       {
                         // Reset our form values, hide the form, and show the form
-                        $("#markAttendance-select-attendance-form").hide();
+                        $("#markAttendanceStudents-select-attendance-form").hide();
 
-                        $('#markAttendance-select-class-name').val([]).trigger('change');
-                        $("#markAttendance-select-class-name-form").show();
-
-                        $("#markAttendance-student-table").DataTable().clear();
+                        $('#markAttendanceStudents-select-class-name').val([]).trigger('change');
+                        $("#markAttendanceStudents-select-student-name").empty();
+                        $('#markAttendanceStudents-select-student-name').val([]).trigger('change');
+                        $("#markAttendanceStudents-select-class-name-form").show();                 
                       }
 
                       $(document).ready(function() 
                       {  
-                        $("#markAttendance-select-attendance-form").hide();
+                        $("#markAttendanceStudents-select-attendance-form").hide();
                       });
 
                       // Pass the data from the old form to the new form and populate it
-                      $('#markAttendance-select-class-name-form').submit(
+                      $('#markAttendanceStudents-select-class-name-form').submit(
                       function(e)
-                      {
+                      {                    
                         e.preventDefault(); // Prevent Default Submission
                         
-                        var classID = $('#markAttendance-select-class-name').val();
-                        var attendanceSelectedDate = $('#markAttendance-date-select').val();
+                        var classID = $('#markAttendanceStudents-select-class-name').val();
 
+                        // Get current date
+                        var d = new Date();
+                        var month = d.getMonth()+1;
+                        var day = d.getDate();
+
+                        var attendanceDate = d.getFullYear() + '-' +
+                            ((''+month).length<2 ? '0' : '') + month + '-' +
+                            ((''+day).length<2 ? '0' : '') + day;
+
+                        
                         if (!classID)
                         {
                           // If classID is unselected, leave the function early
@@ -156,65 +136,49 @@
                         db.serialize(function() 
                         {
                           // SELECT studentDBID, studentID, studentEnglishName, studentAttendance.attendedClass FROM students LEFT JOIN studentAttendance ON students.studentDBID = studentAttendance.studentRefDBID INNER JOIN studentClasses ON students.studentDBID = studentClasses.studentRefDBID WHERE students.studentDBID IN ( SELECT students.studentDBID FROM students, studentClasses WHERE studentClasses.studentRefDBID = students.studentDBID AND studentClasses.classRefID = 1) AND studentClasses.classRefID = 1
-                          //$("#markAttendance-select-class-name").empty();
-                          db.each("SELECT studentDBID, studentID, studentEnglishName, studentAttendance.attendedClass, studentAttendance.attendanceID FROM students LEFT JOIN studentAttendance ON students.studentDBID = studentAttendance.studentRefDBID AND studentAttendance.attendanceDate = ? INNER JOIN studentClasses ON students.studentDBID = studentClasses.studentRefDBID WHERE students.studentDBID IN ( SELECT students.studentDBID FROM students, studentClasses WHERE studentClasses.studentRefDBID = students.studentDBID AND studentClasses.classRefID = ?) AND studentClasses.classRefID = ?", attendanceSelectedDate, classID, classID,  
+                          //$("#markAttendanceStudents-select-class-name").empty();
+                          db.each("SELECT studentDBID, studentID, studentEnglishName FROM students LEFT JOIN studentAttendance ON students.studentDBID = studentAttendance.studentRefDBID AND studentAttendance.attendanceDate = ? INNER JOIN studentClasses ON students.studentDBID = studentClasses.studentRefDBID WHERE students.studentDBID IN ( SELECT students.studentDBID FROM students, studentClasses WHERE studentClasses.studentRefDBID = students.studentDBID AND studentClasses.classRefID = ?) AND studentClasses.classRefID = ? AND studentAttendance.attendedClass IS NULL", attendanceDate, classID, classID,  
                             function(err, row) 
-                            { 
-                              if (row.attendedClass == null || row.attendedClass == "0")
-                              {
-                                //console.log(row.studentDBID + " does not have an attendance record for: " + attendanceSelectedDate);
-                                $("#markAttendance-student-table").DataTable().row.add( [ '<input class="markAttendanceTable-attendedClassCheckbox" type="checkbox" value="' + $('<div/>').text(row.studentDBID + "," + row.attendanceID).html() + '">', row.studentID, row.studentEnglishName ] ).draw( false );
-                              }
-                              else
-                              {
-                                $("#markAttendance-student-table").DataTable().row.add( [ '<input class="markAttendanceTable-attendedClassCheckbox" type="checkbox" value="' + $('<div/>').text(row.studentDBID + "," + row.attendanceID).html() + '" checked>', row.studentID, row.studentEnglishName ] ).draw( false );
-                              }
+                            {                              
+                              var newOption = new Option(row.studentID + " - " + row.studentEnglishName, row.studentDBID, false, false);
+                              $("#markAttendanceStudents-select-student-name").append(newOption);
                             });
                             db.close();
                         });
 
-                        $("#markAttendance-select-class-name-form").hide();
-                        $("#markAttendance-select-attendance-form").show();
+                        $("#markAttendanceStudents-select-class-name-form").hide();
+                        $("#markAttendanceStudents-select-attendance-form").show();
                       });
                     
-                      $('#markAttendance-select-attendance-form').submit(function(e)
+                      $('#markAttendanceStudents-select-attendance-form').submit(function(e)
                       {
                         e.preventDefault();
 
-                        var classID = $('#markAttendance-select-class-name').val();
-                        var attendanceSelectedDate = $('#markAttendance-date-select').val();
+                        var classID = $('#markAttendanceStudents-select-class-name').val();
+                        
+                        // Get current date
+                        var d = new Date();
+                        var month = d.getMonth()+1;
+                        var day = d.getDate();
+
+                        var attendanceDate = d.getFullYear() + '-' +
+                            ((''+month).length<2 ? '0' : '') + month + '-' +
+                            ((''+day).length<2 ? '0' : '') + day;
 
                        
-                          var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
                         
 
                         db.serialize(function() 
                         {
-                          $(".markAttendanceTable-attendedClassCheckbox").each(function ()
-                          {
-                            var studentHereCheckbox = this.checked;
-                            var checkboxArray = $(this).attr("value").split(",");
-                            var studentDBID = checkboxArray[0];
-                            var attendanceID = checkboxArray[1];
-                            //console.log(checkboxArray);
-                            //console.log(attendanceID);
-                          //console.log("Attendance ID: " + attendanceID + ", Student ID: " + studentDBID + " , Was Here: " + studentHereCheckbox + ", Class ID: " + classID + ", Attendance Date: " + attendanceSelectedDate);
+                          $("#markAttendanceStudents-select-student-name :selected").each(function(){
+                            var studentDBID = $(this).val();
 
-                            if (attendanceID == "null")
-                            {
-                              //console.log("ATTENDANCE ID IS NULL");
-                              db.prepare("INSERT INTO studentAttendance (studentRefDBID, classRefID, attendanceDate, attendedClass) VALUES (?, ?, ?, ?)").run(studentDBID, classID, attendanceSelectedDate, studentHereCheckbox).finalize(); 
-                            }
-                            else
-                            {
-                              //console.log("ATTENDANCE ID IS NOT NULL");
-                              db.prepare("UPDATE studentAttendance SET attendedClass = ? WHERE attendanceID = ?").run(studentHereCheckbox, attendanceID).finalize(); 
-                            } 
-                            
-                          });
+                            db.prepare("INSERT INTO studentAttendance (studentRefDBID, classRefID, attendanceDate, attendedClass) VALUES (?, ?, ?, ?)").run(studentDBID, classID, attendanceDate, "1").finalize(); 
+                          });     
                         });
                         db.close();
-                        resetMarkAttendance();
+                        resetMarkAttendanceStudents();
                       });
                       
                     </script>

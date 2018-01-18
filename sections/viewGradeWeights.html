@@ -1,0 +1,128 @@
+<template class="section-template">
+    <section id="viewGradeWeights" class="wrapper">
+       <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>View Grade Weights</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <div id="form-content"></div>
+                    <form id="viewGradeWeights-select-class-name-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Class to view Grade Weights</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <select class="classNameSelect" name="viewGradeWeights-select-class-name" id="viewGradeWeights-select-class-name">
+                                <script>
+                                  //$("#edit-select-class-name").empty();
+                                  
+                                    var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                                    
+                                  
+                                  db.each("SELECT classID, className FROM classes", 
+                                  function(err, row) 
+                                  {   
+                                      var newOption = new Option(row.className, row.classID, false, false);
+                                      $("#viewGradeWeights-select-class-name").append(newOption);
+                                      
+                                  });
+                                </script>
+                              </select>
+                        </div>
+                      </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success" id="viewGradeWeights-select-class-name-btn">Next</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <form id="viewGradeWeights-view-gradeWeights-form" class="form-horizontal form-label-left">
+                        <div class="form-group">
+                            <table id="viewGradeWeights-table" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                                    
+                                <thead>
+                                    <tr>
+                                    <th>Grade Weight ID</th>
+                                    <th>Grade Weight Name</th>
+                                    <th>Grade Weight Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <script>
+                                        var viewGradeWeights = $('#viewGradeWeights-table').DataTable({"order": [[ 0, "dsc" ]]});
+                                    </script>
+                                </tbody>
+                            </table>
+                        </div>
+                      
+                        <div class="ln_solid"></div>
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                            <button type="button" class="btn btn-primary" onclick="resetviewGradeWeightsTable()">Switch Class</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <script>
+
+                      function resetviewGradeWeightsTable()
+                      {
+                        // Reset our form values, hide the form, and show the form
+                        $("#viewGradeWeights-view-gradeWeights-form").hide();
+
+                        $('#viewGradeWeights-select-class-name').val([]).trigger('change');
+                        $("#viewGradeWeights-select-class-name-form").show();
+                        $("#viewGradeWeights-table").DataTable().clear().draw();
+                      }
+
+                      $(document).ready(function() 
+                      {  
+                        $("#viewGradeWeights-view-gradeWeights-form").hide();
+                      });
+
+                      // Pass the data from the old form to the new form and populate it
+                      $('#viewGradeWeights-select-class-name-form').submit(
+                      function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+                        
+                        var classID = $('#viewGradeWeights-select-class-name').val();
+
+                        
+                        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                            
+
+                        db.serialize(function() {
+                            $("#viewGradeWeights-table").DataTable().clear();
+
+                            db.each("SELECT gradeWeightID, gradeWeightName, gradeWeightValue FROM gradeWeights WHERE gradeRefClassID = ?", classID, 
+                            function(err, row) 
+                            {   
+                                $("#viewGradeWeights-table").DataTable().row.add( [ row.gradeWeightID, row.gradeWeightName, row.gradeWeightValue ] ).draw( false );
+                            });
+
+                            db.close(); 
+                        });
+
+                        $("#viewGradeWeights-select-class-name-form").hide();
+                        $("#viewGradeWeights-view-gradeWeights-form").show();
+                      });
+                    </script>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+    </section>
+</template>

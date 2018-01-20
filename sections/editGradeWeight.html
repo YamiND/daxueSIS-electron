@@ -1,0 +1,244 @@
+<template class="section-template">
+    <section id="editGradeWeight" class="wrapper">
+       <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Edit Grade Weights</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <div id="form-content"></div>
+                    <form id="editGradeWeight-select-class-name-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Class to edit Grade Weight:</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <select class="classNameSelect" name="editGradeWeight-select-class-name" id="editGradeWeight-select-class-name">
+                                <script>
+                                  //$("#edit-select-class-name").empty();
+                                  
+                                    var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                                    
+                                  
+                                  db.each("SELECT classID, className FROM classes", 
+                                  function(err, row) 
+                                  {   
+                                      var newOption = new Option(row.className, row.classID, false, false);
+                                      $("#editGradeWeight-select-class-name").append(newOption);
+                                      
+                                  });
+                                </script>
+                              </select>
+                        </div>
+                      </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success" id="editGradeWeight-select-class-name-btn">Next</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <form id="editGradeWeight-select-weight-form" class="form-horizontal form-label-left">                
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Weight Value:</label>
+                            <div class="col-md-9 col-sm-9 col-xs-12">
+                                <select class="editGradeWeightSelect" name="editGradeWeight-select-weight-value" id="editGradeWeight-select-weight-value">
+                                    <script>
+                                      //This will be populated from the other form
+                                    </script>
+                                  </select>
+                            </div>
+                        </div>
+
+                        <div class="ln_solid"></div>
+                        <div class="form-group">
+                          <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                            <button type="button" class="btn btn-primary" onclick="resetEditGradeWeightClass()">Switch Class</button>
+                            <button type="submit" class="btn btn-success" id="editGradeWeight-select-weight-btn">Select Grade Weight</button>
+                          </div>
+                        </div>
+                    </form>
+
+                    <form id="editGradeWeight-edit-weight-form" class="form-horizontal form-label-left">
+                        <div class="form-group">
+                          <label class="control-label col-md-3 col-sm-3 col-xs-12" for="editGradeWeight-edit-weight-name">Weight Name <span class="required">*</span>
+                          </label>
+                          <div class="col-md-6 col-sm-6 col-xs-12">
+                            <input type="text" id="editGradeWeight-edit-weight-name" name="editGradeWeight-edit-weight-name" required="required" class="form-control col-md-7 col-xs-12">
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="editGradeWeight-edit-weight-value">Weight Value <span class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="number" id="editGradeWeight-edit-weight-value" name="editGradeWeight-edit-weight-value" required="required" class="form-control col-md-7 col-xs-12">
+                            </div>
+                        </div>
+                       
+                        <div class="ln_solid"></div>
+                        <div class="form-group">
+                          <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                            <button type="button" class="btn btn-primary" onclick="resetEditGradeWeight()">Switch Grade Weight</button>
+                            <button type="submit" class="btn btn-success" id="editGradeWeight-edit-grade-weight-btn">Edit Grade Weight</button>
+                          </div>
+                        </div>
+
+                        <div class="ln_solid"></div>
+                        <div class="form-group">
+                            <table id="editGradeWeight-table" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">        
+                                <thead>
+                                    <tr>
+                                    <th>Grade Weight ID</th>
+                                    <th>Grade Weight Name</th>
+                                    <th>Grade Weight Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <script>
+                                        var editGradeWeightTable = $('#editGradeWeight-table').DataTable({"order": [[ 0, "dsc" ]]});
+                                    </script>
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>               
+
+                    <script>
+
+                      function resetEditGradeWeight()
+                      {
+                        $("#editGradeWeight-edit-weight-form").hide();
+
+                        $('#editGradeWeight-select-weight-value').val([]).trigger('change');
+                        
+
+                        $("#editGradeWeight-select-weight-form").show();
+                      }
+
+                      function resetEditGradeWeightClass()
+                      {
+                        // Reset our form values, hide the form, and show the form
+                        $("#editGradeWeight-select-weight-form").hide();
+
+                        $("#editGradeWeight-select-weight-value").empty();
+                        $('#editGradeWeight-select-class-name').val([]).trigger('change');
+                        $("#editGradeWeight-select-class-name-form").show();
+                        
+                      }
+
+                      $(document).ready(function() 
+                      {  
+                        $("#editGradeWeight-select-weight-form").hide();
+                        $("#editGradeWeight-edit-weight-form").hide();
+                      });
+
+                      // FORM 1 Submission (Selection of the Class)
+                      $('#editGradeWeight-select-class-name-form').submit(
+                      function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+
+                        var classID = $('#editGradeWeight-select-class-name').val();
+
+                        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                            
+                        db.serialize(function() {
+                          
+
+                          db.each("SELECT gradeWeightID, gradeWeightName, gradeWeightValue FROM gradeWeights WHERE gradeRefClassID = ?", classID, 
+                          function(err, row) 
+                          {   
+                              var newOption = new Option(row.gradeWeightName + " - " + row.gradeWeightValue, row.gradeWeightID, false, false);
+                              $("#editGradeWeight-select-weight-value").append(newOption);
+                              
+                          });
+
+                            db.close(); 
+                        });
+
+                        $("#editGradeWeight-select-class-name-form").hide();
+                        $("#editGradeWeight-select-weight-form").show();
+                      });
+
+                      // FORM 2 Submission (Selecting the specific grade weight)
+                      $('#editGradeWeight-select-weight-form').submit(
+                      function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+                        
+                        var classID = $('#editGradeWeight-select-class-name').val();
+                        var gradeWeightID = $('#editGradeWeight-select-weight-value').val();
+
+                        $("#editGradeWeight-table").DataTable().clear().draw();
+
+                        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+
+                        db.serialize(function() 
+                        {       
+                            db.each("SELECT gradeWeightName, gradeWeightValue FROM gradeWeights WHERE gradeWeightID = ?", gradeWeightID, 
+                            function(err, row) 
+                            {   
+                              $('#editGradeWeight-edit-weight-name').val(row.gradeWeightName);
+                              $('#editGradeWeight-edit-weight-value').val(row.gradeWeightValue);
+                                                
+                            });  
+
+                            db.each("SELECT gradeWeightID, gradeWeightName, gradeWeightValue FROM gradeWeights WHERE gradeRefClassID = ?", classID, 
+                            function(err, row)
+                            {
+                              $("#editGradeWeight-table").DataTable().row.add( [ row.gradeWeightID, row.gradeWeightName, row.gradeWeightValue ] ).draw( false );
+                            });
+                        });
+                        db.close()
+                       
+                        $("#editGradeWeight-select-weight-form").hide();
+                        $("#editGradeWeight-edit-weight-form").show();
+                      });
+
+                      // FORM 3 submission (Actually doing the updating)
+                      $('#editGradeWeight-edit-weight-form').submit(
+                      function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+                        //I ONLY HAVE TO DO AN UPDATE STATEMENT
+
+                        var gradeWeightName = $("#editGradeWeight-edit-weight-name").val();
+                        var gradeWeightValue = $("#editGradeWeight-edit-weight-value").val();
+                        var gradeWeightID = $('#editGradeWeight-select-weight-value').val();
+
+                        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+
+                        db.serialize(function() 
+                        {       
+                          db.prepare("UPDATE gradeWeights SET gradeWeightName = ?, gradeWeightValue = ? WHERE gradeWeightID = ?").run(gradeWeightName, gradeWeightValue, gradeWeightID).finalize(); 
+                        });
+                        db.close();
+
+                        $("#editGradeWeight-edit-weight-name").val('');
+                        $("#editGradeWeight-edit-weight-value").val('');
+                        $("#editGradeWeight-select-weight-value").empty();
+                        $('#editGradeWeight-select-class-name').val([]).trigger('change');
+                        
+
+                        $("#editGradeWeight-select-weight-form").hide();
+                        $("#editGradeWeight-edit-weight-form").hide();
+                        $("#editGradeWeight-select-class-name-form").show();
+
+                      });
+                    </script>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+    </section>
+</template>

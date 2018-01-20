@@ -49,6 +49,7 @@
 
     <!-- Grade Weights (WIP) -->
     <link rel="import" href="sections/createGradeWeight.html">
+    <link rel="import" href="sections/editGradeWeight.html">
     <link rel="import" href="sections/deleteGradeWeight.html">
     <link rel="import" href="sections/viewGradeWeights.html">
 
@@ -452,6 +453,11 @@
 
           $(".editStudentMajorSelect").select2({
             placeholder: "Select Student Major"
+          });
+
+          // Grade Weights
+          $(".editGradeWeightSelect").select2({
+            placeholder: "Select Grade Weight"
           });
 
 

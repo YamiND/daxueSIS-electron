@@ -12,12 +12,12 @@
     <!-- ADDED IMPORT LINKS -->
     <link rel="import" href="sections/index.html">
 
-    <!-- Attendance - Work In Progress - -->
+    <!-- Attendance -->
     <link rel="import" href="sections/markAttendance.html">
     <link rel="import" href="sections/markAttendanceStudents.html">
     <link rel="import" href="sections/viewAttendance.html">
 
-    <!-- Teacher Links - Work In Progress - -->
+    <!-- Teacher Links -->
     <link rel="import" href="sections/addStudentClass.html">
     <link rel="import" href="sections/removeStudentClass.html">
     <link rel="import" href="sections/viewStudentClass.html">
@@ -47,11 +47,13 @@
     <link rel="import" href="sections/viewStudentSkillLevels.html">
 
 
-    <!-- Grade Weights (WIP) -->
+    <!-- Grade Weights -->
     <link rel="import" href="sections/createGradeWeight.html">
     <link rel="import" href="sections/editGradeWeight.html">
     <link rel="import" href="sections/deleteGradeWeight.html">
     <link rel="import" href="sections/viewGradeWeights.html">
+
+    <!-- Grade Items (Work In Progress) -->
 
 
     <!-- END ADDED IMPORT LINKS -->
@@ -65,6 +67,9 @@
     <!-- Custom Theme Style -->
     <link href="assets/css/custom.min.css" rel="stylesheet">
 
+    <!-- Custom Theme Style, most of these are used for navigations -->
+    <link href="assets/css/navigation.min.css" rel="stylesheet">
+
     <!-- God Damn Crazy CSS Shit that prevents page from wrapping like total shit -->
     <link rel="stylesheet" href="assets/css/main.css" />
 
@@ -76,481 +81,469 @@
     <link href="node_modules/select2/dist/css/select2.min.css" rel="stylesheet">
 
     <script>
+      // Global variables and config variables 
       const DEBUG = false;
       const sqlite3 = require('sqlite3').verbose();
       const path = require('path');
       const app = require('electron').remote.app;
       const appDir = path.dirname(require.main.filename);
-
       var ADMIN = true;
     </script>
   </head>
+
+  <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+        <div class="col-md-3 left_col">
+          <div class="left_col scroll-view">
+            <div class="navbar nav_title" style="border: 0;">
+              <a href="#" class="site_title"><i class="fa fa-graduation-cap"></i> <span>大学SIS</span></a>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <!-- menu profile quick info -->
+            <div class="profile">
+              <div class="profile_pic">
+                <img src="assets/images/defaultProfile.png" alt="..." class="img-circle profile_img">
+              </div>
+              <div class="profile_info">
+                <span>Welcome,</span>
+                <h2 class="userNameField"></h2>
+              </div>
+            </div>
+            <!-- /menu profile quick info -->
+
+            <br />
   
-    <body class="nav-md">
-      <div class="container body">
-        <div class="main_container">
-
-
-          <!--MENU STARTS HERE -->
-          <!--Top and Side Panel-->
-          <div class="col-md-3 left_col menu_fixed">
-              <div class="left_col scroll-view">
-                <div class="navbar nav_title" style="border: 0;">
-                  <a class="site_title"><i class="fa fa-graduation-cap"></i> <span>大学SIS</span></a>
-                </div>
-
-                <div class="clearfix"></div>
-
-                <!-- menu profile quick info -->
-                <div class="profile">
-                  <div class="profile_pic">
-                    <img src="assets/images/defaultProfile.png" alt="..." class="img-circle profile_img">
-                  </div>
-                  <div class="profile_info">
-                    <span>Welcome,</span>
-                    <h2 class="userNameField"></h2>
-                  </div>
-                </div>
-                <!-- /menu profile quick info -->
-
-                <br />
-
-                <!-- sidebar menu -->
-                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-                  <div class="menu_section" id="admin-menu">
-                    <h3>General</h3>
-                    <ul class="nav side-menu">
-                      <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a id="index-menu" data-section="index" href="#">Index</a></li>
-                        </ul>
-                      </li>  
-                      
-                      <li><a><i class="fa fa-calendar"></i> Attendance <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a id="markAttendance-menu" data-section="markAttendance" href="#">Mark Attendance</a></li>
-                          <li><a id="viewAttendance-menu" data-section="viewAttendance" href="#">View Attendance</a></li>
-                        </ul>
-                      </li>
-
-                      <li><a><i class="fa fa-university"></i> Classes <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a id="createClass-menu" data-section="createClass" href="#">Create Class</a></li>
-                          <li><a id="editClass-menu" data-section="editClass" href="#">Edit Class</a></li>
-                          <li><a id="deleteClass-menu" data-section="deleteClass" href="#">Delete Class</a></li>
-                          <li><a id="viewClasses-menu" data-section="viewClasses" href="#">View Classes</a></li>
-                        </ul>
-                      </li>
-
-                      <li><a><i class="fa fa-users"></i> Teacher <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a id="addStudentClass-menu" data-section="addStudentClass" href="#">Add Student to Class</a></li>
-                          <li><a id="removeStudentClass-menu" data-section="removeStudentClass" href="#">Remove Student from Class</a></li>
-                          <li><a id="viewStudentClass-menu" data-section="viewStudentClass" href="#">View Students in Class</a></li>
-                        </ul>
-                      </li>
-
-                      <li><a><i class="fa fa-child"></i> Students <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a id="createStudent-menu" data-section="createStudent" href="#">Create Student</a></li>
-                          <li><a id="editStudent-menu" data-section="editStudent" href="#">Edit Student</a></li>
-                          <li><a id="deleteStudent-menu" data-section="deleteStudent" href="#">Delete Student</a></li>
-                          <li><a id="viewStudents-menu" data-section="viewStudents" href="#">View Students</a></li>
-                        </ul>
-                      </li>
-
-                      <li><a><i class="fa fa-object-group"></i> Student Majors <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a id="createStudentMajor-menu" data-section="createStudentMajor" href="#">Create Student Major</a></li>
-                          <li><a id="editStudentMajor-menu" data-section="editStudentMajor" href="#">Edit Student Major</a></li>
-                          <li><a id="deleteStudentMajor-menu" data-section="deleteStudentMajor" href="#">Delete Student Major</a></li>
-                          <li><a id="viewStudentMajors-menu" data-section="viewStudentMajors" href="#">View Student Majors</a></li>
-                        </ul>
-                      </li>
-
-                      <li><a><i class="fa fa-level-up"></i> Student Skill Levels <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a id="createStudentSkillLevel-menu" data-section="createStudentSkillLevel" href="#">Create Student Skill Level</a></li>
-                          <li><a id="editStudentSkillLevel-menu" data-section="editStudentSkillLevel" href="#">Edit Student Skill Level</a></li>
-                          <li><a id="deleteStudentSkillLevel-menu" data-section="deleteStudentSkillLevel" href="#">Delete Student Skill Level</a></li>
-                          <li><a id="viewStudentSkillLevels-menu" data-section="viewStudentSkillLevels" href="#">View Student Skill Levels</a></li>
-                        </ul>
-                      </li>
-
-                      <!-- TODO - Grade Weights -->
-                      <li><a><i class="fa fa-wrench"></i> Grade Weights <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a id="createGradeWeight-menu" data-section="createGradeWeight" href="#">Create Grade Weight</a></li>
-                          <li><a id="editGradeWeight-menu" data-section="editGradeWeight" href="#">Edit Grade Weight</a></li>
-                          <li><a id="deleteGradeWeight-menu" data-section="deleteGradeWeight" href="#">Delete Grade Weight</a></li>
-                          <li><a id="viewGradeWeights-menu" data-section="viewGradeWeights" href="#">View Grade Weights</a></li>
-                        </ul>
-                      </li>
-                
+            <!-- sidebar menu -->
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+              <div class="menu_section" id="admin-menu">
+                <h3>General</h3>
+                <ul class="nav side-menu">
+                  <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a id="index-menu" data-section="index" href="#">Index</a></li>
                     </ul>
-                  </div>
+                  </li>  
+                    
+                  <li><a><i class="fa fa-calendar"></i> Attendance <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a id="markAttendance-menu" data-section="markAttendance" href="#">Mark Attendance</a></li>
+                      <li><a id="viewAttendance-menu" data-section="viewAttendance" href="#">View Attendance</a></li>
+                    </ul>
+                  </li>
 
-                  <div class="menu_section" id="student-menu">
-                      <h3>General</h3>
-                      <ul class="nav side-menu">
-                        <li><a><i class="fa fa-calendar"></i> Attendance <span class="fa fa-chevron-down"></span></a>
-                          <ul class="nav child_menu">
-                            <li><a id="markAttendanceStudents-menu" data-section="markAttendanceStudents" href="#">Mark Attendance (Students)</a></li>                   
-                          </ul>
-                        </li>
+                  <li><a><i class="fa fa-university"></i> Classes <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a id="createClass-menu" data-section="createClass" href="#">Create Class</a></li>
+                      <li><a id="editClass-menu" data-section="editClass" href="#">Edit Class</a></li>
+                      <li><a id="deleteClass-menu" data-section="deleteClass" href="#">Delete Class</a></li>
+                      <li><a id="viewClasses-menu" data-section="viewClasses" href="#">View Classes</a></li>
+                    </ul>
+                  </li>
 
-                      </ul>
-                    </div>
-                </div>
-                <!-- /sidebar menu -->
+                  <li><a><i class="fa fa-users"></i> Teacher <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a id="addStudentClass-menu" data-section="addStudentClass" href="#">Add Student to Class</a></li>
+                      <li><a id="removeStudentClass-menu" data-section="removeStudentClass" href="#">Remove Student from Class</a></li>
+                      <li><a id="viewStudentClass-menu" data-section="viewStudentClass" href="#">View Students in Class</a></li>
+                    </ul>
+                  </li>
 
-                <!-- /menu footer buttons -->
-                <div class="sidebar-footer hidden-small">
-                  <a data-toggle="tooltip" data-placement="top" title="Settings" href="settings.php">
-                    <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-                  </a>
-                  <a data-toggle="tooltip" data-placement="top" title="Email" href="email.php">
-                    <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
-                  </a>
-                  <a data-toggle="tooltip" data-placement="top" title="Refresh" onClick="window.location.reload()">
-                    <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-                  </a>
-                  <a class="close-btn" data-toggle="tooltip" data-placement="top" title="Logout">
-                    <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-                  </a>
-                </div>
-                <!-- /menu footer buttons -->
+                  <li><a><i class="fa fa-child"></i> Students <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a id="createStudent-menu" data-section="createStudent" href="#">Create Student</a></li>
+                      <li><a id="editStudent-menu" data-section="editStudent" href="#">Edit Student</a></li>
+                      <li><a id="deleteStudent-menu" data-section="deleteStudent" href="#">Delete Student</a></li>
+                      <li><a id="viewStudents-menu" data-section="viewStudents" href="#">View Students</a></li>
+                    </ul>
+                  </li>
+
+                  <li><a><i class="fa fa-object-group"></i> Student Majors <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a id="createStudentMajor-menu" data-section="createStudentMajor" href="#">Create Student Major</a></li>
+                      <li><a id="editStudentMajor-menu" data-section="editStudentMajor" href="#">Edit Student Major</a></li>
+                      <li><a id="deleteStudentMajor-menu" data-section="deleteStudentMajor" href="#">Delete Student Major</a></li>
+                      <li><a id="viewStudentMajors-menu" data-section="viewStudentMajors" href="#">View Student Majors</a></li>
+                    </ul>
+                  </li>
+
+                  <li><a><i class="fa fa-level-up"></i> Student Skill Levels <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a id="createStudentSkillLevel-menu" data-section="createStudentSkillLevel" href="#">Create Student Skill Level</a></li>
+                      <li><a id="editStudentSkillLevel-menu" data-section="editStudentSkillLevel" href="#">Edit Student Skill Level</a></li>
+                      <li><a id="deleteStudentSkillLevel-menu" data-section="deleteStudentSkillLevel" href="#">Delete Student Skill Level</a></li>
+                      <li><a id="viewStudentSkillLevels-menu" data-section="viewStudentSkillLevels" href="#">View Student Skill Levels</a></li>
+                    </ul>
+                  </li>
+
+                  <!-- Grade Weights -->
+                  <li><a><i class="fa fa-wrench"></i> Grade Weights <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a id="createGradeWeight-menu" data-section="createGradeWeight" href="#">Create Grade Weight</a></li>
+                      <li><a id="editGradeWeight-menu" data-section="editGradeWeight" href="#">Edit Grade Weight</a></li>
+                      <li><a id="deleteGradeWeight-menu" data-section="deleteGradeWeight" href="#">Delete Grade Weight</a></li>
+                      <li><a id="viewGradeWeights-menu" data-section="viewGradeWeights" href="#">View Grade Weights</a></li>
+                    </ul>
+                  </li>
+
+                  <!-- Grade Items - Work In Progress -->
+                  <li><a><i class="fa fa-tasks"></i> Grade Items <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a id="createGradeItem-menu" data-section="createGradeItem" href="#">Create Grade Item</a></li>
+                      <li><a id="editGradeItem-menu" data-section="editGradeItem" href="#">Edit Grade Item</a></li>
+                      <li><a id="deleteGradeItem-menu" data-section="deleteGradeItem" href="#">Delete Grade Item</a></li>
+                      <li><a id="viewGradeItems-menu" data-section="viewGradeItems" href="#">View Grade Items</a></li>
+                    </ul>
+                  </li>
+                </ul>
               </div>
-            </div>
 
-            <!-- top navigation -->
-            <div class="top_nav">
-              <div class="nav_menu">
-                <nav class="" role="navigation">
-                  <div class="nav toggle">
-                    <a id="menu_toggle"><i class="fa fa-bars"></i></a>
-                  </div>
-
-                  <ul class="nav navbar-nav navbar-right">
-                    <li class="">
-                      <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        <img src="assets/images/defaultProfile.png" alt=""><span class="userNameField"></span>
-                        <span class=" fa fa-angle-down"></span>
-                      </a>
-                      <ul class="dropdown-menu dropdown-usermenu pull-right">
-                        <li>
-                          <a href="javascript:;">
-                            <span>Settings</span>
-                          </a>
-                        </li>
-                        <li><a id="switchMode-btn"><i class="fa fa-unlock-alt pull-right"></i> Change Mode </a></li>
-                        <li><a class="close-btn"><i class="fa fa-sign-out pull-right"></i> Quit </a></li>
-                      </ul>
-                    </li>
-                  </ul>
-                </nav>
+              <!-- Student Menu -->
+              <div class="menu_section" id="student-menu">
+                <h3>General</h3>
+                <ul class="nav side-menu">
+                  <li><a><i class="fa fa-calendar"></i> Attendance <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a id="markAttendanceStudents-menu" data-section="markAttendanceStudents" href="#">Mark Attendance (Students)</a></li>                   
+                    </ul>
+                  </li>
+                </ul>
               </div>
+              <!-- End Student Menu -->
+            </div>      
+            <!-- /sidebar menu -->
+  
+            <!-- /menu footer buttons -->
+            <div class="sidebar-footer hidden-small">
+              <a data-toggle="tooltip" data-placement="top" title="Settings" href="settings.php">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="Email" href="email.php">
+                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="Refresh" onClick="window.location.reload()">
+                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+              </a>
+              <a class="close-btn" data-toggle="tooltip" data-placement="top" title="Logout">
+                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+              </a>
             </div>
-            <!-- /top navigation -->
-        <!-- /Top and Side panel -->
-
-       <!--MENU ENDS HERE -->
-
-
-
-            <!-- WRAPPER STARTS HERE -->
-          <div id="wrapper">
-
+            <!-- /menu footer buttons -->
           </div>
-          <!-- WRAPPER ENDS HERE -->
-
-
-
-
-          <!-- POP UP FOR Changing Modes Occurs Here -->
-            <div id="changeModeOverlay">
-              <div id="popup">
-                <div id="close">X</div>
-                <form id="changeModeOverlay-form" class="form-horizontal form-label-left">
-                  <div class="form-group">
-                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="changeModeOverly-password">Password <span class="required">*</span>
-                    </label>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                      <input type="password" id="changeModeOverly-password" name="changeModeOverly-password" required="required" class="form-control col-md-7 col-xs-12">
-                    </div>
-                  </div>
-
-                  <div class="ln_solid"></div>
-                  <div class="form-group">
-                    <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
-                      <button type="submit" class="btn btn-success" id="changeModeOverly-password-btn">Enter Password</button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-
-          <!-- End POP UP -->
-  
         </div>
-      </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav class="" role="navigation">
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+
+              <ul class="nav navbar-nav navbar-right">
+                <li class="">
+                  <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <img src="assets/images/defaultProfile.png" alt=""><span class="userNameField"></span>
+                    <span class=" fa fa-angle-down"></span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-usermenu pull-right">
+                    <li>
+                      <a href="javascript:;">
+                        <span>Settings</span>
+                      </a>
+                    </li>
+                    <li><a id="switchMode-btn"><i class="fa fa-unlock-alt pull-right"></i> Change Mode </a></li>
+                    <li><a class="close-btn"><i class="fa fa-sign-out pull-right"></i> Quit </a></li>
+                  </ul>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- WRAPPER STARTS HERE -->
+        <div id="wrapper">
+
+        </div>
+        <!-- WRAPPER ENDS HERE -->
   
-      <!-- Script to close Window by class 'close-btn' -->
-      <script>
-        const remote = require('electron').remote;
+        <!-- POP UP FOR Changing Modes Occurs Here -->
+        <div id="changeModeOverlay">
+          <div id="popup">
+            <div id="close">X</div>
+            <form id="changeModeOverlay-form" class="form-horizontal form-label-left">
+              <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="changeModeOverly-password">Password <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <input type="password" id="changeModeOverly-password" name="changeModeOverly-password" required="required" class="form-control col-md-7 col-xs-12">
+                </div>
+              </div>
 
-        // Get all items with the class of 'close-btn'
-        var buttons = document.getElementsByClassName("close-btn");
-        
-        // Add event listener to each button
-        [].forEach.call(buttons, function (button) 
-          {button.addEventListener("click", function (e) 
-            {
-              var window = remote.getCurrentWindow();
-              window.close();
-            });
+              <div class="ln_solid"></div>
+              <div class="form-group">
+                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                  <button type="submit" class="btn btn-success" id="changeModeOverly-password-btn">Enter Password</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- End POP UP -->   
+
+      </div>
+    </div>
+
+    <!-- Script to close Window by class 'close-btn' -->
+    <script>
+      const remote = require('electron').remote;
+
+      // Get all items with the class of 'close-btn'
+      var buttons = document.getElementsByClassName("close-btn");
+      
+      // Add event listener to each button
+      [].forEach.call(buttons, function (button) 
+        {button.addEventListener("click", function (e) 
+          {
+            var window = remote.getCurrentWindow();
+            window.close();
           });
-      </script>
-      <!-- End Script to close Window by class 'close-btn' -->
-
-      <!-- Add jQuery and "single window" Support -->
-      <script> window.$ = window.jQuery = require('jquery');</script>
-      <script>window.i18n = new(require('./translations/i18n'));</script>
-
-      <script src="assets/js/jquery.scrollex.min.js"></script>
-      <script src="assets/js/jquery.scrolly.min.js"></script>
-      <script src="assets/js/skel.min.js"></script>
-      <script src="assets/js/util.js"></script>
-      <script src="assets/js/main.js"></script>
-      <!-- End jQuery and "single window" Support -->
-
-      <!-- Bootstrap -->
-      <script>
-        require('bootstrap/dist/js/bootstrap.min.js');
-      </script>
-
-      <!-- Code needed for menu and translations -->
-      <script>
-        require('./assets/js/menu');
-        require('./assets/js/translations'); 
-      </script>
-      <!-- End Code needed for menu and translations -->
-
-      <!-- Datatables -->
-      <script>
-        require( 'datatables.net-bs' )();
-        require( 'datatables.net-buttons-bs' )();
-        require( 'datatables.net-buttons/js/buttons.print.js' )();
-        require( 'datatables.net-responsive-bs' )();
-
-        //require('datatables.net/js/jquery.dataTables.js')();
-        //require('datatables.net-bs/js/dataTables.bootstrap.js')();
-       // require('datatables.net-buttons/js/dataTables.buttons.min.js')();
-        //require('datatables.net-buttons-bs/js/buttons.bootstrap.min.js')();
-        //require('datatables.net-buttons/js/buttons.print.js')();
-      </script>
-
-      <!-- Custom Theme Scripts -->
-      <script src="assets/js/custom.min.js"></script>
-
-      <!-- Select2 -->
-      <script>
-        require('select2/dist/js/select2.full.min.js')();
-      </script>
-    
-      <!-- Date Range Picker -->
-      <script>
-        require('daterangepicker');
-      </script>  
-
-
-
-      <!-- Bcrpyt -->
-      <script>
-        var bcrypt = require('bcrypt');
-      </script>
-
-      <script>
-        $(document).ready(function() 
-        {
-
-          // Hide student Menu
-          //$("#student-menu").hide();
-
-          $('#markAttendance-date-select').daterangepicker(
-            {
-              locale: {
-                format: 'YYYY-MM-DD'
-                    },
-                singleDatePicker: true,
-              });
-
-            $('#viewAttendance-date-select').daterangepicker(
-            {
-              locale: {
-                format: 'YYYY-MM-DD'
-                    },
-                singleDatePicker: true,
-              });
-
-          /* Assign Student to Class - Select Student */
-          $(".assignStudentClassSelect").select2({
-            placeholder: "Select Student to assign class for"
-          });
-
-          /* Class Name Select */
-          $(".classNameSelect").select2({
-              placeholder: "Select Class Name"
-          });
-          
-          /* Create Class Time Select ID */
-          $("#create-class-periods").select2({
-            placeholder: "Select Class Times"
-          });
-
-          /* Create Class Day Select */
-          $(".createClassDaySelect").select2({
-              placeholder: "Select Class Day(s)"
-            });
-
-          /* Mark Attendance Students Select */
-            $(".studentNameSelect").select2({
-            placeholder: "Select Student(s) "
-          });
-            
-          /* Edit Class Time Select ID */
-          $("#edit-class-periods").select2({
-            placeholder: "Select Class Times"
-          });
-
-          $(".createStudentMajorSelect").select2({
-            placeholder: "Select Student Major"
-          });
-
-          $(".createStudentSkillLevelSelect").select2({
-            placeholder: "Select Student Skill Level"
-          });
-
-          $(".deleteStudentNameSelect").select2({
-            placeholder: "Select Student to Delete"
-          });
-
-          $(".editStudentNameSelect").select2({
-            placeholder: "Select Student to Edit"
-          });
-
-          $(".editStudentMajorSelect").select2({
-            placeholder: "Select Student Major"
-          });
-
-          $(".editStudentSkillLevelSelect").select2({
-            placeholder: "Select Student Skill Level"
-          });
-
-          $(".deleteStudentMajorNameSelect").select2({
-            placeholder: "Select Student Major"
-          });
-
-          $(".editStudentMajorSelect").select2({
-            placeholder: "Select Student Major"
-          });
-
-          // Grade Weights
-          $(".editGradeWeightSelect").select2({
-            placeholder: "Select Grade Weight"
-          });
-
-
-        // Popup Overlay Code
-        document.getElementById("switchMode-btn").addEventListener("click", function(){
-          $('#changeModeOverlay').fadeIn(300); 
-          $("#changeModeOverly-password").focus();
         });
-       
-        document.getElementById("close").addEventListener("click", function(){
-          $('#changeModeOverlay').fadeOut(300);
-        });   
+    </script>
+    <!-- End Script to close Window by class 'close-btn' -->
+    
+    <!-- Add jQuery and "single window" Support -->
+    <script> window.$ = window.jQuery = require('jquery');</script>
+    <script>window.i18n = new(require('./translations/i18n'));</script>
 
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/skel.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+    <!-- End jQuery and "single window" Support -->
+
+    <!-- Bootstrap -->
+    <script>
+      require('bootstrap/dist/js/bootstrap.min.js');
+    </script>
+
+    <!-- Code needed for menu and translations -->
+    <script>
+      require('./assets/js/menu');
+      require('./assets/js/translations'); 
+    </script>
+    <!-- End Code needed for menu and translations -->
+
+    <!-- Datatables -->
+    <script>
+      require( 'datatables.net-bs' )();
+      require( 'datatables.net-buttons-bs' )();
+      require( 'datatables.net-buttons/js/buttons.print.js' )();
+      require( 'datatables.net-responsive-bs' )();
+
+      //require('datatables.net/js/jquery.dataTables.js')();
+      //require('datatables.net-bs/js/dataTables.bootstrap.js')();
+      // require('datatables.net-buttons/js/dataTables.buttons.min.js')();
+      //require('datatables.net-buttons-bs/js/buttons.bootstrap.min.js')();
+      //require('datatables.net-buttons/js/buttons.print.js')();
+    </script>
+
+    <!-- Custom Theme Scripts -->
+    <script src="assets/js/custom.min.js"></script> 
+
+    <!-- Select2 -->
+    <script>
+      require('select2/dist/js/select2.full.min.js')();
+    </script>
+  
+    <!-- Date Range Picker -->
+    <script>
+      require('daterangepicker');
+    </script>  
+
+    <!-- Bcrpyt -->
+    <script>
+      var bcrypt = require('bcrypt');
+    </script>
+
+    <script>
+      $(document).ready(function() 
+      {
+        $('#markAttendance-date-select').daterangepicker({
+          locale: {
+            format: 'YYYY-MM-DD'
+                },
+            singleDatePicker: true,
+        });
+
+          $('#viewAttendance-date-select').daterangepicker(
+          {
+            locale: {
+              format: 'YYYY-MM-DD'
+                  },
+              singleDatePicker: true,
+            });
+
+        /* Assign Student to Class - Select Student */
+        $(".assignStudentClassSelect").select2({
+          placeholder: "Select Student to assign class for"
+        });
+
+        /* Class Name Select */
+        $(".classNameSelect").select2({
+            placeholder: "Select Class Name"
+        });
+        
+        /* Create Class Time Select ID */
+        $("#create-class-periods").select2({
+          placeholder: "Select Class Times"
+        });
+
+        /* Create Class Day Select */
+        $(".createClassDaySelect").select2({
+            placeholder: "Select Class Day(s)"
+          });
+
+        /* Mark Attendance Students Select */
+          $(".studentNameSelect").select2({
+          placeholder: "Select Student(s) "
+        });
+          
+        /* Edit Class Time Select ID */
+        $("#edit-class-periods").select2({
+          placeholder: "Select Class Times"
+        });
+
+        $(".createStudentMajorSelect").select2({
+          placeholder: "Select Student Major"
+        });
+
+        $(".createStudentSkillLevelSelect").select2({
+          placeholder: "Select Student Skill Level"
+        });
+
+        $(".deleteStudentNameSelect").select2({
+          placeholder: "Select Student to Delete"
+        });
+
+        $(".editStudentNameSelect").select2({
+          placeholder: "Select Student to Edit"
+        });
+
+        $(".editStudentMajorSelect").select2({
+          placeholder: "Select Student Major"
+        });
+
+        $(".editStudentSkillLevelSelect").select2({
+          placeholder: "Select Student Skill Level"
+        });
+
+        $(".deleteStudentMajorNameSelect").select2({
+          placeholder: "Select Student Major"
+        });
+
+        $(".editStudentMajorSelect").select2({
+          placeholder: "Select Student Major"
+        });
+
+        // Grade Weights
+        $(".editGradeWeightSelect").select2({
+          placeholder: "Select Grade Weight"
+        });
+
+
+      // Popup Overlay Code
+      document.getElementById("switchMode-btn").addEventListener("click", function(){
+        $('#changeModeOverlay').fadeIn(300); 
+        $("#changeModeOverly-password").focus();
+      });
+      
+      document.getElementById("close").addEventListener("click", function(){
+        $('#changeModeOverlay').fadeOut(300);
+      });   
+
+    });
+
+      $("#changeModeOverlay-form").submit(function (e) 
+      {
+        e.preventDefault();
+
+        checkPassword(); 
+                              
       });
 
-        $("#changeModeOverlay-form").submit(function (e) 
+      function checkPassword()
+      {
+        var submittedPassword = $('#changeModeOverly-password').val();
+        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+
+        db.serialize(function() 
         {
-          e.preventDefault();
-
-          checkPassword(); 
-                                
-        });
-
-        function checkPassword()
-        {
-          var submittedPassword = $('#changeModeOverly-password').val();
-          var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
-
-          db.serialize(function() 
+          db.each("SELECT userPassword, userSalt FROM user", function(err, row) 
           {
-            db.each("SELECT userPassword, userSalt FROM user", function(err, row) 
+            var hash = bcrypt.hashSync(submittedPassword, row.userSalt);
+            
+            if (hash == row.userPassword)
             {
-              var hash = bcrypt.hashSync(submittedPassword, row.userSalt);
-              
-              if (hash == row.userPassword)
+              ADMIN = !ADMIN; // Reset the State
+
+              // Toggle Student Menu to True/False
+              $("#student-menu").toggle();
+
+              // Toggle Admin Menu to True/False
+              $("#admin-menu").toggle();
+
+              $('#changeModeOverly-password').val('');
+
+              if (!ADMIN)
               {
-                ADMIN = !ADMIN; // Reset the State
-
-                // Toggle Student Menu to True/False
-                $("#student-menu").toggle();
-
-                // Toggle Admin Menu to True/False
-                $("#admin-menu").toggle();
-
-                $('#changeModeOverly-password').val('');
-
-                if (!ADMIN)
-                {
-                  navigation.menu.hideAllSections();
-                  $('#changeModeOverlay').fadeOut(300);
-                  $('#' + 'markAttendanceStudents').show()
-                  $('#' + 'markAttendanceStudents' + ' section').show()
-                }
-                else
-                {
-                  navigation.menu.hideAllSections();
-                  $('#changeModeOverlay').fadeOut(300);
-                  $('#' + 'index').show()
-                  $('#' + 'index' + ' section').show()
-                }
-                
+                navigation.menu.hideAllSections();
+                $('#changeModeOverlay').fadeOut(300);
+                $('#' + 'markAttendanceStudents').show()
+                $('#' + 'markAttendanceStudents' + ' section').show()
               }
               else
               {
-                console.log("Failure");
+                navigation.menu.hideAllSections();
+                $('#changeModeOverlay').fadeOut(300);
+                $('#' + 'index').show()
+                $('#' + 'index' + ' section').show()
               }
-
-            });
-          });
-
-          db.close();
-        }
-        
-
-        function getUserName()
-        {
-          var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
-
-          db.serialize(function() 
-          {
-            db.each("SELECT userFirstName, userLastName FROM user", function(err, row) 
+              
+            }
+            else
             {
-              $('.userNameField').append(row.userFirstName + " " + row.userLastName);
-            });
+              console.log("Failure");
+            }
+
           });
+        });
 
-          db.close();
-        }
+        db.close();
+      }
+      
 
-        getUserName();
+      function getUserName()
+      {
+        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
 
-      </script>
+        db.serialize(function() 
+        {
+          db.each("SELECT userFirstName, userLastName FROM user", function(err, row) 
+          {
+            $('.userNameField').append(row.userFirstName + " " + row.userLastName);
+          });
+        });
 
-    </body>
-  </html>
-  
+        db.close();
+      }
+
+      getUserName();
+
+    </script>
+  </body>
+</html>

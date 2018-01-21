@@ -35,7 +35,7 @@
     "ejs": "^2.5.1",
     "electron-config": "^0.2.1",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.2.1",
+    "jquery": "^3.3.1",
     "papaparse": "^4.3.6",
     "select2": "^4.0.6-rc.0",
     "sqlite3": "^3.1.13"

@@ -1,0 +1,130 @@
+<template class="section-template">
+    <section id="viewGradeItems" class="wrapper">
+       <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>View Grade Items</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <div id="form-content"></div>
+                    <form id="viewGradeItems-select-class-name-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Class to view Grade Items</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <select class="classNameSelect" name="viewGradeItems-select-class-name" id="viewGradeItems-select-class-name">
+                                <script>
+                                  //$("#edit-select-class-name").empty();
+                                  
+                                    var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                                    
+                                  
+                                  db.each("SELECT classID, className FROM classes", 
+                                  function(err, row) 
+                                  {   
+                                      var newOption = new Option(row.className, row.classID, false, false);
+                                      $("#viewGradeItems-select-class-name").append(newOption);
+                                      
+                                  });
+                                </script>
+                              </select>
+                        </div>
+                      </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success" id="viewGradeItems-select-class-name-btn">Next</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <form id="viewGradeItems-view-gradeWeights-form" class="form-horizontal form-label-left">
+                        <div class="form-group">
+                            <table id="viewGradeItems-table" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                                    
+                                <thead>
+                                    <tr>
+                                    <th>Grade Item ID</th>
+                                    <th>Grade Item Name</th>
+                                    <th>Grade Item Points Possible</th>
+                                    <th>Grade Item Due Date</th>
+                                    <th>Grade Item Weight Type/Percentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <script>
+                                        var viewGradeItems = $('#viewGradeItems-table').DataTable({"order": [[ 0, "dsc" ]]});
+                                    </script>
+                                </tbody>
+                            </table>
+                        </div>
+                      
+                        <div class="ln_solid"></div>
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                            <button type="button" class="btn btn-primary" onclick="resetviewGradeItemsTable()">Switch Class</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <script>
+
+                      function resetviewGradeItemsTable()
+                      {
+                        // Reset our form values, hide the form, and show the form
+                        $("#viewGradeItems-view-gradeWeights-form").hide();
+
+                        $('#viewGradeItems-select-class-name').val([]).trigger('change');
+                        $("#viewGradeItems-select-class-name-form").show();
+                        $("#viewGradeItems-table").DataTable().clear().draw();
+                      }
+
+                      $(document).ready(function() 
+                      {  
+                        $("#viewGradeItems-view-gradeWeights-form").hide();
+                      });
+
+                      // Pass the data from the old form to the new form and populate it
+                      $('#viewGradeItems-select-class-name-form').submit(
+                      function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+                        
+                        var classID = $('#viewGradeItems-select-class-name').val();
+
+                        
+                        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                            
+
+                        db.serialize(function() {
+                            $("#viewGradeItems-table").DataTable().clear();
+
+                            db.each("SELECT gradeItemID, gradeItemName, gradeItemPointsPossible, gradeItemDueDate, gradeWeights.gradeWeightName, gradeWeights.gradeWeightValue FROM gradeItems LEFT JOIN gradeWeights ON gradeWeights.gradeWeightID = gradeItems.gradeItemWeightRefID AND gradeItemClassRefID = ?", classID, 
+                            function(err, row) 
+                            {   
+                                $("#viewGradeItems-table").DataTable().row.add( [ row.gradeItemID, row.gradeItemName, row.gradeItemPointsPossible, row.gradeItemDueDate, row.gradeWeightName + ", " + row.gradeWeightValue + "%" ] ).draw( false );
+                            });
+
+                            db.close(); 
+                        });
+
+                        $("#viewGradeItems-select-class-name-form").hide();
+                        $("#viewGradeItems-view-gradeWeights-form").show();
+                      });
+                    </script>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+    </section>
+</template>

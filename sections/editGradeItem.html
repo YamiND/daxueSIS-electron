@@ -1,0 +1,259 @@
+<template class="section-template">
+    <section id="editGradeItem" class="wrapper">
+       <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Edit Grade Item</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <div id="form-content"></div>
+
+                    <!-- Form 1, select the grade Item -->
+                    <form id="editGradeItem-select-class-name-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Class to edit Grade Item:</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <select class="classNameSelect" name="editGradeItem-select-class-name" id="editGradeItem-select-class-name">
+                                <script>
+                                  //$("#edit-select-class-name").empty();
+                                  
+                                    var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                                    
+                                  
+                                  db.each("SELECT classID, className FROM classes", 
+                                  function(err, row) 
+                                  {   
+                                      var newOption = new Option(row.className, row.classID, false, false);
+                                      $("#editGradeItem-select-class-name").append(newOption);
+                                      
+                                  });
+                                </script>
+                              </select>
+                        </div>
+                      </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success" id="editGradeItem-select-class-name-btn">Next</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <!-- Form 2, select the grade Item -->
+                    <form id="editGradeItem-select-grade-item-form" class="form-horizontal form-label-left">
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Grade Item:</label>
+                            <div class="col-md-9 col-sm-9 col-xs-12">
+                                <select class="editGradeWeightSelect" name="editGradeItem-select-grade-item" id="editGradeItem-select-grade-item">
+                                    <script>
+                                        // Grade Items will be populated here from the first form upon submission
+                                    </script>
+                                </select>
+                            </div>
+                        </div>
+                       
+                        <div class="ln_solid"></div>
+                        <div class="form-group">
+                          <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                            <button type="button" class="btn btn-primary" onclick="resetEditGradeItemClass()">Switch Class</button>
+                            <button type="submit" class="btn btn-success" id="editGradeItem-select-grade-item-btn">Select Grade Item</button>
+                          </div>
+                        </div>
+                      </form>
+
+
+
+
+                    <!-- Form 3, Update the Grade Item Details -->
+                      <form id="editGradeItem-edit-grade-item-form" class="form-horizontal form-label-left">
+                            <div class="form-group">
+                              <label class="control-label col-md-3 col-sm-3 col-xs-12" for="editGradeItem-edit-grade-item-name">Grade Item Name <span class="required">*</span>
+                              </label>
+                              <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="text" id="editGradeItem-edit-grade-item-name" name="editGradeItem-edit-grade-item-name" required="required" class="form-control col-md-7 col-xs-12">
+                              </div>
+                            </div>
+    
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="editGradeItem-edit-grade-points-possible">Grade Item Points Possible <span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="number" id="editGradeItem-edit-grade-points-possible" name="editGradeItem-edit-grade-points-possible" required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+    
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="editGradeItem-edit-grade-due-date">Grade Item Due Date <span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="date" id="editGradeItem-edit-grade-due-date" name="editGradeItem-edit-grade-due-date" required="required" class="form-control col-md-7 col-xs-12">
+                                </div>
+                            </div>
+      
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Grade Weight:</label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <select class="editGradeWeightSelect" name="editGradeItem-edit-grade-weight" id="editGradeItem-edit-grade-weight">
+                                        <script>
+                                            // Grade Weights will be populated here from the first form upon submission
+                                        </script>
+                                    </select>
+                                </div>
+                            </div>
+                           
+                            <div class="ln_solid"></div>
+                            <div class="form-group">
+                              <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                                <button type="button" class="btn btn-primary" onclick="resetEditGradeItemSwitch()">Switch Grade Item</button>
+                                <button type="submit" class="btn btn-success" id="editGradeItem-edit-grade-item-btn">Edit Grade Item</button>
+                              </div>
+                            </div>
+                        </form>
+                        
+                    
+
+                    <script>
+
+                      function resetEditGradeItemClass() // Fix this
+                      {
+                        // Reset our form values, hide the form, and show the form
+                        $("#editGradeItem-select-grade-item-form").hide();
+
+                        $("#editGradeItem-select-grade-item").empty();
+                        $('#editGradeItem-select-class-name').val([]).trigger('change');
+                        $('#editGradeItem-select-class-name-form').show();
+                      }
+
+                      function resetEditGradeItemSwitch() // Fix this
+                      {
+                        // Reset our form values, hide the form, and show the form
+                        $("#editGradeItem-edit-grade-item-form").hide();
+
+                        $("#editGradeItem-edit-grade-weight").empty();
+                        $('#editGradeItem-select-grade-item').val([]).trigger('change');
+                        $("#editGradeItem-select-grade-item-form").show();
+                      }
+
+                      $(document).ready(function() 
+                      {  
+                        $("#editGradeItem-select-grade-item-form").hide();
+                        $("#editGradeItem-edit-grade-item-form").hide();
+                      });
+
+                      // Form 1 submission
+                      $('#editGradeItem-select-class-name-form').submit(
+                      function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+
+                        var classID = $('#editGradeItem-select-class-name').val();
+
+                        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                            
+                        db.serialize(function() {
+
+                            db.each("SELECT gradeItemID, gradeItemName, gradeItemPointsPossible, gradeItemDueDate, gradeWeights.gradeWeightName, gradeWeights.gradeWeightValue, gradeWeights.gradeWeightID FROM gradeItems LEFT JOIN gradeWeights ON gradeWeights.gradeWeightID = gradeItems.gradeItemWeightRefID AND gradeItemClassRefID = ?", classID, 
+                            function(err, row) 
+                            {   
+                                var newOption = new Option(row.gradeItemName + " - " + row.gradeItemPointsPossible + " - " + row.gradeItemDueDate + " - " + row.gradeWeightName + " - " + row.gradeWeightID, row.gradeItemID, false, false);
+                                $("#editGradeItem-select-grade-item").append(newOption);
+                            });
+
+                            db.close(); 
+                        });
+
+                        $("#editGradeItem-select-class-name-form").hide();
+                        $("#editGradeItem-select-grade-item-form").show();
+                      });
+
+                      // Form 2 Submission
+                      $('#editGradeItem-select-grade-item-form').submit(
+                      function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+                        
+                        var classID = $('#editGradeItem-select-class-name').val();
+
+                        var selectedGradeItem = $("#editGradeItem-select-grade-item option:selected").text();
+                        var splitSelectedGradeItemArray = selectedGradeItem.split(" - ");
+                       
+                        $("#editGradeItem-edit-grade-item-name").val(splitSelectedGradeItemArray[0]);
+                        $("#editGradeItem-edit-grade-points-possible").val(splitSelectedGradeItemArray[1]);
+                        $("#editGradeItem-edit-grade-due-date").val(splitSelectedGradeItemArray[2]);
+
+                        var gradeWeightID = splitSelectedGradeItemArray[4];
+                        
+
+                        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                            
+                        db.serialize(function() {
+
+                            db.each("SELECT gradeWeightName, gradeWeightValue, gradeWeightID FROM gradeWeights WHERE gradeRefClassID = ?", classID, 
+                            function(err, row) 
+                            {   
+                                if (row.gradeWeightID == gradeWeightID)
+                                {
+                                    var newOption = new Option(row.gradeWeightName + " - " + row.gradeWeightValue, row.gradeWeightID, false, true);
+                                }
+                                else
+                                {
+                                    var newOption = new Option(row.gradeWeightName + " - " + row.gradeWeightValue, row.gradeWeightID, false, false);
+                                }
+                                
+                                $("#editGradeItem-edit-grade-weight").append(newOption);
+                            });
+
+                            db.close(); 
+                        });
+
+                        $("#editGradeItem-select-grade-item-form").hide();
+                        $("#editGradeItem-edit-grade-item-form").show();
+                        
+                      });
+
+
+                      // Form 3 Submission
+                      $('#editGradeItem-edit-grade-item-form').submit(
+                      function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+
+                        var gradeItemID = $("#editGradeItem-select-grade-item").val();
+                        var gradeItemName = $('#editGradeItem-edit-grade-item-name').val();
+                        var gradeItemPointsPossible = $('#editGradeItem-edit-grade-points-possible').val();
+                        var gradeItemDueDate = $('#editGradeItem-edit-grade-due-date').val();
+                        var gradeWeightID = $('#editGradeItem-edit-grade-weight').val();
+                        
+                        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                            
+                        db.serialize(function() 
+                        {       
+                          db.prepare("UPDATE gradeItems SET gradeItemName = ?, gradeItemPointsPossible = ?, gradeItemDueDate = ? WHERE gradeItemID = ?").run(gradeItemName, gradeItemPointsPossible, gradeItemDueDate, gradeItemID).finalize(); 
+                        });
+                        db.close();
+
+                        $("#editGradeItem-edit-grade-weight").empty();
+                        $("#editGradeItem-select-grade-item").empty();
+
+                        $("#editGradeItem-edit-grade-item-form").hide();
+                        $("#editGradeItem-select-class-name-form").show();
+                        
+                      });
+                    </script>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+    </section>
+</template>

@@ -1,0 +1,143 @@
+<template class="section-template">
+    <section id="deleteGradeItem" class="wrapper">
+       <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Delete Grade Item</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <div id="form-content"></div>
+                    <form id="deleteGradeItem-select-class-name-form" class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Class to delete Grade Item:</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <select class="classNameSelect" name="deleteGradeItem-select-class-name" id="deleteGradeItem-select-class-name">
+                                <script>
+                                  //$("#edit-select-class-name").empty();
+                                  
+                                    var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                                    
+                                  
+                                  db.each("SELECT classID, className FROM classes", 
+                                  function(err, row) 
+                                  {   
+                                      var newOption = new Option(row.className, row.classID, false, false);
+                                      $("#deleteGradeItem-select-class-name").append(newOption);
+                                      
+                                  });
+                                </script>
+                              </select>
+                        </div>
+                      </div>
+                      <div class="ln_solid"></div>
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                          <button type="submit" class="btn btn-success" id="deleteGradeItem-select-class-name-btn">Next</button>
+                        </div>
+                      </div>
+                    </form>
+
+                    <form id="deleteGradeItem-delete-grade-item-form" class="form-horizontal form-label-left">
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Grade Item:</label>
+                            <div class="col-md-9 col-sm-9 col-xs-12">
+                                <select class="editGradeWeightSelect" name="deleteGradeItem-select-grade-item" id="deleteGradeItem-select-grade-item">
+                                    <script>
+                                        // Grade Items will be populated here from the first form upon submission
+                                    </script>
+                                </select>
+                            </div>
+                        </div>
+                       
+                        <div class="ln_solid"></div>
+                        <div class="form-group">
+                          <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-5">
+                            <button type="button" class="btn btn-primary" onclick="resetDeleteGradeItemClass()">Switch Class</button>
+                            <button type="submit" class="btn btn-success" id="deleteGradeItem-delete-grade-item-btn">Delete Grade Item</button>
+                          </div>
+                        </div>
+                      </form>
+                    
+
+                    <script>
+
+                      function resetDeleteGradeItemClass()
+                      {
+                        // Reset our form values, hide the form, and show the form
+                        $("#deleteGradeItem-delete-grade-item-form").hide();
+
+                        $("#deleteGradeItem-select-grade-item").empty();
+                        $('#deleteGradeItem-select-class-name').val([]).trigger('change');
+                        $("#deleteGradeItem-select-class-name-form").show();
+                        
+                      }
+
+                      $(document).ready(function() 
+                      {  
+                        $("#deleteGradeItem-delete-grade-item-form").hide();
+                      });
+
+                      // Pass the data from the old form to the new form and populate it
+                      $('#deleteGradeItem-select-class-name-form').submit(
+                      function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+
+                        var classID = $('#deleteGradeItem-select-class-name').val();
+
+                        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+                            
+                        db.serialize(function() {
+
+                            db.each("SELECT gradeItemID, gradeItemName, gradeItemPointsPossible, gradeItemDueDate, gradeWeights.gradeWeightName, gradeWeights.gradeWeightValue FROM gradeItems LEFT JOIN gradeWeights ON gradeWeights.gradeWeightID = gradeItems.gradeItemWeightRefID AND gradeItemClassRefID = ?", classID, 
+                            function(err, row) 
+                            {   
+                                var newOption = new Option(row.gradeItemName + " - " + row.gradeItemPointsPossible + " - " + row.gradeItemDueDate + " - " + row.gradeWeightName, row.gradeItemID, false, false);
+                                $("#deleteGradeItem-select-grade-item").append(newOption);
+                            });
+
+                            db.close(); 
+                        });
+
+                        $("#deleteGradeItem-select-class-name-form").hide();
+                        $("#deleteGradeItem-delete-grade-item-form").show();
+                      });
+
+
+                      $('#deleteGradeItem-delete-grade-item-form').submit(
+                      function(e)
+                      {
+                        e.preventDefault(); // Prevent Default Submission
+                        
+                        var gradeItemID = $('#deleteGradeItem-select-grade-item').val();
+
+                        var db = new sqlite3.Database(path.join(appDir, "sqlite", "daxuesis.db"));
+
+                        db.serialize(function() 
+                        {       
+                            db.prepare("DELETE FROM gradeItems WHERE gradeItemID = ?").run(gradeItemID).finalize();
+                        });  
+
+                        db.close();
+                    
+                        resetDeleteGradeItemClass();
+                        
+                      });
+                    </script>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /page content -->
+    </section>
+</template>

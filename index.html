@@ -17,7 +17,8 @@
     <link rel="import" href="sections/markAttendanceStudents.html">
     <link rel="import" href="sections/viewAttendance.html">
 
-    <!-- Teacher Links -->
+    <!-- Teacher Links (WIP) -->
+    <link rel="import" href="sections/gradeStudentClass.html">
     <link rel="import" href="sections/addStudentClass.html">
     <link rel="import" href="sections/removeStudentClass.html">
     <link rel="import" href="sections/viewStudentClass.html">
@@ -46,14 +47,13 @@
     <link rel="import" href="sections/deleteStudentSkillLevel.html">
     <link rel="import" href="sections/viewStudentSkillLevels.html">
 
-
     <!-- Grade Weights -->
     <link rel="import" href="sections/createGradeWeight.html">
     <link rel="import" href="sections/editGradeWeight.html">
     <link rel="import" href="sections/deleteGradeWeight.html">
     <link rel="import" href="sections/viewGradeWeights.html">
 
-    <!-- Grade Items (Work In Progress) -->
+    <!-- Grade Items -->
     <link rel="import" href="sections/createGradeItem.html">
     <link rel="import" href="sections/editGradeItem.html">
     <link rel="import" href="sections/deleteGradeItem.html">
@@ -147,8 +147,10 @@
                     </ul>
                   </li>
 
+                  <!-- Teacher Functions -->
                   <li><a><i class="fa fa-users"></i> Teacher <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
+                      <li><a id="gradeStudentClass-menu" data-section="gradeStudentClass" href="#">Grade Students</a></li>
                       <li><a id="addStudentClass-menu" data-section="addStudentClass" href="#">Add Student to Class</a></li>
                       <li><a id="removeStudentClass-menu" data-section="removeStudentClass" href="#">Remove Student from Class</a></li>
                       <li><a id="viewStudentClass-menu" data-section="viewStudentClass" href="#">View Students in Class</a></li>
@@ -192,7 +194,7 @@
                     </ul>
                   </li>
 
-                  <!-- Grade Items - Work In Progress -->
+                  <!-- Grade Items -->
                   <li><a><i class="fa fa-tasks"></i> Grade Items <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a id="createGradeItem-menu" data-section="createGradeItem" href="#">Create Grade Item</a></li>

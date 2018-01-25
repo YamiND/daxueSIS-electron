@@ -6,7 +6,7 @@ var fs = require('fs');
 
 var appDir = path.dirname(require.main.filename);
 
-const DEBUG = true;
+const DEBUG = false;
 
 function checkDirectorySync(directory) {  
   try {
@@ -16,14 +16,10 @@ function checkDirectorySync(directory) {
   }
 }
 
-
-
-
 function createDatabase(callback)
 {
   callback();
-
-  //if (!fs.existsSync(path.join(app.getPath("userData"), "sqlite", "daxuesis.db"))) 
+  
   if (!fs.existsSync(path.join(appDir, "sqlite", "daxuesis.db"))) 
   {
     var sqlite3 = require('sqlite3').verbose();
@@ -34,24 +30,31 @@ function createDatabase(callback)
       db.serialize(function() 
       {
         var createTableSQL = [
-                              "PRAGMA foreign_keys = off;","BEGIN TRANSACTION;",
-                              "DROP TABLE IF EXISTS classes;",
-                              "CREATE TABLE classes (classID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, className   VARCHAR (45) NOT NULL, classDay INT NOT NULL, classPeriod INT NOT NULL);",
-                              "DROP TABLE IF EXISTS studentAttendance;",
-                              "CREATE TABLE studentAttendance (attendanceID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, studentRefDBID INTEGER REFERENCES students (studentDBID) ON DELETE CASCADE, classRefID INTEGER REFERENCES classes (classID) ON DELETE CASCADE, attendanceDate DATE, attendedClass  BOOLEAN);",
-                              "DROP TABLE IF EXISTS studentClasses;",
-                              "CREATE TABLE studentClasses (studentRefDBID INT REFERENCES students (studentDBID) ON DELETE CASCADE ON UPDATE CASCADE, classRefID INTEGER REFERENCES classes (classID) ON DELETE CASCADE ON UPDATE CASCADE);",
-                              "DROP TABLE IF EXISTS studentMajors;",
-                              "CREATE TABLE studentMajors (studentMajorID   INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, studentMajorName STRING  NOT NULL UNIQUE);",
-                              "DROP TABLE IF EXISTS students;",
-                              "CREATE TABLE students (studentDBID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, studentEnglishName VARCHAR (45), studentMajorID INTEGER REFERENCES studentMajors (studentMajorID) ON DELETE CASCADE, studentSkillLevelID INT NOT NULL REFERENCES studentSkillLevels (studentSkillLevelID) ON DELETE CASCADE, studentID INTEGER UNIQUE NOT NULL);",
-                              "DROP TABLE IF EXISTS studentSkillLevels;",
-                              "CREATE TABLE studentSkillLevels (studentSkillLevelID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, studentSkillLevel INTEGER UNIQUE NOT NULL);",
-                              "DROP TABLE IF EXISTS user;",
-                              "CREATE TABLE user (userID INT UNIQUE PRIMARY KEY NOT NULL, userFirstName STRING NOT NULL, userLastName  STRING NOT NULL, userPassword  STRING);", 
-                              "COMMIT TRANSACTION;",
-                              "PRAGMA foreign_keys = on;"
-                            ];
+          "PRAGMA foreign_keys = off;",
+          "BEGIN TRANSACTION;",
+          "DROP TABLE IF EXISTS classes;",
+          "CREATE TABLE classes (classID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, className VARCHAR (45) NOT NULL, classDay INT NOT NULL, classPeriod INT NOT NULL);",
+          "DROP TABLE IF EXISTS gradeItems;",
+          "CREATE TABLE gradeItems (gradeItemID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, gradeItemName STRING NOT NULL, gradeItemPointsPossible DOUBLE NOT NULL, gradeItemDueDate DATE, gradeItemClassRefID INTEGER REFERENCES classes (classID) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL, gradeItemWeightRefID INTEGER REFERENCES gradeWeights (gradeWeightID) ON DELETE CASCADE ON UPDATE CASCADE);",
+          "DROP TABLE IF EXISTS grades;",
+          "CREATE TABLE grades (gradeID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, gradePointsScored DOUBLE NOT NULL, gradeStudentRefDBID INTEGER REFERENCES students (studentDBID) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL, gradeItemRefID INTEGER REFERENCES gradeItems (gradeItemID) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL, gradeSubmittedDate DATE NOT NULL);",
+          "DROP TABLE IF EXISTS gradeWeights;",
+          "CREATE TABLE gradeWeights (gradeWeightID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, gradeWeightName STRING NOT NULL, gradeWeightValue INTEGER NOT NULL, gradeRefClassID INTEGER REFERENCES classes (classID) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL);",
+          "DROP TABLE IF EXISTS studentAttendance;",
+          "CREATE TABLE studentAttendance (attendanceID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, studentRefDBID INTEGER REFERENCES students (studentDBID) ON DELETE CASCADE, classRefID INTEGER REFERENCES classes (classID) ON DELETE CASCADE, attendanceDate DATE, attendedClass BOOLEAN);",
+          "DROP TABLE IF EXISTS studentClasses;",
+          "CREATE TABLE studentClasses (studentRefDBID INT REFERENCES students (studentDBID) ON DELETE CASCADE ON UPDATE CASCADE, classRefID INTEGER REFERENCES classes (classID) ON DELETE CASCADE ON UPDATE CASCADE);",
+          "DROP TABLE IF EXISTS studentMajors;",
+          "CREATE TABLE studentMajors (studentMajorID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, studentMajorName STRING NOT NULL UNIQUE);",
+          "DROP TABLE IF EXISTS students;",
+          "CREATE TABLE students (studentDBID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, studentEnglishName VARCHAR (45), studentMajorID INTEGER REFERENCES studentMajors (studentMajorID) ON DELETE CASCADE, studentSkillLevelID INT NOT NULL REFERENCES studentSkillLevels (studentSkillLevelID) ON DELETE CASCADE, studentID INTEGER UNIQUE NOT NULL);",
+          "DROP TABLE IF EXISTS studentSkillLevels;",
+          "CREATE TABLE studentSkillLevels (studentSkillLevelID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, studentSkillLevel INTEGER UNIQUE NOT NULL);",
+          "DROP TABLE IF EXISTS user;",
+          "CREATE TABLE user (userID INT UNIQUE PRIMARY KEY NOT NULL, userFirstName STRING NOT NULL, userLastName STRING NOT NULL, userPassword STRING, userSalt STRING);",
+          "COMMIT TRANSACTION;",
+          "PRAGMA foreign_keys = on;"
+          ];
 
         for(var i=0; i< createTableSQL.length; i++)
         {
@@ -84,14 +87,12 @@ function createWindow () {
     // In the future I might use a frameless browser again
     //mainWindow = new BrowserWindow({titleBarStyle: 'hidden',
     mainWindow = new BrowserWindow({
-    width: 1281,
-    height: 800,
-    minWidth: 1281,
-    minHeight: 800,
     show: false,
-    icon: path.join(__dirname, 'assets/icons/daxuesis.icns')
-
+    icon: path.join(appDir, 'assets/icons/daxuesis.icns')
   })
+
+  mainWindow.maximize();
+  mainWindow.setMenu(null);
 
 
   // and load the index.html of the app.
@@ -115,12 +116,9 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
-
-  require('./menu/mainmenu')
   
   if (!DEBUG)
-  {
-    //createDatabase(function () {checkDirectorySync(path.join(app.getPath("userData"), "sqlite"))}); // Check if sqlite dir exists 
+  { 
     createDatabase(function () {checkDirectorySync(path.join(appDir, "sqlite"))}); // Check if sqlite dir exists 
   }
 }
@@ -146,6 +144,3 @@ app.on('activate', function () {
     createWindow()
   }
 })
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.

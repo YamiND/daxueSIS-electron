@@ -11,12 +11,12 @@ Originally I had this project follow a client-server model with it being accesse
 
 ## Setup
 You will need to have a proper node.js environment + npm setup. Once you have done that, please run the following command(s)
-    ```
-    npm run-script rebuild // Rebuild the modules for running on Windows, macOS, or Linux
-    npm run-script start // Runs 大学SIS in the CWD 
-    npm run-script build-mac // Builds a .app that should be portable
-    npm run-script build-win // Builds a .exe with dependencies for being portable on Windows 
-    ```
+```
+npm run-script rebuild // Rebuild the modules for running on Windows, macOS, or Linux
+npm run-script start // Runs 大学SIS in the CWD 
+npm run-script build-mac // Builds a .app that should be portable
+npm run-script build-win // Builds a .exe with dependencies for being portable on Windows 
+```
 
 Builds by defualt will be saved to a release-builds directory. From there you can copy that folder to wherever you need to run it from
 

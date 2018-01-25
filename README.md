@@ -18,5 +18,5 @@ npm run-script build-mac // Builds a .app that should be portable
 npm run-script build-win // Builds a .exe with dependencies for being portable on Windows 
 ```
 
-Builds by defualt will be saved to a release-builds directory. From there you can copy that folder to wherever you need to run it from
+Builds by default will be saved to a release-builds directory. From there you can copy that folder to wherever you need to run it from
 
